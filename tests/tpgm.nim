@@ -30,6 +30,10 @@ pgm5.max = pgm2.max
 pgm5.data = pgm2.data
 
 suite "usecase":
+  test "read P2":
+    check readPGMFile("tests/out/p2.pgm")[] == pgm2[]
+  test "read P5":
+    check readPGMFile("tests/out/p5.pgm")[] == pgm5[]
   test "write P2":
     writeFile "tests/out/p2.pgm", pgm2.formatP2
   test "write P5":

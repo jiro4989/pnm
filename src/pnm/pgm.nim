@@ -100,7 +100,7 @@ proc parsePGM*(s: string): PGM =
   result.row = colRow[1].parseInt
   result.max = lines[2].parseUint.uint8
   for line in lines[3..^1]:
-    result.data.add line.split(" ").mapIt(it.parseUInt.uint8).toBin
+    result.data.add line.split(" ").mapIt(it.parseUInt.uint8)
 
 proc parsePGM*(s: openArray[uint8]): PGM =
   ## 事前にバリデーションしておくこと
