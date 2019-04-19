@@ -1240,14 +1240,16 @@ function main() {
   <ul class="simple simple-toc" id="toc-list">
 <li><a class="reference" id="pbm-example_toc" href="#pbm-example">PBM example</a></li>
 <li>
+  <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
+  <ul class="simple simple-toc-section">
+    
+  </ul>
+</li>
+<li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#PBM"
     title="PBM = ref PBMObj"><wbr />PBM<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#IllegalFileDiscriptorError"
-    title="IllegalFileDiscriptorError = object of Defect"><wbr />Illegal<wbr />File<wbr />Discriptor<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#IllegalColumnRowError"
-    title="IllegalColumnRowError = object of Defect"><wbr />Illegal<wbr />Column<wbr />Row<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1303,23 +1305,16 @@ P1
 <ul class="simple"><li><a class="reference external" href="https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88">https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88</a>)</li>
 </ul>
 </p>
-  <div class="section" id="7">
+  <div class="section" id="6">
+<h1><a class="toc-backref" href="#6">Imports</a></h1>
+<dl class="item">
+<a class="reference external" href="errors.html">errors</a>, <a class="reference external" href="util.html">util</a>, <a class="reference external" href="validator.html">validator</a>
+</dl></div>
+<div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <a id="PBM"></a>
 <dt><pre><a href="pbm.html#PBM"><span class="Identifier">PBM</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Identifier">PBMObj</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="IllegalFileDiscriptorError"></a>
-<dt><pre><a href="pbm.html#IllegalFileDiscriptorError"><span class="Identifier">IllegalFileDiscriptorError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Defect</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="IllegalColumnRowError"></a>
-<dt><pre><a href="pbm.html#IllegalColumnRowError"><span class="Identifier">IllegalColumnRowError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Defect</span></pre></dt>
 <dd>
 
 
@@ -1366,7 +1361,7 @@ P1用
 </dd>
 <a id="validatePBM,openArray[uint8]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">validatePBM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">,</span>
-    <span class="Identifier">IllegalColumnRowError</span><span class="Other">,</span> <span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">IllegalColumnRowError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <ol class="simple"><li>先頭２バイトがP1またはP4である</li>
 <li>2行目のデータは行 列の整数値である</li>
@@ -1383,7 +1378,7 @@ P4用 事前にバリデーションしておくこと
 </dd>
 <a id="readPBM,File"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">readPBM</span><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">File</span><span class="Other">)</span><span class="Other">:</span> <a href="pbm.html#PBM"><span class="Identifier">PBM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">,</span>
-                                 <span class="Identifier">IllegalColumnRowError</span><span class="Other">,</span> <span class="Other">,</span> <span class="Identifier">EOFError</span><span class="Other">,</span> <span class="Identifier">OverflowError</span><span class="Other">,</span>
+                                 <span class="Identifier">IllegalColumnRowError</span><span class="Other">,</span> <span class="Identifier">EOFError</span><span class="Other">,</span> <span class="Identifier">OverflowError</span><span class="Other">,</span>
                                  <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
@@ -1392,7 +1387,7 @@ P4用 事前にバリデーションしておくこと
 <a id="readPBMFile,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">readPBMFile</span><span class="Other">(</span><span class="Identifier">fn</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="pbm.html#PBM"><span class="Identifier">PBM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span>
                                         <span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">,</span>
-                                        <span class="Identifier">IllegalColumnRowError</span><span class="Other">,</span> <span class="Other">,</span> <span class="Identifier">EOFError</span><span class="Other">,</span>
+                                        <span class="Identifier">IllegalColumnRowError</span><span class="Other">,</span> <span class="Identifier">EOFError</span><span class="Other">,</span>
                                         <span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
                                 <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1415,7 +1410,7 @@ P4用 事前にバリデーションしておくこと
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-19 06:04:12 UTC</small>
+        <small>Made with Nim. Generated: 2019-04-19 11:10:24 UTC</small>
       </div>
     </div>
   </div>

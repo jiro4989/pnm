@@ -19,13 +19,13 @@
 ##
 ## See also:
 ## * https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88)
+## * http://tech.ckme.co.jp/pnm.shtml
 
 from strformat import `&`
 from sequtils import mapIt, filterIt
 import strutils
 
-import errors
-include util, validator
+import errors, util, validator
 
 type
   PGMObj = object

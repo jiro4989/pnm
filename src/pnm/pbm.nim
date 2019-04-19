@@ -22,8 +22,7 @@ from strformat import `&`
 from sequtils import mapIt, filterIt, concat
 import strutils
 
-include util, validator
-import errors
+import errors, util, validator
 
 const
   pbmFileDiscriptorP1* = "P1"

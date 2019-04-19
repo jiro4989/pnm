@@ -2,7 +2,7 @@ from algorithm import reverse
 from sequtils import mapIt
 from strutils import join
 
-proc toBinSeq(b: uint8): seq[uint8] =
+proc toBinSeq*(b: uint8): seq[uint8] =
   ## 2進数のビットをシーケンスに変換する
   ## 0b0000_1111 -> @[0'u8, 0, 0, 0, 1, 1, 1, 1]
   var c = b
@@ -11,12 +11,12 @@ proc toBinSeq(b: uint8): seq[uint8] =
     c = c shr 1
   result.reverse
 
-proc toBinString(data: openArray[uint8]): string =
+proc toBinString*(data: openArray[uint8]): string =
   for b in data.mapIt(it.toBinSeq.mapIt(it.`$`[0].char)):
     for c in b:
       result.add c
 
-proc toMatrixString(s: string, col: int): string =
+proc toMatrixString*(s: string, col: int): string =
   var line: seq[char]
   var lines: seq[seq[char]]
   for i, c in s:
@@ -28,7 +28,7 @@ proc toMatrixString(s: string, col: int): string =
     lines.add line
   result = lines.mapIt(it.join(" ")).join("\n")
 
-proc toBin(arr: openArray[uint8]): seq[uint8] =
+proc toBin*(arr: openArray[uint8]): seq[uint8] =
   var data: uint8
   var i = 0
   for u in arr:
@@ -42,7 +42,7 @@ proc toBin(arr: openArray[uint8]): seq[uint8] =
   if data != 0:
     result.add data shl (8 - i)
 
-proc removeCommentLine(s: openArray[uint8]): seq[uint8] =
+proc removeCommentLine*(s: openArray[uint8]): seq[uint8] =
   var commentLineFound: bool
   for b in s:
     if b == '#'.uint8:

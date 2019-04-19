@@ -4,12 +4,12 @@ from strformat import `&`
 
 import errors
 
-proc validateFileDiscriptor(s: openArray[uint8], fds: varargs[string]) =
+proc validateFileDiscriptor*(s: openArray[uint8], fds: varargs[string]) =
   let fd = s[0..1].mapIt(it.char).join("")
   if fd notin fds:
     raise newException(IllegalFileDiscriptorError, &"IllegalFileDiscriptor: file discriptor is {fd}")
 
-proc validateColumnAndRow(s: openArray[uint8], start: int) =
+proc validateColumnAndRow*(s: openArray[uint8], start: int) =
   # check column and row
   var whiteSpaceCount: int
   var lfExist: bool
@@ -26,7 +26,7 @@ proc validateColumnAndRow(s: openArray[uint8], start: int) =
   if whiteSpaceCount != 1:
     raise newException(IllegalColumnRowError, &"whitespace count is {whiteSpaceCount}")
 
-proc validateMaxValue(s: openArray[uint8], start: int) =
+proc validateMaxValue*(s: openArray[uint8], start: int) =
   for i, b in s[start..^1]:
     let c = b.char
     if c == '\n':
