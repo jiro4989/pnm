@@ -196,4 +196,4 @@ proc readPBMFile*(fn: string): PBM =
   result = f.readPBM
 
 proc `$`*(self: PBM): string =
-  result = "{" & &"fileDiscriptor:{self.fileDiscriptor},col:{self.col},row:{self.row},data:{self.data}" & "}"
+  result = $self[]
