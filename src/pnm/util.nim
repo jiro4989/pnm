@@ -20,7 +20,7 @@ proc toMatrixString*(data: openArray[uint8], col: int): string =
   var line: seq[string]
   var lines: seq[seq[string]]
   for i, c in data:
-    line.add c.`$`
+    line.add $c
     if (i+1) mod col == 0:
       lines.add line
       line = @[]
@@ -33,18 +33,6 @@ proc toMatrixString*(s: string, col: int): string =
   var lines: seq[seq[char]]
   for i, c in s:
     line.add c
-    if (i+1) mod col == 0:
-      lines.add line
-      line = @[]
-  if 0 < line.len:
-    lines.add line
-  result = lines.mapIt(it.join(" ")).join("\n")
-
-proc toRGBMatrixString*(data: openArray[uint8], col: int): string =
-  var line: seq[char]
-  var lines: seq[seq[char]]
-  for i, c in data:
-    line.add c.`$`[0].char
     if (i+1) mod col == 0:
       lines.add line
       line = @[]

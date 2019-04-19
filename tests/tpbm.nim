@@ -100,12 +100,6 @@ suite "parsePBM(openArray[uint8])":
   test "normal":
     check pbm1bin.parsePBM[] == pbm1[]
 
-suite "readPBMFile":
-  test "read p1 file":
-    check readPBMFile("tests/out/p1.pbm")[] == pbm1[]
-  test "read p4 file":
-    check readPBMFile("tests/out/p4.pbm")[] == pbm4[]
-
 suite "usecase":
   test "write P1":
     writeFile("tests/out/p1.pbm", pbm1.formatP1)
@@ -114,3 +108,7 @@ suite "usecase":
     let bin = pbm4.formatP4
     discard f.writeBytes(bin, 0, bin.len)
     f.close
+  test "read p1 file":
+    check readPBMFile("tests/out/p1.pbm")[] == pbm1[]
+  test "read p4 file":
+    check readPBMFile("tests/out/p4.pbm")[] == pbm4[]
