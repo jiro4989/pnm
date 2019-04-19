@@ -22,6 +22,26 @@ pgm2.data = @[
   2, 2, 2, 2, 2, 2,
 ]
 
+var pgm2_2 = new PGM
+pgm2_2.fileDiscriptor = pgmFileDiscriptorP2
+pgm2_2.col = 6
+pgm2_2.row = 12
+pgm2_2.max = 20
+pgm2_2.data = @[
+  0'u8, 0, 0, 0, 0, 0,
+  0'u8, 0, 0, 0, 0, 0,
+  0'u8, 0, 0, 0, 0, 0,
+  0'u8, 0, 0, 0, 0, 0,
+  10, 10, 10, 10, 10, 10,
+  10, 10, 10, 10, 10, 10,
+  10, 10, 10, 10, 10, 10,
+  10, 10, 10, 10, 10, 10,
+  20, 20, 20, 20, 20, 20,
+  20, 20, 20, 20, 20, 20,
+  20, 20, 20, 20, 20, 20,
+  20, 20, 20, 20, 20, 20,
+]
+
 const pgm2str = """P2
 6 12
 2
@@ -37,6 +57,22 @@ const pgm2str = """P2
 2 2 2 2 2 2
 2 2 2 2 2 2
 2 2 2 2 2 2"""
+
+const pgm2_2str = """P2
+6 12
+20
+0 0 0 0 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0
+10 10 10 10 10 10
+10 10 10 10 10 10
+10 10 10 10 10 10
+10 10 10 10 10 10
+20 20 20 20 20 20
+20 20 20 20 20 20
+20 20 20 20 20 20
+20 20 20 20 20 20"""
 
 var pgm5 = new PGM
 pgm5.fileDiscriptor = pgmFileDiscriptorP5
@@ -67,6 +103,8 @@ let pgm5bin = @[
 suite "formatP2":
   test "normal":
     check pgm2.formatP2 == pgm2str
+  test "number of data part is over 10":
+    check pgm2_2.formatP2 == pgm2_2str
 
 suite "formatP5":
   test "normal":
@@ -96,11 +134,15 @@ suite "validatePGM":
       @['P'.uint8, '2'.uint8, '\n'.uint8, '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8, ' '.uint8, ].validatePGM
       @['P'.uint8, '2'.uint8, '\n'.uint8, '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8, ].validatePGM
 
+suite "parsePGM(string)":
+  test "normal":
+    discard
+
+suite "parsePGM(openArray[uint8])":
+  test "normal":
+    discard
+
 suite "usecase":
-  test "read P2":
-    check readPGMFile("tests/out/p2.pgm")[] == pgm2[]
-  test "read P5":
-    check readPGMFile("tests/out/p5.pgm")[] == pgm5[]
   test "write P2":
     writeFile "tests/out/p2.pgm", pgm2.formatP2
   test "write P5":
@@ -108,3 +150,7 @@ suite "usecase":
     let bin = pgm5.formatP5
     discard f.writeBytes(bin, 0, bin.len)
     f.close
+  test "read P2":
+    check readPGMFile("tests/out/p2.pgm")[] == pgm2[]
+  test "read P5":
+    check readPGMFile("tests/out/p5.pgm")[] == pgm5[]

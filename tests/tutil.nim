@@ -17,6 +17,18 @@ suite "toBin":
   test "empty":
     var s: seq[uint8]
     check s.toBin == s
+
+suite "toMatrixString(openArray[uint])":
+  test "1 digit":
+    check @[0'u8, 1, 8, 9].toMatrixString(2) == "0 1\n8 9"
+  test "2 digit":
+    check @[0'u8, 1, 10, 99].toMatrixString(2) == "0 1\n10 99"
+  
+suite "toMatrixString(string)":
+  test "1 digit":
+    discard
+  test "2 digit":
+    discard
   
 suite "removeCommentLine":
   var s: seq[uint8]
