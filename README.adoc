@@ -5,7 +5,9 @@
 
 Image library in pure Nim.
 
-WARN: Developing now.
+image:https://travis-ci.org/jiro4989/pnm.svg?branch=master["Build Status", link="https://travis-ci.org/jiro4989/pnm"]
+
+WARN:: Developing now.
 
 == Usage
 
