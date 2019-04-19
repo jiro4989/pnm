@@ -6,7 +6,7 @@
 ## .. code-block:: text
 ##
 ##    P2
-##    # Shows the word "FEEP" (example from Netpbm man page on PGM)
+##    # Shows the word "FEEP" (example from Netpgm man page on PGM)
 ##    24 7
 ##    15
 ##    0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
@@ -36,11 +36,11 @@ type
   PGM* = ref PGMObj
 
 const
-  pbmFileDiscriptorP2* = "P2"
-  pbmFileDiscriptorP5* = "P5"
+  pgmFileDiscriptorP2* = "P2"
+  pgmFileDiscriptorP5* = "P5"
 
 proc formatP2*(self: PGM): string =
-  let data = self.data.toBinString.toMatrixString(self.col)
+  let data = self.data.toMatrixString(self.col)
   result = &"""{self.fileDiscriptor}
 {self.col} {self.row}
 {self.max}
@@ -69,7 +69,7 @@ proc validatePGM*(s: openArray[uint8]) =
   ## 3. 3行目のデータは最大値である
   ## 4. コメント行を無視した行数が３以上である
   let s2 = s.removeCommentLine
-  s2.validateFileDiscriptor(pbmFileDiscriptorP2, pbmFileDiscriptorP5)
+  s2.validateFileDiscriptor(pgmFileDiscriptorP2, pgmFileDiscriptorP5)
   s2.validateColumnAndRow 3
   var lfCnt: int
   var pos: int
@@ -133,9 +133,9 @@ proc readPGM*(f: File): PGM =
   let fd = f.readLine
   f.setFilePos 0
   case fd
-  of pbmFileDiscriptorP2:
+  of pgmFileDiscriptorP2:
     result = f.readAll.parsePGM
-  of pbmFileDiscriptorP5:
+  of pgmFileDiscriptorP5:
     result = data.parsePGM
   else: discard
 
