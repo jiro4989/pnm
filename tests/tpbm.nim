@@ -84,3 +84,13 @@ suite "parsePBM(string)":
 suite "parsePBM(openArray[uint8])":
   test "normal":
     check pbm1bin.parsePBM[] == pbm1[]
+
+suite "usecase":
+  test "write P1":
+    writeFile("tests/out/p1.pbm", pbm1.formatP1)
+  test "write P4":
+    pbm1.fileDiscriptor = pbmFileDiscriptorP4
+    var f = open("tests/out/p4.pbm", fmWrite)
+    let bin = pbm1.formatP4
+    discard f.writeBytes(bin, 0, bin.len)
+    f.close
