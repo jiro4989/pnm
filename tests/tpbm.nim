@@ -21,6 +21,11 @@ pbm1.data = @[
   0b00000000, 0b00000000, 0b00000000, 0b00000000,
   0b00000000, 0b00000000, 0b00000000, 0b00000000,
 ]
+var pbm4 = new PBM
+pbm4.fileDiscriptor = pbmFileDiscriptorP4
+pbm4.col = pbm1.col
+pbm4.row = pbm1.row
+pbm4.data = pbm1.data
 
 let pbm1str = """P1
 32 12
@@ -68,6 +73,25 @@ suite "toBin":
   test "empty":
     var s: seq[uint8]
     check s.toBin == s
+  
+suite "removeCommentLine":
+  var s: seq[uint8]
+  test "normal":
+    check @['a'.uint8, '#'.uint8, ' '.uint8, '\n'.uint8, 'b'.uint8].removeCommentLine == @['a'.uint8, 'b'.uint8]
+    check @['a'.uint8, '#'.uint8, ' '.uint8, '\n'.uint8].removeCommentLine == @['a'.uint8]
+    check @['#'.uint8, ' '.uint8, '\n'.uint8].removeCommentLine == s
+  test "no comment":
+    check @['a'.uint8, '\n'.uint8,
+            'b'.uint8, '\n'.uint8,
+            'c'.uint8, 
+            ].removeCommentLine == @['a'.uint8, '\n'.uint8, 'b'.uint8, '\n'.uint8, 'c'.uint8]
+  test "3 line":
+    check @['a'.uint8, '#'.uint8, ' '.uint8, '\n'.uint8,
+            'b'.uint8, '#'.uint8, ' '.uint8, '\n'.uint8,
+            'c'.uint8, '#'.uint8, ' '.uint8, '\n'.uint8,
+            ].removeCommentLine == @['a'.uint8, 'b'.uint8, 'c'.uint8]
+  test "empty":
+    check s.removeCommentLine == s
 
 suite "formatP1":
   test "normal":
@@ -77,6 +101,31 @@ suite "formatP4":
   test "normal":
     check pbm1.formatP4 == pbm1bin
 
+suite "validatePBM":
+  test "NoError":
+    validatePBM(@['P'.uint8, '1'.uint8, '\n'.uint8,
+                  '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+                  '1'.uint8])
+    validatePBM(@['P'.uint8, '4'.uint8, '\n'.uint8,
+                  '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+                  '1'.uint8])
+  test "IllegalFileDiscriptorError":
+    expect IllegalFileDiscriptorError:
+      validatePBM(@['P'.uint8, '9'.uint8, '\n'.uint8,
+                    '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+                    '1'.uint8])
+  test "IllegalColumnRowError":
+    expect IllegalColumnRowError:
+      validatePBM(@['P'.uint8, '1'.uint8, '\n'.uint8,
+                    'a'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+                    '1'.uint8])
+      validatePBM(@['P'.uint8, '1'.uint8, '\n'.uint8,
+                    '1'.uint8, '1'.uint8, '\n'.uint8,
+                    '1'.uint8])
+      validatePBM(@['P'.uint8, '1'.uint8, '\n'.uint8,
+                    '1'.uint8, ' '.uint8, '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+                    '1'.uint8])
+
 suite "parsePBM(string)":
   test "normal":
     check pbm1str.parsePBM[] == pbm1[]
@@ -85,12 +134,17 @@ suite "parsePBM(openArray[uint8])":
   test "normal":
     check pbm1bin.parsePBM[] == pbm1[]
 
+suite "readPBMFile":
+  test "read p1 file":
+    check readPBMFile("tests/out/p1.pbm")[] == pbm1[]
+  test "read p4 file":
+    check readPBMFile("tests/out/p4.pbm")[] == pbm4[]
+
 suite "usecase":
   test "write P1":
     writeFile("tests/out/p1.pbm", pbm1.formatP1)
   test "write P4":
-    pbm1.fileDiscriptor = pbmFileDiscriptorP4
     var f = open("tests/out/p4.pbm", fmWrite)
-    let bin = pbm1.formatP4
+    let bin = pbm4.formatP4
     discard f.writeBytes(bin, 0, bin.len)
     f.close

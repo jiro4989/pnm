@@ -59,6 +59,18 @@ proc toBin(arr: openArray[uint8]): seq[uint8] =
   if data != 0:
     result.add data shl (8 - i)
 
+proc removeCommentLine(s: openArray[uint8]): seq[uint8] =
+  var commentLineFound: bool
+  for b in s:
+    if b == '#'.uint8:
+      commentLineFound = true
+      continue
+    if commentLineFound and b == '\n'.uint8:
+      commentLineFound = false
+      continue
+    if not commentLineFound:
+      result.add b
+    
 proc formatP1*(self: PBM): string =
   var chars: seq[char]
   for b in self.data.mapIt(it.toBinSeq.mapIt(it.`$`[0].char)):
@@ -113,55 +125,39 @@ proc parsePBM*(s: string): PBM =
   for line in lines[2..^1]:
     result.data.add line.split(" ").mapIt(it.parseUInt.uint8).toBin
 
-proc removeCommentLine(s: openArray[uint8]): seq[uint8] =
-  var commentLineFound: bool
-  for b in s:
-    if b == '#'.uint8:
-      commentLineFound = true
-      continue
-    if b == '\n'.uint8:
-      commentLineFound = false
-      continue
-    if not commentLineFound:
-      result.add b
-    
 proc validatePBM*(s: openArray[uint8]) =
   ## 1. 先頭２バイトがP1またはP4である
   ## 2. 2行目のデータは行 列の整数値である
   ## 3. コメント行を無視した行数が３以上である
   # check filediscriptor
-  let fd = s[0..1].mapIt(it.char).`$`
+  let fd = s[0..1].mapIt(it.char).join("")
   case fd
   of pbmFileDiscriptorP1, pbmFileDiscriptorP4:
     discard
   else:
-    var e = new(IllegalFileDiscriptorError)
-    e.msg = &"IllegalFileDiscriptor: file discriptor is {fd}"
-    raise e
+    raise newException(IllegalFileDiscriptorError, &"IllegalFileDiscriptor: file discriptor is {fd}")
 
   # check column and row
   var whiteSpaceCount: int
   var lfExist: bool
   for i, b in s[3..^1].removeCommentLine:
-    if b == ' '.uint8:
-      whiteSpaceCount.inc
-      continue
-    if b == '\n'.uint8:
+    let c = b.char
+    if c == '\n':
       lfExist = true
       break
-    if b.char notin Digits:
-      var e = new(IllegalColumnRowError)
-      e.msg = &"IllegalColumnRowError: byteIndex is {i}, value is {b}"
-      raise e
+    if c == ' ':
+      whiteSpaceCount.inc
+      continue
+    if c notin Digits:
+      raise newException(IllegalColumnRowError, &"byteIndex is {i}, value is {c}")
   if whiteSpaceCount != 1:
-    var e = new(IllegalColumnRowError)
-    e.msg = &"IllegalColumnRowError: whitespace count is {whiteSpaceCount}"
-    raise e
+    raise newException(IllegalColumnRowError, &"whitespace count is {whiteSpaceCount}")
 
-  # check line count
-  if not lfExist:
-    ## TODO
-    raise
+  when false:
+    # check line count
+    if not lfExist:
+      ## TODO
+      raise
 
 proc parsePBM*(s: openArray[uint8]): PBM =
   ## P4用
