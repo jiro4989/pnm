@@ -45,6 +45,20 @@ proc toBinSeq(b: uint8): seq[uint8] =
     c = c shr 1
   result.reverse
 
+proc toBin(arr: openArray[uint8]): seq[uint8] =
+  var data: uint8
+  var i = 0
+  for u in arr:
+    data = data shl 1
+    data += u
+    i.inc
+    if i mod 8 == 0:
+      result.add data
+      data = 0'u8
+      i = 0
+  if data != 0:
+    result.add data shl (8 - i)
+
 proc formatP1*(self: PBM): string =
   var chars: seq[char]
   for b in self.data.mapIt(it.toBinSeq.mapIt(it.`$`[0].char)):
@@ -77,21 +91,7 @@ proc formatP4*(self: PBM): seq[uint8] =
   result.add '\n'.uint8
   # data part
   # ---------
-  # for row in self.data:
-  #   var data = 0'u8
-  #   var bitCnt = 0
-  #   for b in row:
-  #     if 8 <= bitCnt:
-  #       result.add data
-  #       data = 0
-  #       bitCnt = 0
-  #     data = data shl 1
-  #     data += b
-  #     bitCnt.inc
-  #   if 0 < bitCnt:
-  #     let diff = 8 - bitCnt
-  #     data = data shl diff
-  #     result.add data
+  result.add self.data
 
 proc parsePBM*(s: string): PBM =
   ## P1用
@@ -111,7 +111,7 @@ proc parsePBM*(s: string): PBM =
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
   for line in lines[2..^1]:
-    result.data = result.data.concat line.split(" ").mapIt(it.parseUInt.uint8)
+    result.data.add line.split(" ").mapIt(it.parseUInt.uint8).toBin
 
 proc removeCommentLine(s: openArray[uint8]): seq[uint8] =
   var commentLineFound: bool
@@ -167,15 +167,15 @@ proc parsePBM*(s: openArray[uint8]): PBM =
   ## P4用
   ## 事前にバリデーションしておくこと
   new(result)
-  var dataPos = 2
+  var dataPos = 3
   var colRowLine: string
-  for i, b in s[2..^1]:
+  for i, b in s[3..^1]:
     if b == '\n'.uint8:
-      dataPos += i
+      dataPos += (i+1)
       break
     colRowLine.add b.char
   let colRow = colRowLine.split(" ")
-  result.fileDiscriptor = s[0..1].mapIt(it.char).`$`
+  result.fileDiscriptor = s[0..1].mapIt(it.char).join("")
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
   result.data = s[dataPos..^1]
