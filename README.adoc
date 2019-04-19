@@ -14,17 +14,14 @@ WARN: Developing now.
 import pnm
 
 block:
-    let pbm = newPBM(@[@[0, 1], @[1, 0]])
-    pbm.toASCII.writeFile("ascii.pbm")
-    pbm.toBinary.writeFile("binary.pbm")
+    let f = open("p1.pbm")
+    let pbm = f.readPBM()
+    echo pbm
 
 block:
-    let pbmFile = open("ascii.pbm")
-    let pbm = pbmFile.readPBMSCII
+    let pbm = f.readPBMFile("p4.pbm")
+    echo pbm
 
-block:
-    let pbmFile = open("binary.pbm")
-    let pbm = pbmFile.readPBMBinary
 ----
 
 == Document

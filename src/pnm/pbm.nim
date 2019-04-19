@@ -20,6 +20,7 @@
 
 from strformat import `&`
 from sequtils import mapIt, filterIt, concat
+from algorithm import reverse
 import strutils
 
 const
@@ -30,28 +31,35 @@ type
   PBMObj = object
     fileDiscriptor*: string
     col*, row*: int
-    data*: seq[seq[uint8]]
+    data*: seq[uint8]
   PBM* = ref PBMObj
   IllegalFileDiscriptorError* = object of Defect
   IllegalColumnRowError* = object of Defect
 
-proc newPBM*(data: seq[seq[uint8]]): PBM =
-  new(result)
-  if data.len < 1:
-    return
-  let col = data[0].len
-  let row = data.len
-
-  result.row = row
-  result.col = col
-  result.data = data
-
-proc newPBM*(data: seq[seq[uint8]], fileDiscriptor: string): PBM =
-  result = newPBM(data)
-  result.fileDiscriptor = fileDiscriptor
+proc toBinSeq(b: uint8): seq[uint8] =
+  ## 2進数のビットをシーケンスに変換する
+  ## 0b0000_1111 -> @[0'u8, 0, 0, 0, 1, 1, 1, 1]
+  var c = b
+  for i in 1..8:
+    result.add uint8(c and 0b0000_0001)
+    c = c shr 1
+  result.reverse
 
 proc formatP1*(self: PBM): string =
-  let data = self.data.mapIt(it.mapIt(it.ord).join(" ")).join("\n")
+  var chars: seq[char]
+  for b in self.data.mapIt(it.toBinSeq.mapIt(it.`$`[0].char)):
+    for c in b:
+      chars.add c
+  var line: seq[char]
+  var lines: seq[seq[char]]
+  for i, c in chars:
+    line.add c
+    if (i+1) mod self.col == 0:
+      lines.add line
+      line = @[]
+  if 0 < line.len:
+    lines.add line
+  let data = lines.mapIt(it.join(" ")).join("\n")
   result = &"""{self.fileDiscriptor}
 {self.col} {self.row}
 {data}"""
@@ -69,23 +77,24 @@ proc formatP4*(self: PBM): seq[uint8] =
   result.add '\n'.uint8
   # data part
   # ---------
-  for row in self.data:
-    var data = 0'u8
-    var bitCnt = 0
-    for b in row:
-      if 8 <= bitCnt:
-        result.add data
-        data = 0
-        bitCnt = 0
-      data = data shl 1
-      data += b
-      bitCnt.inc
-    if 0 < bitCnt:
-      let diff = 8 - bitCnt
-      data = data shl diff
-      result.add data
+  # for row in self.data:
+  #   var data = 0'u8
+  #   var bitCnt = 0
+  #   for b in row:
+  #     if 8 <= bitCnt:
+  #       result.add data
+  #       data = 0
+  #       bitCnt = 0
+  #     data = data shl 1
+  #     data += b
+  #     bitCnt.inc
+  #   if 0 < bitCnt:
+  #     let diff = 8 - bitCnt
+  #     data = data shl diff
+  #     result.add data
 
 proc parsePBM*(s: string): PBM =
+  ## P1用
   new(result)
   var lines: seq[string]
   for line in s.splitLines:
@@ -101,10 +110,10 @@ proc parsePBM*(s: string): PBM =
   result.fileDiscriptor = lines[0]
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
-  let rawData = lines[2..^1]
-  result.data = rawData.mapIt(it.split(" ").mapIt(it.parseUInt.uint8))
+  for line in lines[2..^1]:
+    result.data = result.data.concat line.split(" ").mapIt(it.parseUInt.uint8)
 
-proc removeCommentLine(s: seq[uint8]): seq[uint8] =
+proc removeCommentLine(s: openArray[uint8]): seq[uint8] =
   var commentLineFound: bool
   for b in s:
     if b == '#'.uint8:
@@ -116,7 +125,7 @@ proc removeCommentLine(s: seq[uint8]): seq[uint8] =
     if not commentLineFound:
       result.add b
     
-proc validatePBM*(s: seq[uint8]) =
+proc validatePBM*(s: openArray[uint8]) =
   ## 1. 先頭２バイトがP1またはP4である
   ## 2. 2行目のデータは行 列の整数値である
   ## 3. コメント行を無視した行数が３以上である
@@ -154,7 +163,8 @@ proc validatePBM*(s: seq[uint8]) =
     ## TODO
     raise
 
-proc parsePBM*(s: seq[uint8]): PBM =
+proc parsePBM*(s: openArray[uint8]): PBM =
+  ## P4用
   ## 事前にバリデーションしておくこと
   new(result)
   var dataPos = 2
@@ -168,22 +178,26 @@ proc parsePBM*(s: seq[uint8]): PBM =
   result.fileDiscriptor = s[0..1].mapIt(it.char).`$`
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
-  for i, b in s[dataPos..^1]:
-    var line: seq[uint8]
-    if i mod result.col == 0:
-      result.data.add line
-      line = @[]
-    line.add b
+  result.data = s[dataPos..^1]
 
-proc readPBMFile*(f: File): PBM =
+proc readPBM*(f: File): PBM =
+  let data = f.readAll.mapIt(it.uint8)
+  f.setFilePos 0
+  validatePBM(data)
+
   let fd = f.readLine
   f.setFilePos 0
   case fd
   of pbmFileDiscriptorP1:
     result = f.readAll.parsePBM
   of pbmFileDiscriptorP4:
-    discard
-  else: raise
+    result = data.parsePBM
+  else: discard
+
+proc readPBMFile*(fn: string): PBM =
+  var f = open(fn)
+  defer: f.close
+  result = f.readPBM
 
 proc `$`*(self: PBM): string =
   result = "{" & &"fileDiscriptor:{self.fileDiscriptor},col:{self.col},row:{self.row},data:{self.data}" & "}"
