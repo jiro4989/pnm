@@ -25,7 +25,7 @@ from sequtils import mapIt, filterIt
 import strutils
 
 import errors
-include util
+include util, validator
 
 type
   PGMObj = object
@@ -68,35 +68,39 @@ proc validatePGM*(s: openArray[uint8]) =
   ## 2. 2行目のデータは行 列の整数値である
   ## 3. 3行目のデータは最大値である
   ## 4. コメント行を無視した行数が３以上である
-  # check filediscriptor
-  let fd = s[0..1].mapIt(it.char).join("")
-  case fd
-  of pbmFileDiscriptorP2, pbmFileDiscriptorP5:
-    discard
-  else:
-    raise newException(IllegalFileDiscriptorError, &"IllegalFileDiscriptor: file discriptor is {fd}")
-
-  # check column and row
-  var whiteSpaceCount: int
-  var lfExist: bool
-  for i, b in s[3..^1].removeCommentLine:
-    let c = b.char
-    if c == '\n':
-      lfExist = true
+  let s2 = s.removeCommentLine
+  s2.validateFileDiscriptor(pbmFileDiscriptorP2, pbmFileDiscriptorP5)
+  s2.validateColumnAndRow 3
+  var lfCnt: int
+  var pos: int
+  for i, v in s2:
+    if v.char == '\n':
+      lfCnt.inc
+    if 2 <= lfCnt:
+      pos = (i+1)
       break
-    if c == ' ':
-      whiteSpaceCount.inc
-      continue
-    if c notin Digits:
-      raise newException(IllegalColumnRowError, &"byteIndex is {i}, value is {c}")
-  if whiteSpaceCount != 1:
-    raise newException(IllegalColumnRowError, &"whitespace count is {whiteSpaceCount}")
+  s2.validateMaxValue pos
 
-  when false:
-    # check line count
-    if not lfExist:
-      ## TODO
-      raise
+proc parsePGM*(s: string): PGM =
+  ## P2用
+  new(result)
+  var lines: seq[string]
+  for line in s.splitLines:
+    if not line.startsWith "#":
+      lines.add line
+
+  if lines.len < 3:
+    return
+  let colRow = lines[1].split(" ")
+  if colRow.len < 2:
+    return
+
+  result.fileDiscriptor = lines[0]
+  result.col = colRow[0].parseInt
+  result.row = colRow[1].parseInt
+  result.max = lines[2].parseUint.uint8
+  for line in lines[3..^1]:
+    result.data.add line.split(" ").mapIt(it.parseUInt.uint8).toBin
 
 proc parsePGM*(s: openArray[uint8]): PGM =
   ## 事前にバリデーションしておくこと
@@ -120,6 +124,25 @@ proc parsePGM*(s: openArray[uint8]): PGM =
     maxV.add b.char
   result.max = maxV.parseUint.uint8
   result.data = s[dataPos..^1]
+
+proc readPGM*(f: File): PGM =
+  let data = f.readAll.mapIt(it.uint8)
+  f.setFilePos 0
+  validatePGM(data)
+
+  let fd = f.readLine
+  f.setFilePos 0
+  case fd
+  of pbmFileDiscriptorP2:
+    result = f.readAll.parsePGM
+  of pbmFileDiscriptorP5:
+    result = data.parsePGM
+  else: discard
+
+proc readPGMFile*(fn: string): PGM =
+  var f = open(fn)
+  defer: f.close
+  result = f.readPGM
 
 proc `$`*(self: PGM): string =
   result = $self[]

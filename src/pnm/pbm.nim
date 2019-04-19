@@ -21,7 +21,8 @@
 from strformat import `&`
 from sequtils import mapIt, filterIt, concat
 import strutils
-include util
+
+include util, validator
 import errors
 
 const
@@ -80,35 +81,9 @@ proc validatePBM*(s: openArray[uint8]) =
   ## 1. 先頭２バイトがP1またはP4である
   ## 2. 2行目のデータは行 列の整数値である
   ## 3. コメント行を無視した行数が３以上である
-  # check filediscriptor
-  let fd = s[0..1].mapIt(it.char).join("")
-  case fd
-  of pbmFileDiscriptorP1, pbmFileDiscriptorP4:
-    discard
-  else:
-    raise newException(IllegalFileDiscriptorError, &"IllegalFileDiscriptor: file discriptor is {fd}")
-
-  # check column and row
-  var whiteSpaceCount: int
-  var lfExist: bool
-  for i, b in s[3..^1].removeCommentLine:
-    let c = b.char
-    if c == '\n':
-      lfExist = true
-      break
-    if c == ' ':
-      whiteSpaceCount.inc
-      continue
-    if c notin Digits:
-      raise newException(IllegalColumnRowError, &"byteIndex is {i}, value is {c}")
-  if whiteSpaceCount != 1:
-    raise newException(IllegalColumnRowError, &"whitespace count is {whiteSpaceCount}")
-
-  when false:
-    # check line count
-    if not lfExist:
-      ## TODO
-      raise
+  let s2 = s.removeCommentLine
+  s2.validateFileDiscriptor(pbmFileDiscriptorP1, pbmFileDiscriptorP4)
+  s2.validateColumnAndRow 3
 
 proc parsePBM*(s: openArray[uint8]): PBM =
   ## P4用
