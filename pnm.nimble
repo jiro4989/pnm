@@ -15,5 +15,5 @@ import strformat
 
 task docs, "Generate documents":
   exec "nimble doc src/pnm.nim -o:docs/pnm.html"
-  for f in ["errors", "pbm", "pgm", "util", "validator"]:
+  for f in ["errors", "pbm", "pgm", "ppm", "util", "validator"]:
     exec &"nimble doc src/pnm/{f}.nim -o:docs/{f}.html"

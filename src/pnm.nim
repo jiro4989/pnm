@@ -1,1 +1,1 @@
-include pnm/pbm, pnm/pgm
+include pnm/pbm, pnm/pgm, pnm/ppm
