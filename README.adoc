@@ -1,0 +1,33 @@
+:toc: left
+:sectnums:
+
+= pnm
+
+Image library in pure Nim.
+
+WARN: Developing now.
+
+== Usage
+
+[source,nim]
+----
+import pnm
+
+block:
+    let pbm = newPBM(@[@[0, 1], @[1, 0]])
+    pbm.toASCII.writeFile("ascii.pbm")
+    pbm.toBinary.writeFile("binary.pbm")
+
+block:
+    let pbmFile = open("ascii.pbm")
+    let pbm = pbmFile.readPBMSCII
+
+block:
+    let pbmFile = open("binary.pbm")
+    let pbm = pbmFile.readPBMBinary
+----
+
+== Document
+
+* https://jiro4989.github.io/image/pbm.html
+* https://jiro4989.github.io/image/pgm.html
