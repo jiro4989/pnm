@@ -1603,8 +1603,8 @@ Return new PBM.
 <dd>
 Return formatted string for PBM P1.
 <p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p1</span> <span class="Other">=</span> <span class="Identifier">newPBM</span><span class="Other">(</span><span class="Identifier">pbmFileDiscriptorP1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">]</span><span class="Other">)</span>
-<span class="Comment">## TODO</span></pre>
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p1</span> <span class="Other">=</span> <span class="Identifier">newPBM</span><span class="Other">(</span><span class="Identifier">pbmFileDiscriptorP1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b10000000'u8</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">p1</span><span class="Other">.</span><span class="Identifier">formatP1</span> <span class="Operator">==</span> <span class="StringLit">&quot;P1\n1 1\n1&quot;</span></pre>
 
 </dd>
 <a id="formatP4,PBM"></a>
@@ -1612,8 +1612,10 @@ Return formatted string for PBM P1.
 <dd>
 Return formatted byte data for PBM P4.
 <p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p4</span> <span class="Other">=</span> <span class="Identifier">newPBM</span><span class="Other">(</span><span class="Identifier">pbmFileDiscriptorP4</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">]</span><span class="Other">)</span>
-<span class="Comment">## TODO</span></pre>
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p4</span> <span class="Other">=</span> <span class="Identifier">newPBM</span><span class="Other">(</span><span class="Identifier">pbmFileDiscriptorP4</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b10000000'u8</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">p4</span><span class="Other">.</span><span class="Identifier">formatP4</span> <span class="Operator">==</span>
+    <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'4'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+      <span class="DecNumber">0b10000000'u8</span><span class="Other">]</span></pre>
 
 </dd>
 <a id="parsePBM,string"></a>
@@ -1629,6 +1631,10 @@ Return PBM that is parsed from string. This proc is function for PBM P1. You sho
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePBM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="pnm.html#PBM"><span class="Identifier">PBM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return PBM that is parsed from uint8 sequence. This proc is function for PBM P4. You should validate string to use this proc with <a class="reference external" href="#validatePBM,openArray[uint8]">validatePBM proc</a> .
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'4'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+          <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="DecNumber">0b10000000'u8</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">parsePBM</span><span class="Other">[</span><span class="Other">]</span> <span class="Operator">==</span>
+    <span class="Identifier">newPBM</span><span class="Other">(</span><span class="Identifier">pbmFileDiscriptorP4</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b10000000'u8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">[</span><span class="Other">]</span></pre>
 
 </dd>
 <a id="validatePBM,openArray[uint8]"></a>
@@ -1645,6 +1651,12 @@ Return PBM that is parsed from uint8 sequence. This proc is function for PBM P4.
 <ul class="simple"><li><a class="reference external" href="errors.html">errors module</a></li>
 </ul>
 
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Comment">## No error</span>
+<span class="Identifier">validatePBM</span><span class="Other">(</span><span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+              <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">validatePBM</span><span class="Other">(</span><span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'4'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+              <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="readPBM,File"></a>
@@ -1656,7 +1668,8 @@ Return PBM (P1 or P4) from file. This proc validates data before reading data. R
 <p><strong class="examples_text">Examples:</strong></p>
 <pre class="listing"><span class="Keyword">try</span><span class="Other">:</span>
   <span class="Keyword">var</span> <span class="Identifier">f</span> <span class="Other">=</span> <span class="Identifier">open</span><span class="Other">(</span><span class="StringLit">&quot;p1.pbm&quot;</span><span class="Other">)</span>
-  <span class="Identifier">echo</span> <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">readPBM</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">readPBM</span>
+  <span class="Comment">## do something...</span>
   <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">close</span>
 <span class="Keyword">except</span><span class="Other">:</span>
   <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
@@ -1672,7 +1685,8 @@ Return PBM (P1 or P4) from file. This proc validates data before reading data. R
 Return PBM (P1 or P4) from file. This proc validates data before reading data. Raise errors when illegal was found. At seeing description of erros, see <a class="reference external" href="validatePBM,openArray[utin8]">validatePBM proc</a>
 <p><strong class="examples_text">Examples:</strong></p>
 <pre class="listing"><span class="Keyword">try</span><span class="Other">:</span>
-  <span class="Identifier">echo</span> <span class="Identifier">readPBMFile</span><span class="Other">(</span><span class="StringLit">&quot;p1.pbm&quot;</span><span class="Other">)</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">readPBMFile</span><span class="Other">(</span><span class="StringLit">&quot;p1.pbm&quot;</span><span class="Other">)</span>
+  <span class="Comment">## do something...</span>
 <span class="Keyword">except</span><span class="Other">:</span>
   <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
@@ -1893,7 +1907,7 @@ P3用
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-20 13:49:35 UTC</small>
+        <small>Made with Nim. Generated: 2019-04-20 18:59:49 UTC</small>
       </div>
     </div>
   </div>

@@ -1243,8 +1243,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#toBinSeq%2Cuint8"
     title="toBinSeq(b: uint8): seq[uint8]"><wbr />to<wbr />Bin<wbr />Seq<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#toBinString%2CopenArray%5Buint8%5D"
-    title="toBinString(data: openArray[uint8]): string"><wbr />to<wbr />Bin<wbr />String<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#toBinString%2CopenArray%5Buint8%5D%2Cint"
+    title="toBinString(data: openArray[uint8]; col: int): string"><wbr />to<wbr />Bin<wbr />String<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#toMatrixString%2CopenArray%5Buint8%5D%2Cint"
     title="toMatrixString(data: openArray[uint8]; col: int): string"><wbr />to<wbr />Matrix<wbr />String<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#toMatrixString%2Cstring%2Cint"
@@ -1280,13 +1280,15 @@ Return binary sequence from each bits of uint8.
     <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">]</span></pre>
 
 </dd>
-<a id="toBinString,openArray[uint8]"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">toBinString</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="toBinString,openArray[uint8],int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">toBinString</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return binary string from each bits of uint8.
 <p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b00001111'u8</span><span class="Other">,</span> <span class="DecNumber">0b00000000000000000000000010101010</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">toBinString</span> <span class="Operator">==</span>
-    <span class="StringLit">&quot;0000111110101010&quot;</span></pre>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b00001111'u8</span><span class="Other">,</span> <span class="DecNumber">0b00000000000000000000000010101010</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">toBinString</span><span class="Other">(</span><span class="DecNumber">8</span><span class="Other">)</span> <span class="Operator">==</span>
+    <span class="StringLit">&quot;0000111110101010&quot;</span>
+<span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b10000000'u8</span><span class="Other">,</span> <span class="DecNumber">0b00000000000000000000000000000000</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">toBinString</span><span class="Other">(</span><span class="DecNumber">1</span><span class="Other">)</span> <span class="Operator">==</span>
+    <span class="StringLit">&quot;10&quot;</span></pre>
 
 </dd>
 <a id="toMatrixString,openArray[uint8],int"></a>
@@ -1341,7 +1343,7 @@ Return sequence that removed comment line. Range of comment is from '#' to first
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-20 13:49:41 UTC</small>
+        <small>Made with Nim. Generated: 2019-04-20 18:59:46 UTC</small>
       </div>
     </div>
   </div>
