@@ -1262,44 +1262,73 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc"></p>
+  <p class="module-desc"><p>util is internal utilities for pnm module.</p>
+<p><strong>You don't need to use directly this module for pnm module.</strong></p>
+</p>
   <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
 <a id="toBinSeq,uint8"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">toBinSeq</span><span class="Other">(</span><span class="Identifier">b</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-2進数のビットをシーケンスに変換する 0b0000_1111 -&gt; @[0'u8, 0, 0, 0, 1, 1, 1, 1]
+Return binary sequence from each bits of uint8.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">from</span> <span class="Identifier">sequtils</span> <span class="Keyword">import</span> <span class="Identifier">repeat</span>
+
+<span class="Identifier">doAssert</span> <span class="DecNumber">0'u8</span><span class="Other">.</span><span class="Identifier">toBinSeq</span> <span class="Operator">==</span> <span class="DecNumber">0'u8</span><span class="Other">.</span><span class="Identifier">repeat</span><span class="Other">(</span><span class="DecNumber">8</span><span class="Other">)</span>
+<span class="Identifier">doAssert</span> <span class="DecNumber">0b00000000000000000000000010101010</span><span class="Other">.</span><span class="Identifier">toBinSeq</span> <span class="Operator">==</span>
+    <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">]</span></pre>
 
 </dd>
 <a id="toBinString,openArray[uint8]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">toBinString</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return binary string from each bits of uint8.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b00001111'u8</span><span class="Other">,</span> <span class="DecNumber">0b00000000000000000000000010101010</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">toBinString</span> <span class="Operator">==</span>
+    <span class="StringLit">&quot;0000111110101010&quot;</span></pre>
 
 </dd>
 <a id="toMatrixString,openArray[uint8],int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">toMatrixString</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return matrix string from decimal sequence. Matrix string is joined by whitespace. And matrix string add new line when counter of column is reached <cite>col</cite>.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0'u8</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">8</span><span class="Other">,</span> <span class="DecNumber">9</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">toMatrixString</span><span class="Other">(</span><span class="DecNumber">2</span><span class="Other">)</span> <span class="Operator">==</span> <span class="StringLit">&quot;0 1\n8 9&quot;</span>
+<span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0'u8</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">10</span><span class="Other">,</span> <span class="DecNumber">99</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">toMatrixString</span><span class="Other">(</span><span class="DecNumber">2</span><span class="Other">)</span> <span class="Operator">==</span> <span class="StringLit">&quot;0 1\n10 99&quot;</span></pre>
 
 </dd>
 <a id="toMatrixString,string,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">toMatrixString</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return matrix string from decimal sequence. Matrix string is joined by whitespace. And matrix string add new line when counter of column is reached <cite>col</cite>.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="StringLit">&quot;1111111100000000&quot;</span><span class="Other">.</span><span class="Identifier">toMatrixString</span><span class="Other">(</span><span class="DecNumber">8</span><span class="Other">)</span> <span class="Operator">==</span>
+    <span class="StringLit">&quot;1 1 1 1 1 1 1 1\n0 0 0 0 0 0 0 0&quot;</span></pre>
 
 </dd>
 <a id="toBin,openArray[uint8]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">toBin</span><span class="Other">(</span><span class="Identifier">arr</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Returns sequences that binary sequence is converted to uint8 every 8 bits.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">toBin</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b11110000'u8</span><span class="Other">]</span>
+<span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">toBin</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">0b11111100'u8</span><span class="Other">]</span>
+<span class="Keyword">var</span> <span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">s</span><span class="Other">.</span><span class="Identifier">toBin</span> <span class="Operator">==</span> <span class="Identifier">s</span></pre>
 
 </dd>
 <a id="removeCommentLine,openArray[uint8]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">removeCommentLine</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return sequence that removed comment line. Range of comment is from '#' to first 'n'.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'a'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'#'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'b'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">removeCommentLine</span> <span class="Operator">==</span>
+    <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'a'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'b'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span>
+<span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'a'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'#'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">removeCommentLine</span> <span class="Operator">==</span>
+    <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'a'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span>
+<span class="Keyword">var</span> <span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
+<span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'#'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">removeCommentLine</span> <span class="Operator">==</span> <span class="Identifier">s</span></pre>
 
 </dd>
 
@@ -1312,7 +1341,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-20 00:57:10 UTC</small>
+        <small>Made with Nim. Generated: 2019-04-20 01:45:01 UTC</small>
       </div>
     </div>
   </div>

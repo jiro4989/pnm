@@ -9,6 +9,20 @@ suite "toBinSeq":
   test "0b1010_1010":
     check 0b1010_1010.toBinSeq == @[1'u8, 0, 1, 0, 1, 0, 1, 0]
 
+suite "toBinString":
+  test "normal":
+    check @[0b0000_1111'u8, 0b1010_1010].toBinString == "0000111110101010"
+
+suite "toMatrixString(openArray[uint])":
+  test "1 digit":
+    check @[0'u8, 1, 8, 9].toMatrixString(2) == "0 1\n8 9"
+  test "2 digit":
+    check @[0'u8, 1, 10, 99].toMatrixString(2) == "0 1\n10 99"
+  
+suite "toMatrixString(string)":
+  test "1 normal":
+    check "1111111100000000".toMatrixString(8) == "1 1 1 1 1 1 1 1\n0 0 0 0 0 0 0 0"
+  
 suite "toBin":
   test "1 1 1 1 0 0 0 0":
     check @[1'u8, 1, 1, 1, 0, 0, 0, 0].toBin == @[0b1111_0000'u8]
@@ -18,18 +32,6 @@ suite "toBin":
     var s: seq[uint8]
     check s.toBin == s
 
-suite "toMatrixString(openArray[uint])":
-  test "1 digit":
-    check @[0'u8, 1, 8, 9].toMatrixString(2) == "0 1\n8 9"
-  test "2 digit":
-    check @[0'u8, 1, 10, 99].toMatrixString(2) == "0 1\n10 99"
-  
-suite "toMatrixString(string)":
-  test "1 digit":
-    discard
-  test "2 digit":
-    discard
-  
 suite "removeCommentLine":
   var s: seq[uint8]
   test "normal":
