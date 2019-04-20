@@ -111,10 +111,9 @@ proc newPBM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PBM =
 proc formatP1*(self: PBM): string =
   ## Return formatted string for PBM P1.
   runnableExamples:
-    let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[1'u8])
-    ## TODO
-    #doAssert p1.formatP1 == "P1\n1 1\n1"
-  let data = self.data.toBinString.toMatrixString(self.col)
+    let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[0b1000_0000'u8])
+    doAssert p1.formatP1 == "P1\n1 1\n1"
+  let data = self.data.toBinString(self.col).toMatrixString(self.col)
   result = &"""{self.fileDiscriptor}
 {self.col} {self.row}
 {data}"""
@@ -122,13 +121,12 @@ proc formatP1*(self: PBM): string =
 proc formatP4*(self: PBM): seq[uint8] =
   ## Return formatted byte data for PBM P4.
   runnableExamples:
-    let p4 = newPBM(pbmFileDiscriptorP4, 1, 1, @[1'u8])
-    ## TODO
-    # doAssert p4.formatP4 == @[
-    #   'P'.uint8, '4'.uint8, '\n'.uint8,
-    #   '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
-    #   0b10000000'u8,
-    # ]
+    let p4 = newPBM(pbmFileDiscriptorP4, 1, 1, @[0b1000_0000'u8])
+    doAssert p4.formatP4 == @[
+      'P'.uint8, '4'.uint8, '\n'.uint8,
+      '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+      0b10000000'u8,
+    ]
   # header part
   # -----------
   # file discriptor
@@ -211,7 +209,8 @@ proc readPBM*(f: File): PBM =
   runnableExamples:
     try:
       var f = open("p1.pbm")
-      echo f.readPBM
+      let p = f.readPBM
+      ## do something...
       f.close
     except:
       stderr.writeLine getCurrentExceptionMsg()
@@ -234,7 +233,8 @@ proc readPBMFile*(fn: string): PBM =
   ## see `validatePBM proc <validatePBM,openArray[utin8]>`_
   runnableExamples:
     try:
-      echo readPBMFile("p1.pbm")
+      let p = readPBMFile("p1.pbm")
+      ## do something...
     except:
       stderr.writeLine getCurrentExceptionMsg()
   var f = open(fn)

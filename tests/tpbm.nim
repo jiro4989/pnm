@@ -58,10 +58,18 @@ let pbm1bin = @[
 suite "formatP1":
   test "normal":
     check pbm1.formatP1 == pbm1str
+  test "column size is 1":
+    check newPBM(pbmFileDiscriptorP1, 1, 1, @[0b1000_0000'u8]).formatP1 == "P1\n1 1\n1"
 
 suite "formatP4":
   test "normal":
     check pbm1.formatP4 == pbm1bin
+  test "column size is 1":
+    check newPBM(pbmFileDiscriptorP4, 1, 1, @[0b1000_0000'u8]).formatP4 == @[
+      'P'.uint8, '4'.uint8, '\n'.uint8,
+      '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+      0b1000_0000'u8, 
+    ]
 
 suite "validatePBM":
   test "NoError":

@@ -18,13 +18,15 @@ proc toBinSeq*(b: uint8): seq[uint8] =
     c = c shr 1
   result.reverse
 
-proc toBinString*(data: openArray[uint8]): string =
+proc toBinString*(data: openArray[uint8], col: int): string =
   ## Return binary string from each bits of uint8.
   runnableExamples:
-    doAssert @[0b0000_1111'u8, 0b1010_1010].toBinString == "0000111110101010"
+    doAssert @[0b0000_1111'u8, 0b1010_1010].toBinString(8) == "0000111110101010"
+    doAssert @[0b1000_0000'u8, 0b0000_0000].toBinString(1) == "1\n0"
   for b in data.mapIt(it.toBinSeq.mapIt(it.`$`[0].char)):
-    for c in b:
-      result.add c
+    for i, c in b:
+      if i < col:
+        result.add c
 
 proc toMatrixString*(data: openArray[uint8], col: int): string =
   ## Return matrix string from decimal sequence.

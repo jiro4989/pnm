@@ -43,10 +43,20 @@ let p2bin = @[
 suite "formatP3":
   test "normal":
     check p1.formatP3 == p1str
+  test "column size is 1":
+    check newPPM(ppmFileDiscriptorP3, 1, 2, @[128'u8, 128, 128, 0, 0, 0]).formatP3 == "P3\n1 2\n128\n128 128 128\n0 0 0"
 
 suite "formatP6":
   test "normal":
     check p2.formatP6 == p2bin
+  test "column size is 1":
+    check newPPM(ppmFileDiscriptorP6, 1, 2, @[128'u8, 128, 128, 0, 0, 0]).formatP6 == @[
+      'P'.uint8, '6'.uint8, '\n'.uint8,
+      '1'.uint8, ' '.uint8, '2'.uint8, '\n'.uint8,
+      '1'.uint8, '2'.uint8, '8'.uint8, '\n'.uint8,
+      128'u8, 128, 128,
+      0, 0, 0,
+    ]
 
 suite "validatePPM":
   test "NoError P3":

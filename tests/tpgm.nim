@@ -95,10 +95,20 @@ suite "formatP2":
     check pgm2.formatP2 == pgm2str
   test "number of data part is over 10":
     check pgm2_2.formatP2 == pgm2_2str
+  test "column size is 1":
+    check newPGM(pgmFileDiscriptorP2, 1, 2, @[0b1000_0000'u8, 0b1000_0000'u8]).formatP2 == "P2\n1 2\n128\n128\n128"
 
 suite "formatP5":
   test "normal":
     check pgm5.formatP5 == pgm5bin
+  test "column size is 1":
+    check newPGM(pgmFileDiscriptorP5, 1, 1, @[0b1000_0000'u8, 0b1000_0000'u8]).formatP5 == @[
+      'P'.uint8, '5'.uint8, '\n'.uint8,
+      '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+      '1'.uint8, '2'.uint8, '8'.uint8, '\n'.uint8,
+      0b1000_0000'u8, 
+      0b1000_0000'u8, 
+    ]
 
 suite "validatePGM":
   test "NoError P2":
