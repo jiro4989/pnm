@@ -17,3 +17,13 @@ task docs, "Generate documents":
   for f in ["errors", "pbm", "pgm", "ppm", "util", "validator"]:
     exec &"nimble doc src/pnm/{f}.nim -o:docs/{f}.html"
   exec "nimble doc src/pnm.nim -o:docs/pnm.html"
+
+task examples, "Execute example code":
+  exec "nim c -d:release examples/pbm_example.nim"
+  exec "./examples/pbm_example"
+
+  exec "nim c -d:release examples/pgm_example.nim"
+  exec "./examples/pgm_example"
+
+  exec "nim c -d:release examples/ppm_example.nim"
+  exec "./examples/ppm_example"
