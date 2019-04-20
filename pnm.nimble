@@ -27,3 +27,6 @@ task examples, "Execute example code":
 
   exec "nim c -d:release examples/ppm_example.nim"
   exec "./examples/ppm_example"
+
+  exec "nim c -d:release examples/convert.nim"
+  exec "./examples/convert"
