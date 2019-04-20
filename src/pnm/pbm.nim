@@ -88,7 +88,7 @@ type
     ## Don't directly use this type.
     fileDiscriptor*: string ## File discriptor (P1 or P4)
     col*, row*: int         ## Column count
-    data*: seq[uint8]       ## byte (pixel) data
+    data*: seq[uint8]       ## Byte (pixel) data
   PBM* = ref PBMObj
     ## PBM ref object.
     ## Procedures use this type. Not PBMobj.
