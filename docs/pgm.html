@@ -1239,7 +1239,10 @@ function main() {
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li><a class="reference" id="pgm_toc" href="#pgm">pgm</a></li>
-<li><a class="reference" id="pgm-example_toc" href="#pgm-example">PGM example</a></li>
+<ul class="simple"><li><a class="reference" id="pgm-basic-usage_toc" href="#pgm-basic-usage">Basic usage</a></li>
+<ul class="simple"><li><a class="reference" id="basic-usage-reading-pgm-file_toc" href="#basic-usage-reading-pgm-file">Reading PGM file</a></li>
+<li><a class="reference" id="basic-usage-writing-pgm-file_toc" href="#basic-usage-writing-pgm-file">Writing PGM file</a></li>
+</ul></ul><li><a class="reference" id="pgm-format-example_toc" href="#pgm-format-example">PGM format example</a></li>
 <li>
   <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
   <ul class="simple simple-toc-section">
@@ -1251,10 +1254,10 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#PGMObj"
     title="PGMObj = object
-  fileDiscriptor*: string      ## P2
-  col*, row*: int
-  max*: uint8
-  data*: seq[uint8]"><wbr />PGMObj<span class="attachedType" style="visibility:hidden"></span></a></li>
+  fileDiscriptor*: string      ## File discriptor (P2 or P5)
+  col*, row*: int               ## Column count
+  max*: uint8                  ## Max value
+  data*: seq[uint8]            ## Byte (pixel) data"><wbr />PGMObj<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#PGM"
     title="PGM = ref PGMObj"><wbr />PGM<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1279,12 +1282,12 @@ function main() {
     title="formatP2(self: PGM): string"><wbr />format<wbr />P2<span class="attachedType" style="visibility:hidden">PGM</span></a></li>
   <li><a class="reference" href="#formatP5%2CPGM"
     title="formatP5(self: PGM): seq[uint8]"><wbr />format<wbr />P5<span class="attachedType" style="visibility:hidden">PGM</span></a></li>
-  <li><a class="reference" href="#validatePGM%2CopenArray%5Buint8%5D"
-    title="validatePGM(s: openArray[uint8])"><wbr />validate<wbr />PGM<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#parsePGM%2Cstring"
     title="parsePGM(s: string): PGM"><wbr />parse<wbr />PGM<span class="attachedType" style="visibility:hidden">PGM</span></a></li>
   <li><a class="reference" href="#parsePGM%2CopenArray%5Buint8%5D"
     title="parsePGM(s: openArray[uint8]): PGM"><wbr />parse<wbr />PGM<span class="attachedType" style="visibility:hidden">PGM</span></a></li>
+  <li><a class="reference" href="#validatePGM%2CopenArray%5Buint8%5D"
+    title="validatePGM(s: openArray[uint8])"><wbr />validate<wbr />PGM<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#readPGM%2CFile"
     title="readPGM(f: File): PGM"><wbr />read<wbr />PGM<span class="attachedType" style="visibility:hidden">PGM</span></a></li>
   <li><a class="reference" href="#readPGMFile%2Cstring"
@@ -1307,7 +1310,50 @@ function main() {
   <p class="module-desc">
 <h1><a class="toc-backref" id="pgm" href="#pgm">pgm</a></h1><p>pgm is PGM(Portable graymap) image encoder/decorder module.</p>
 
-<h1><a class="toc-backref" id="pgm-example" href="#pgm-example">PGM example</a></h1><pre class="listing">
+<h2><a class="toc-backref" id="pgm-basic-usage" href="#pgm-basic-usage">Basic usage</a></h2>
+<h3><a class="toc-backref" id="basic-usage-reading-pgm-file" href="#basic-usage-reading-pgm-file">Reading PGM file</a></h3><p><a class="reference external" href="#readPGMFile,string">readPGMFile proc</a> can read PGM (P2 and P5).</p>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">pnm</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P2</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">readPGMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p2.pgm&quot;</span><span class="Punctuation">)</span>
+  <span class="Identifier">echo</span> <span class="Identifier">p</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P5</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">readPGMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p5.pgm&quot;</span><span class="Punctuation">)</span>
+  <span class="Identifier">echo</span> <span class="Identifier">p</span></pre>
+<h3><a class="toc-backref" id="basic-usage-writing-pgm-file" href="#basic-usage-writing-pgm-file">Writing PGM file</a></h3><p><a class="reference external" href="#writePGMFile,string,PGM">writePGMFile proc</a> can write PGM (P2 and P5).</p>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">pnm</span>
+
+<span class="Keyword">let</span> <span class="Identifier">col</span> <span class="Operator">=</span> <span class="DecNumber">6</span>
+<span class="Keyword">let</span> <span class="Identifier">row</span> <span class="Operator">=</span> <span class="DecNumber">12</span>
+<span class="Keyword">let</span> <span class="Identifier">max</span> <span class="Operator">=</span> <span class="DecNumber">2</span>
+<span class="Keyword">let</span> <span class="Identifier">data</span> <span class="Operator">=</span> <span class="Operator">@</span><span class="Punctuation">[</span>
+  <span class="DecNumber">0'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span>
+  <span class="DecNumber">0'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span>
+  <span class="DecNumber">0'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span>
+  <span class="DecNumber">0'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span>
+  <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span>
+  <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span>
+  <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span>
+  <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span>
+<span class="Punctuation">]</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P2</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">newPGM</span><span class="Punctuation">(</span><span class="Identifier">pgmFileDiscriptorP2</span><span class="Punctuation">,</span> <span class="Identifier">col</span><span class="Punctuation">,</span> <span class="Identifier">row</span><span class="Punctuation">,</span> <span class="Identifier">data</span><span class="Punctuation">)</span>
+  <span class="Identifier">writePGMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p2.pgm&quot;</span><span class="Punctuation">,</span> <span class="Identifier">p</span><span class="Punctuation">)</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P5</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">newPGM</span><span class="Punctuation">(</span><span class="Identifier">pgmFileDiscriptorP5</span><span class="Punctuation">,</span> <span class="Identifier">col</span><span class="Punctuation">,</span> <span class="Identifier">row</span><span class="Punctuation">,</span> <span class="Identifier">data</span><span class="Punctuation">)</span>
+  <span class="Identifier">writePGMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p5.pgm&quot;</span><span class="Punctuation">,</span> <span class="Identifier">p</span><span class="Punctuation">)</span></pre>
+<h1><a class="toc-backref" id="pgm-format-example" href="#pgm-format-example">PGM format example</a></h1><pre class="listing">
 P2
 # Shows the word &quot;FEEP&quot; (example from Netpgm man page on PGM)
 24 7
@@ -1318,11 +1364,7 @@ P2
 0  3  3  3  0  0  0  7  7  7  0  0  0 11 11 11  0  0  0 15 15 15 15  0
 0  3  0  0  0  0  0  7  0  0  0  0  0 11  0  0  0  0  0 15  0  0  0  0
 0  3  0  0  0  0  0  7  7  7  7  0  0 11 11 11 11  0  0 15  0  0  0  0
-0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0</pre><p>See also:</p>
-<ul class="simple"><li><a class="reference external" href="https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88">https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88</a>)</li>
-<li><a class="reference external" href="http://tech.ckme.co.jp/pnm.shtml">http://tech.ckme.co.jp/pnm.shtml</a></li>
-</ul>
-</p>
+0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0</pre></p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
@@ -1333,19 +1375,19 @@ P2
 <dl class="item">
 <a id="PGMObj"></a>
 <dt><pre><a href="pgm.html#PGMObj"><span class="Identifier">PGMObj</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">fileDiscriptor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## P2</span>
-  <span class="Identifier">col</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">row</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
-  <span class="Identifier">max</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>
-  <span class="Identifier">data</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-</pre></dt>
+  <span class="Identifier">fileDiscriptor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## File discriptor (P2 or P5)</span>
+  <span class="Identifier">col</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">row</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>               <span class="Comment">## Column count</span>
+  <span class="Identifier">max</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>                  <span class="Comment">## Max value</span>
+  <span class="Identifier">data</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>            <span class="Comment">## Byte (pixel) data</span>
+  </pre></dt>
 <dd>
-
+PGM object. Don't directly use this type.
 
 </dd>
 <a id="PGM"></a>
 <dt><pre><a href="pgm.html#PGM"><span class="Identifier">PGM</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <a href="pgm.html#PGMObj"><span class="Identifier">PGMObj</span></a></pre></dt>
 <dd>
-
+PGM ref object. Procedures use this type. Not PGMObj.
 
 </dd>
 
@@ -1374,43 +1416,74 @@ P2
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">fileDiscriptor</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">,</span> <span class="Identifier">row</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return new PGM.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p1</span> <span class="Other">=</span> <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP2</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Keyword">let</span> <span class="Identifier">p4</span> <span class="Other">=</span> <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP5</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">]</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="formatP2,PGM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">formatP2</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return formatted string for PGM P2.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP2</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">2'u8</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">p</span><span class="Other">.</span><span class="Identifier">formatP2</span> <span class="Operator">==</span> <span class="StringLit">&quot;P2\n1 1\n2\n2&quot;</span></pre>
 
 </dd>
 <a id="formatP5,PGM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">formatP5</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+Return formatted byte data for PGM P5.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP5</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">2'u8</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">p</span><span class="Other">.</span><span class="Identifier">formatP5</span> <span class="Operator">==</span>
+    <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'5'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+      <span class="CharLit">'2'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="DecNumber">2'u8</span><span class="Other">]</span></pre>
 
+</dd>
+<a id="parsePGM,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePGM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Return PGM that is parsed from string. This proc is function for PGM P2. You should validate string to use this proc with <a class="reference external" href="#validatePGM,openArray[uint8]">validatePGM proc</a> .
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="StringLit">&quot;P2\n1 1\n2\n2&quot;</span><span class="Other">.</span><span class="Identifier">parsePGM</span><span class="Other">[</span><span class="Other">]</span> <span class="Operator">==</span>
+    <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP2</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">2'u8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">[</span><span class="Other">]</span>
+<span class="Identifier">doAssert</span> <span class="StringLit">&quot;P5\n1 1\n2\n2&quot;</span><span class="Other">.</span><span class="Identifier">parsePGM</span><span class="Other">[</span><span class="Other">]</span> <span class="Operator">==</span>
+    <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP5</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">2'u8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">[</span><span class="Other">]</span></pre>
+
+</dd>
+<a id="parsePGM,openArray[uint8]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePGM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Return PGM that is parsed from string. This proc is function for PGM P2. You should validate string to use this proc with <a class="reference external" href="#validatePGM,openArray[uint8]">validatePGM proc</a> .
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'2'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+          <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'2'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="DecNumber">2'u8</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">parsePGM</span><span class="Other">[</span><span class="Other">]</span> <span class="Operator">==</span>
+    <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP2</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">2'u8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">[</span><span class="Other">]</span></pre>
 
 </dd>
 <a id="validatePGM,openArray[uint8]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">validatePGM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">,</span>
     <span class="Identifier">IllegalColumnRowError</span><span class="Other">,</span> <span class="Identifier">IllegalMaxValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-<ol class="simple"><li>先頭２バイトがP1またはP4である</li>
-<li>2行目のデータは行 列の整数値である</li>
-<li>3行目のデータは最大値である</li>
-<li>コメント行を無視した行数が３以上である</li>
+<p>Validate PGM data format.</p>
+<p>Validating contents are:</p>
+<ol class="simple"><li>It is P2 or P5 that 2 byte data at the head.</li>
+<li>It is decimal number that data on 2 line.</li>
+<li>It is max value of data that data on 3 line.</li>
 </ol>
+<p>Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was found.</p>
+<p>See also:</p>
+<ul class="simple"><li><a class="reference external" href="errors.html">errors module</a></li>
+</ul>
 
-
-</dd>
-<a id="parsePGM,string"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePGM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-P2用
-
-</dd>
-<a id="parsePGM,openArray[uint8]"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePGM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-事前にバリデーションしておくこと
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Comment">## No error</span>
+<span class="Identifier">validatePGM</span><span class="Other">(</span><span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'2'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+              <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">validatePGM</span><span class="Other">(</span><span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'5'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+              <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="readPGM,File"></a>
@@ -1419,7 +1492,15 @@ P2用
                                  <span class="Identifier">EOFError</span><span class="Other">,</span> <span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
                          <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return PGM (P2 or P5) from file. This proc validates data before reading data. Raise errors when illegal was found. At seeing description of erros, see <a class="reference external" href="validatePGM,openArray[utin8]">validatePGM proc</a>
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">try</span><span class="Other">:</span>
+  <span class="Keyword">var</span> <span class="Identifier">f</span> <span class="Other">=</span> <span class="Identifier">open</span><span class="Other">(</span><span class="StringLit">&quot;p2.pgm&quot;</span><span class="Other">)</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">readPGM</span>
+  <span class="Comment">## do something...</span>
+  <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">close</span>
+<span class="Keyword">except</span><span class="Other">:</span>
+  <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="readPGMFile,string"></a>
@@ -1430,21 +1511,47 @@ P2用
                                         <span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
                                 <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return PGM (P2 or P5) from file. This proc validates data before reading data. Raise errors when illegal was found. At seeing description of erros, see <a class="reference external" href="validatePGM,openArray[utin8]">validatePGM proc</a>
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">try</span><span class="Other">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">readPGMFile</span><span class="Other">(</span><span class="StringLit">&quot;p2.pgm&quot;</span><span class="Other">)</span>
+  <span class="Comment">## do something...</span>
+<span class="Keyword">except</span><span class="Other">:</span>
+  <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="writePGM,File,PGM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">writePGM</span><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">File</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">]</span><span class="Other">,</span>
                                <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+Write PGM (P2 or P5) to file. Raise IllegalFileDiscriptorError when illegal was found from file discriptor.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">from</span> <span class="Identifier">os</span> <span class="Keyword">import</span> <span class="Identifier">removeFile</span>
 
+<span class="Keyword">try</span><span class="Other">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">p1</span> <span class="Other">=</span> <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP2</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">]</span><span class="Other">)</span>
+  <span class="Keyword">var</span> <span class="Identifier">f</span> <span class="Other">=</span> <span class="Identifier">open</span><span class="Other">(</span><span class="StringLit">&quot;p2.pgm&quot;</span><span class="Other">,</span> <span class="Identifier">fmWrite</span><span class="Other">)</span>
+  <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">writePGM</span> <span class="Identifier">p1</span>
+  <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">close</span>
+  <span class="Identifier">removeFile</span> <span class="StringLit">&quot;p2.pgm&quot;</span>
+<span class="Keyword">except</span><span class="Other">:</span>
+  <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="writePGMFile,string,PGM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">writePGMFile</span><span class="Other">(</span><span class="Identifier">fn</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <a href="pgm.html#PGM"><span class="Identifier">PGM</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span>
     <span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+Write PGM (P2 or P5) to file. Raise IllegalFileDiscriptorError when illegal was found from file discriptor.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">from</span> <span class="Identifier">os</span> <span class="Keyword">import</span> <span class="Identifier">removeFile</span>
 
+<span class="Keyword">try</span><span class="Other">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">p1</span> <span class="Other">=</span> <span class="Identifier">newPGM</span><span class="Other">(</span><span class="Identifier">pgmFileDiscriptorP2</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">]</span><span class="Other">)</span>
+  <span class="Identifier">writePGMFile</span> <span class="StringLit">&quot;p2.pgm&quot;</span><span class="Other">,</span> <span class="Identifier">p1</span>
+  <span class="Identifier">removeFile</span> <span class="StringLit">&quot;p2.pgm&quot;</span>
+<span class="Keyword">except</span><span class="Other">:</span>
+  <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="$,PGM"></a>
@@ -1463,7 +1570,7 @@ P2用
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-20 18:59:43 UTC</small>
+        <small>Made with Nim. Generated: 2019-04-20 19:32:40 UTC</small>
       </div>
     </div>
   </div>
