@@ -1,20 +1,23 @@
 import pnm
 from pnm/util import toBin
 
+import times
 from sequtils import repeat, concat
 from strformat import `&`
-import times
 
-const blockSize = 20
+let
+  fn = "examples/pbm_example.pbm"
+  blockSize = 20
+  now = cpuTime()
+  col = 20
+  row = col * blockSize
 
-let now = cpuTime()
-const fn = "examples/pbm_example.pbm"
 echo &"Generating {fn}..."
 
-let col = 20
-let row = col * blockSize
-var data: seq[uint8]
-var bin: uint8
+var
+  data: seq[uint8]
+  bin: uint8
+
 for i in 1..row:
   for j in 1..col:
     bin = bin xor 1

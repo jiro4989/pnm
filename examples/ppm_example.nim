@@ -1,49 +1,49 @@
 import pnm
 
+import times
 from sequtils import repeat, concat
 from strformat import `&`
-import times
 
-const blockSize = 2
+let blockSize = 2
 
 block:
-  let now = cpuTime()
-  const fn = "examples/ppm_example1.ppm"
+  let
+    now = cpuTime()
+    fn = "examples/ppm_example1.ppm"
+    col = 255
+    row = 255
+    b = 0'u8
+
   echo &"Generating {fn}..."
 
   var data: seq[uint8]
-  const b = 0'u8
-  for g in 0'u8..255:
-    for r in 0'u8..255:
+  for g in 0'u8..row.uint8:
+    for r in 0'u8..col.uint8:
       for color in @[r, g, b].repeat(blockSize):
         data = data.concat color
 
-  let
-    col = 255 * blockSize
-    row = 255
-    ppm = newPPM(ppmFileDiscriptorP6, col, row, data)
-
+  let ppm = newPPM(ppmFileDiscriptorP6, col*blockSize, row, data)
   writePPMFile fn, ppm
 
   echo &"Success generating {fn}. times {cpuTime() - now} sec"
   echo "--------------------------------"
 
 block:
-  let now = cpuTime()
-  const fn = "examples/ppm_example2.ppm"
+  let
+    fn = "examples/ppm_example2.ppm"
+    now = cpuTime()
+    col = 255
+    row = 255
+
   echo &"Generating {fn}..."
 
   var data: seq[uint8]
-  for g in 0'u8..255:
-    for r in 0'u8..255:
+  for g in 0'u8..row.uint8:
+    for r in 0'u8..col.uint8:
       for color in @[r, g, r*g].repeat(blockSize):
         data = data.concat color
 
-  let
-    col = 255 * blockSize
-    row = 255
-    ppm = newPPM(ppmFileDiscriptorP6, col, row, data)
-
+  let ppm = newPPM(ppmFileDiscriptorP6, col*blockSize, row, data)
   writePPMFile fn, ppm
 
   echo &"Success generating {fn}. times {cpuTime() - now} sec"
