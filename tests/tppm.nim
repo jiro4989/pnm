@@ -86,11 +86,11 @@ suite "validatePPM":
 
 suite "parsePPM(string)":
   test "normal":
-    discard
+    check p1str.parsePPM[] == p1[]
 
 suite "parsePPM(openArray[uint8])":
   test "normal":
-    discard
+    check p2bin.parsePPM[] == p2[]
 
 suite "usecase":
   test "write P3":

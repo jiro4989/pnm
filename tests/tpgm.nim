@@ -136,11 +136,11 @@ suite "validatePGM":
 
 suite "parsePGM(string)":
   test "normal":
-    discard
+    check pgm2str.parsePGM[] == pgm2[]
 
 suite "parsePGM(openArray[uint8])":
   test "normal":
-    discard
+    check pgm5bin.parsePGM[] == pgm5[]
 
 suite "usecase":
   test "write P2":
