@@ -31,7 +31,7 @@ import strutils
 import errors, util, validator
 
 type
-  PGMObj = object
+  PGMObj* = object
     fileDiscriptor*: string ## P2
     col*, row*: int
     max*: uint8

@@ -17,13 +17,13 @@
 ##
 ##    block:
 ##      # P1
-##      let pbm = readPBMFile("tests/out/p1.pbm")
-##      echo pbm
+##      let p = readPBMFile("tests/out/p1.pbm")
+##      echo p
 ##
 ##    block:
 ##      # P4
-##      let pbm = readPBMFile("tests/out/p4.pbm")
-##      echo pbm
+##      let p = readPBMFile("tests/out/p4.pbm")
+##      echo p
 ##
 ## Writing PBM file
 ## ^^^^^^^^^^^^^^^^
@@ -82,18 +82,26 @@ import strutils
 
 import errors, util, validator
 
+type
+  PBMObj* = object
+    ## PBM object.
+    ## Don't directly use this type.
+    fileDiscriptor*: string ## File discriptor (P1 or P4)
+    col*, row*: int         ## Column count
+    data*: seq[uint8]       ## byte (pixel) data
+  PBM* = ref PBMObj
+    ## PBM ref object.
+    ## Procedures use this type. Not PBMobj.
+
 const
   pbmFileDiscriptorP1* = "P1"
   pbmFileDiscriptorP4* = "P4"
 
-type
-  PBMObj = object
-    fileDiscriptor*: string
-    col*, row*: int
-    data*: seq[uint8]
-  PBM* = ref PBMObj
-
 proc newPBM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PBM =
+  ## Return new PBM.
+  runnableExamples:
+    let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[1'u8])
+    let p4 = newPBM(pbmFileDiscriptorP4, 1, 1, @[1'u8])
   new result
   result.fileDiscriptor = fileDiscriptor
   result.col = col
@@ -101,12 +109,26 @@ proc newPBM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PBM =
   result.data = data
 
 proc formatP1*(self: PBM): string =
+  ## Return formatted string for PBM P1.
+  runnableExamples:
+    let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[1'u8])
+    ## TODO
+    #doAssert p1.formatP1 == "P1\n1 1\n1"
   let data = self.data.toBinString.toMatrixString(self.col)
   result = &"""{self.fileDiscriptor}
 {self.col} {self.row}
 {data}"""
 
 proc formatP4*(self: PBM): seq[uint8] =
+  ## Return formatted byte data for PBM P4.
+  runnableExamples:
+    let p4 = newPBM(pbmFileDiscriptorP4, 1, 1, @[1'u8])
+    ## TODO
+    # doAssert p4.formatP4 == @[
+    #   'P'.uint8, '4'.uint8, '\n'.uint8,
+    #   '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+    #   0b10000000'u8,
+    # ]
   # header part
   # -----------
   # file discriptor
@@ -122,6 +144,12 @@ proc formatP4*(self: PBM): seq[uint8] =
   result.add self.data
 
 proc parsePBM*(s: string): PBM =
+  ## Return PBM that is parsed from string.
+  ## This proc is function for PBM P1.
+  ## You should validate string to use this proc with `validatePBM proc
+  ## <#validatePBM,openArray[uint8]>`_ .
+  runnableExamples:
+    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDiscriptorP1, 1, 1, @[0b1000_0000'u8])[]
   ## P1用
   new(result)
   var lines: seq[string]
@@ -141,17 +169,11 @@ proc parsePBM*(s: string): PBM =
   for line in lines[2..^1]:
     result.data.add line.split(" ").mapIt(it.parseUInt.uint8).toBin
 
-proc validatePBM*(s: openArray[uint8]) =
-  ## 1. 先頭２バイトがP1またはP4である
-  ## 2. 2行目のデータは行 列の整数値である
-  ## 3. コメント行を無視した行数が３以上である
-  let s2 = s.removeCommentLine
-  s2.validateFileDiscriptor(pbmFileDiscriptorP1, pbmFileDiscriptorP4)
-  s2.validateColumnAndRow 3
-
 proc parsePBM*(s: openArray[uint8]): PBM =
-  ## P4用
-  ## 事前にバリデーションしておくこと
+  ## Return PBM that is parsed from uint8 sequence.
+  ## This proc is function for PBM P4.
+  ## You should validate string to use this proc with `validatePBM proc
+  ## <#validatePBM,openArray[uint8]>`_ .
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -166,7 +188,33 @@ proc parsePBM*(s: openArray[uint8]): PBM =
   result.row = colRow[1].parseInt
   result.data = s[dataPos..^1]
 
+proc validatePBM*(s: openArray[uint8]) =
+  ## Validate PBM data format.
+  ##
+  ## Validating contents are:
+  ## 1. It is P1 or P4 that 2 byte data at the head.
+  ## 2. It is decimal number that data on 2 line.
+  ##
+  ## Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was
+  ## found.
+  ##
+  ## See also:
+  ## * `errors module <errors.html>`_
+  let s2 = s.removeCommentLine
+  s2.validateFileDiscriptor(pbmFileDiscriptorP1, pbmFileDiscriptorP4)
+  s2.validateColumnAndRow 3
+
 proc readPBM*(f: File): PBM =
+  ## Return PBM (P1 or P4) from file. This proc validates data before reading
+  ## data. Raise errors when illegal was found. At seeing description of erros,
+  ## see `validatePBM proc <validatePBM,openArray[utin8]>`_
+  runnableExamples:
+    try:
+      var f = open("p1.pbm")
+      echo f.readPBM
+      f.close
+    except:
+      stderr.writeLine getCurrentExceptionMsg()
   let data = f.readAll.mapIt(it.uint8)
   f.setFilePos 0
   validatePBM(data)
@@ -181,11 +229,32 @@ proc readPBM*(f: File): PBM =
   else: discard
 
 proc readPBMFile*(fn: string): PBM =
+  ## Return PBM (P1 or P4) from file. This proc validates data before reading
+  ## data. Raise errors when illegal was found. At seeing description of erros,
+  ## see `validatePBM proc <validatePBM,openArray[utin8]>`_
+  runnableExamples:
+    try:
+      echo readPBMFile("p1.pbm")
+    except:
+      stderr.writeLine getCurrentExceptionMsg()
   var f = open(fn)
   defer: f.close
   result = f.readPBM
 
 proc writePBM*(f: File, data: PBM) =
+  ## Write PBM (P1 or P4) to file.
+  ## Raise IllegalFileDiscriptorError when illegal was found from file
+  ## discriptor.
+  runnableExamples:
+    from os import removeFile
+    try:
+      let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[1'u8])
+      var f = open("p1.pbm", fmWrite)
+      f.writePBM p1
+      f.close
+      removeFile "p1.pbm"
+    except:
+      stderr.writeLine getCurrentExceptionMsg()
   let fd = data.fileDiscriptor
   case fd
   of pbmFileDiscriptorP1:
@@ -197,6 +266,17 @@ proc writePBM*(f: File, data: PBM) =
     raise newException(IllegalFileDiscriptorError, &"file discriptor is {fd}")
 
 proc writePBMFile*(fn: string, data: PBM) =
+  ## Write PBM (P1 or P4) to file.
+  ## Raise IllegalFileDiscriptorError when illegal was found from file
+  ## discriptor.
+  runnableExamples:
+    from os import removeFile
+    try:
+      let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[1'u8])
+      writePBMFile "p1.pbm", p1
+      removeFile "p1.pbm"
+    except:
+      stderr.writeLine getCurrentExceptionMsg()
   var f = open(fn, fmWrite)
   defer: f.close
   f.writePBM data
