@@ -28,5 +28,4 @@ block:
 
 == Document
 
-* https://jiro4989.github.io/image/pbm.html
-* https://jiro4989.github.io/image/pgm.html
+* https://jiro4989.github.io/pnm/pnm.html
