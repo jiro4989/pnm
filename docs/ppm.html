@@ -1239,7 +1239,10 @@ function main() {
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li><a class="reference" id="ppm_toc" href="#ppm">ppm</a></li>
-<li><a class="reference" id="ppm-example_toc" href="#ppm-example">PPM example</a></li>
+<ul class="simple"><li><a class="reference" id="ppm-basic-usage_toc" href="#ppm-basic-usage">Basic usage</a></li>
+<ul class="simple"><li><a class="reference" id="basic-usage-reading-ppm-file_toc" href="#basic-usage-reading-ppm-file">Reading PPM file</a></li>
+<li><a class="reference" id="basic-usage-writing-ppm-file_toc" href="#basic-usage-writing-ppm-file">Writing PPM file</a></li>
+</ul></ul><li><a class="reference" id="ppm-format-example_toc" href="#ppm-format-example">PPM format example</a></li>
 <li>
   <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
   <ul class="simple simple-toc-section">
@@ -1251,10 +1254,10 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#PPMObj"
     title="PPMObj = object
-  fileDiscriptor*: string      ## P2
-  col*, row*: int
-  max*: uint8
-  data*: seq[uint8]"><wbr />PPMObj<span class="attachedType" style="visibility:hidden"></span></a></li>
+  fileDiscriptor*: string      ## File discriptor (P3 or P6)
+  col*, row*: int               ## Column count
+  max*: uint8                  ## Max value
+  data*: seq[uint8]            ## Byte (pixel) data"><wbr />PPMObj<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#PPM"
     title="PPM = ref PPMObj"><wbr />PPM<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1279,12 +1282,12 @@ function main() {
     title="formatP3(self: PPM): string"><wbr />format<wbr />P3<span class="attachedType" style="visibility:hidden">PPM</span></a></li>
   <li><a class="reference" href="#formatP6%2CPPM"
     title="formatP6(self: PPM): seq[uint8]"><wbr />format<wbr />P6<span class="attachedType" style="visibility:hidden">PPM</span></a></li>
-  <li><a class="reference" href="#validatePPM%2CopenArray%5Buint8%5D"
-    title="validatePPM(s: openArray[uint8])"><wbr />validate<wbr />PPM<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#parsePPM%2Cstring"
     title="parsePPM(s: string): PPM"><wbr />parse<wbr />PPM<span class="attachedType" style="visibility:hidden">PPM</span></a></li>
   <li><a class="reference" href="#parsePPM%2CopenArray%5Buint8%5D"
     title="parsePPM(s: openArray[uint8]): PPM"><wbr />parse<wbr />PPM<span class="attachedType" style="visibility:hidden">PPM</span></a></li>
+  <li><a class="reference" href="#validatePPM%2CopenArray%5Buint8%5D"
+    title="validatePPM(s: openArray[uint8])"><wbr />validate<wbr />PPM<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#readPPM%2CFile"
     title="readPPM(f: File): PPM"><wbr />read<wbr />PPM<span class="attachedType" style="visibility:hidden">PPM</span></a></li>
   <li><a class="reference" href="#readPPMFile%2Cstring"
@@ -1307,22 +1310,59 @@ function main() {
   <p class="module-desc">
 <h1><a class="toc-backref" id="ppm" href="#ppm">ppm</a></h1><p>ppm is PPM(Portable graymap) image encoder/decorder module.</p>
 
-<h1><a class="toc-backref" id="ppm-example" href="#ppm-example">PPM example</a></h1><pre class="listing">
-P2
-# Shows the word &quot;FEEP&quot; (example from NetPPM man page on PPM)
-24 7
-15
-0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
-0  3  3  3  3  0  0  7  7  7  7  0  0 11 11 11 11  0  0 15 15 15 15  0
-0  3  0  0  0  0  0  7  0  0  0  0  0 11  0  0  0  0  0 15  0  0 15  0
-0  3  3  3  0  0  0  7  7  7  0  0  0 11 11 11  0  0  0 15 15 15 15  0
-0  3  0  0  0  0  0  7  0  0  0  0  0 11  0  0  0  0  0 15  0  0  0  0
-0  3  0  0  0  0  0  7  7  7  7  0  0 11 11 11 11  0  0 15  0  0  0  0
-0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0</pre><p>See also:</p>
-<ul class="simple"><li><a class="reference external" href="https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88">https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88</a>)</li>
-<li><a class="reference external" href="http://tech.ckme.co.jp/pnm.shtml">http://tech.ckme.co.jp/pnm.shtml</a></li>
-</ul>
-</p>
+<h2><a class="toc-backref" id="ppm-basic-usage" href="#ppm-basic-usage">Basic usage</a></h2>
+<h3><a class="toc-backref" id="basic-usage-reading-ppm-file" href="#basic-usage-reading-ppm-file">Reading PPM file</a></h3><p><a class="reference external" href="#readPPMFile,string">readPPMFile proc</a> can read PPM (P3 and P6).</p>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">pnm</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P3</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">readPPMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p3.ppm&quot;</span><span class="Punctuation">)</span>
+  <span class="Identifier">echo</span> <span class="Identifier">p</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P6</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">readPPMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p6.ppm&quot;</span><span class="Punctuation">)</span>
+  <span class="Identifier">echo</span> <span class="Identifier">p</span></pre>
+<h3><a class="toc-backref" id="basic-usage-writing-ppm-file" href="#basic-usage-writing-ppm-file">Writing PPM file</a></h3><p><a class="reference external" href="#writePPMFile,string,PPM">writePPMFile proc</a> can write PPM (P3 and P6).</p>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">pnm</span>
+
+<span class="Keyword">let</span> <span class="Identifier">col</span> <span class="Operator">=</span> <span class="DecNumber">6</span>
+<span class="Keyword">let</span> <span class="Identifier">row</span> <span class="Operator">=</span> <span class="DecNumber">12</span>
+<span class="Keyword">let</span> <span class="Identifier">max</span> <span class="Operator">=</span> <span class="DecNumber">2</span>
+<span class="Keyword">let</span> <span class="Identifier">data</span> <span class="Operator">=</span> <span class="Operator">@</span><span class="Punctuation">[</span>
+  <span class="DecNumber">0'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span>
+  <span class="DecNumber">0'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span>
+  <span class="DecNumber">0'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span>
+  <span class="DecNumber">0'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">,</span>
+  <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span>
+  <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span>
+  <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span>
+  <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span> <span class="DecNumber">2</span><span class="Punctuation">,</span>
+<span class="Punctuation">]</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P3</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">newPPM</span><span class="Punctuation">(</span><span class="Identifier">ppmFileDiscriptorP3</span><span class="Punctuation">,</span> <span class="Identifier">col</span><span class="Punctuation">,</span> <span class="Identifier">row</span><span class="Punctuation">,</span> <span class="Identifier">data</span><span class="Punctuation">)</span>
+  <span class="Identifier">writePPMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p3.ppm&quot;</span><span class="Punctuation">,</span> <span class="Identifier">p</span><span class="Punctuation">)</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P6</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">newPPM</span><span class="Punctuation">(</span><span class="Identifier">ppmFileDiscriptorP6</span><span class="Punctuation">,</span> <span class="Identifier">col</span><span class="Punctuation">,</span> <span class="Identifier">row</span><span class="Punctuation">,</span> <span class="Identifier">data</span><span class="Punctuation">)</span>
+  <span class="Identifier">writePPMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p6.ppm&quot;</span><span class="Punctuation">,</span> <span class="Identifier">p</span><span class="Punctuation">)</span></pre>
+<h1><a class="toc-backref" id="ppm-format-example" href="#ppm-format-example">PPM format example</a></h1><pre class="listing"><span class="Identifier">P3</span>
+<span class="Comment"># The P3 means colors are in ASCII, then 3 columns and 2 rows, then 255 for max color, then RGB triplets</span>
+<span class="DecNumber">3</span> <span class="DecNumber">2</span>
+<span class="DecNumber">255</span>
+<span class="DecNumber">255</span> <span class="DecNumber">0</span> <span class="DecNumber">0</span>
+<span class="DecNumber">0</span> <span class="DecNumber">255</span> <span class="DecNumber">0</span>
+<span class="DecNumber">0</span> <span class="DecNumber">0</span> <span class="DecNumber">255</span>
+<span class="DecNumber">255</span> <span class="DecNumber">255</span> <span class="DecNumber">0</span>
+<span class="DecNumber">255</span> <span class="DecNumber">255</span> <span class="DecNumber">255</span>
+<span class="DecNumber">0</span> <span class="DecNumber">0</span> <span class="DecNumber">0</span></pre></p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
@@ -1333,19 +1373,19 @@ P2
 <dl class="item">
 <a id="PPMObj"></a>
 <dt><pre><a href="ppm.html#PPMObj"><span class="Identifier">PPMObj</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
-  <span class="Identifier">fileDiscriptor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## P2</span>
-  <span class="Identifier">col</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">row</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
-  <span class="Identifier">max</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>
-  <span class="Identifier">data</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>
-</pre></dt>
+  <span class="Identifier">fileDiscriptor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>      <span class="Comment">## File discriptor (P3 or P6)</span>
+  <span class="Identifier">col</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">row</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>               <span class="Comment">## Column count</span>
+  <span class="Identifier">max</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint8</span>                  <span class="Comment">## Max value</span>
+  <span class="Identifier">data</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span>            <span class="Comment">## Byte (pixel) data</span>
+  </pre></dt>
 <dd>
-
+PPM object. Don't directly use this type.
 
 </dd>
 <a id="PPM"></a>
 <dt><pre><a href="ppm.html#PPM"><span class="Identifier">PPM</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <a href="ppm.html#PPMObj"><span class="Identifier">PPMObj</span></a></pre></dt>
 <dd>
-
+PPM ref object. Procedures use this type. Not PPMObj.
 
 </dd>
 
@@ -1374,43 +1414,72 @@ P2
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">fileDiscriptor</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">,</span> <span class="Identifier">row</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return new PPM.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p3</span> <span class="Other">=</span> <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">ppmFileDiscriptorP3</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">255'u8</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Keyword">let</span> <span class="Identifier">p6</span> <span class="Other">=</span> <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">ppmFileDiscriptorP6</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">255'u8</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">]</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="formatP3,PPM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">formatP3</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return formatted string for PPM P3.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">ppmFileDiscriptorP3</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">255'u8</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">p</span><span class="Other">.</span><span class="Identifier">formatP3</span> <span class="Operator">==</span> <span class="StringLit">&quot;P3\n1 1\n255\n255 255 255&quot;</span></pre>
 
 </dd>
 <a id="formatP6,PPM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">formatP6</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+Return formatted byte data for PPM P6.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">ppmFileDiscriptorP6</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">255'u8</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">p</span><span class="Other">.</span><span class="Identifier">formatP6</span> <span class="Operator">==</span>
+    <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'6'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+      <span class="CharLit">'2'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'5'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'5'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="DecNumber">255'u8</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">]</span></pre>
 
+</dd>
+<a id="parsePPM,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePPM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Return PPM that is parsed from string. This proc is function for PPM P3. You should validate string to use this proc with <a class="reference external" href="#validatePPM,openArray[uint8]">validatePPM proc</a> .
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="StringLit">&quot;P3\n1 1\n255\n255 255 255&quot;</span><span class="Other">.</span><span class="Identifier">parsePPM</span><span class="Other">[</span><span class="Other">]</span> <span class="Operator">==</span>
+    <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">ppmFileDiscriptorP3</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">255'u8</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">]</span><span class="Other">)</span><span class="Other">[</span><span class="Other">]</span></pre>
+
+</dd>
+<a id="parsePPM,openArray[uint8]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePPM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Return PPM that is parsed from string. This proc is function for PPM P3. You should validate string to use this proc with <a class="reference external" href="#validatePPM,openArray[uint8]">validatePPM proc</a> .
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Identifier">doAssert</span> <span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'6'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+          <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'2'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'5'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'5'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="DecNumber">255'u8</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">parsePPM</span><span class="Other">[</span><span class="Other">]</span> <span class="Operator">==</span>
+    <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">ppmFileDiscriptorP6</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">255'u8</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">,</span> <span class="DecNumber">255</span><span class="Other">]</span><span class="Other">)</span><span class="Other">[</span><span class="Other">]</span></pre>
 
 </dd>
 <a id="validatePPM,openArray[uint8]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">validatePPM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">,</span>
     <span class="Identifier">IllegalColumnRowError</span><span class="Other">,</span> <span class="Identifier">IllegalMaxValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-<ol class="simple"><li>先頭２バイトがP3またはP6である</li>
-<li>2行目のデータは行 列の整数値である</li>
-<li>3行目のデータは最大値である</li>
-<li>コメント行を無視した行数が３以上である</li>
+<p>Validate PPM data format.</p>
+<p>Validating contents are:</p>
+<ol class="simple"><li>It is P3 or P6 that 2 byte data at the head.</li>
+<li>It is decimal number that data on 2 line.</li>
+<li>It is max value of data that data on 3 line.</li>
 </ol>
+<p>Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was found.</p>
+<p>See also:</p>
+<ul class="simple"><li><a class="reference external" href="errors.html">errors module</a></li>
+</ul>
 
-
-</dd>
-<a id="parsePPM,string"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePPM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-P3用
-
-</dd>
-<a id="parsePPM,openArray[uint8]"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">parsePPM</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-事前にバリデーションしておくこと
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Comment">## No error</span>
+<span class="Identifier">validatePPM</span><span class="Other">(</span><span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'3'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+              <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span>
+<span class="Identifier">validatePPM</span><span class="Other">(</span><span class="Operator">@</span><span class="Other">[</span><span class="CharLit">'P'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'6'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">' '</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span>
+              <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'\n'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">,</span> <span class="CharLit">'1'</span><span class="Other">.</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="readPPM,File"></a>
@@ -1419,7 +1488,15 @@ P3用
                                  <span class="Identifier">EOFError</span><span class="Other">,</span> <span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
                          <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return PPM (P3 or P6) from file. This proc validates data before reading data. Raise errors when illegal was found. At seeing description of erros, see <a class="reference external" href="validatePPM,openArray[utin8]">validatePPM proc</a>
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">try</span><span class="Other">:</span>
+  <span class="Keyword">var</span> <span class="Identifier">f</span> <span class="Other">=</span> <span class="Identifier">open</span><span class="Other">(</span><span class="StringLit">&quot;p3.ppm&quot;</span><span class="Other">)</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">readPPM</span>
+  <span class="Comment">## do something...</span>
+  <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">close</span>
+<span class="Keyword">except</span><span class="Other">:</span>
+  <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="readPPMFile,string"></a>
@@ -1430,21 +1507,47 @@ P3用
                                         <span class="Identifier">OverflowError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
                                 <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Return PPM (P3 or P6) from file. This proc validates data before reading data. Raise errors when illegal was found. At seeing description of erros, see <a class="reference external" href="validatePPM,openArray[utin8]">validatePPM proc</a>
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">try</span><span class="Other">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Other">=</span> <span class="Identifier">readPPMFile</span><span class="Other">(</span><span class="StringLit">&quot;p3.ppm&quot;</span><span class="Other">)</span>
+  <span class="Comment">## do something...</span>
+<span class="Keyword">except</span><span class="Other">:</span>
+  <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="writePPM,File,PPM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">writePPM</span><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">File</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">]</span><span class="Other">,</span>
                                <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+Write PPM (P3 or P6) to file. Raise IllegalFileDiscriptorError when illegal was found from file discriptor.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">from</span> <span class="Identifier">os</span> <span class="Keyword">import</span> <span class="Identifier">removeFile</span>
 
+<span class="Keyword">try</span><span class="Other">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">p1</span> <span class="Other">=</span> <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">ppmFileDiscriptorP3</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">]</span><span class="Other">)</span>
+  <span class="Keyword">var</span> <span class="Identifier">f</span> <span class="Other">=</span> <span class="Identifier">open</span><span class="Other">(</span><span class="StringLit">&quot;p3.ppm&quot;</span><span class="Other">,</span> <span class="Identifier">fmWrite</span><span class="Other">)</span>
+  <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">writePPM</span> <span class="Identifier">p1</span>
+  <span class="Identifier">f</span><span class="Other">.</span><span class="Identifier">close</span>
+  <span class="Identifier">removeFile</span> <span class="StringLit">&quot;p3.ppm&quot;</span>
+<span class="Keyword">except</span><span class="Other">:</span>
+  <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="writePPMFile,string,PPM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">writePPMFile</span><span class="Other">(</span><span class="Identifier">fn</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <a href="ppm.html#PPM"><span class="Identifier">PPM</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span>
     <span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+Write PPM (P3 or P6) to file. Raise IllegalFileDiscriptorError when illegal was found from file discriptor.
+<p><strong class="examples_text">Examples:</strong></p>
+<pre class="listing"><span class="Keyword">from</span> <span class="Identifier">os</span> <span class="Keyword">import</span> <span class="Identifier">removeFile</span>
 
+<span class="Keyword">try</span><span class="Other">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">p1</span> <span class="Other">=</span> <span class="Identifier">newPPM</span><span class="Other">(</span><span class="Identifier">ppmFileDiscriptorP3</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="DecNumber">1'u8</span><span class="Other">]</span><span class="Other">)</span>
+  <span class="Identifier">writePPMFile</span> <span class="StringLit">&quot;p3.ppm&quot;</span><span class="Other">,</span> <span class="Identifier">p1</span>
+  <span class="Identifier">removeFile</span> <span class="StringLit">&quot;p3.ppm&quot;</span>
+<span class="Keyword">except</span><span class="Other">:</span>
+  <span class="Identifier">stderr</span><span class="Other">.</span><span class="Identifier">writeLine</span> <span class="Identifier">getCurrentExceptionMsg</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
 <a id="$,PPM"></a>
@@ -1463,7 +1566,7 @@ P3用
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-20 19:32:41 UTC</small>
+        <small>Made with Nim. Generated: 2019-04-20 20:17:44 UTC</small>
       </div>
     </div>
   </div>
