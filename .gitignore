@@ -2,3 +2,6 @@ tests/tpbm
 tests/tpgm
 tests/tppm
 tests/tutil
+examples/pbm_example
+examples/pgm_example
+examples/ppm_example
