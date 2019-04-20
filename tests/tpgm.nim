@@ -2,12 +2,10 @@ import unittest
 
 include pnm/pgm
 
-var pgm2 = new PGM
-pgm2.fileDiscriptor = pgmFileDiscriptorP2
-pgm2.col = 6
-pgm2.row = 12
-pgm2.max = 2
-pgm2.data = @[
+let col = 6
+let row = 12
+let max = 2
+let data = @[
   0'u8, 0, 0, 0, 0, 0,
   0'u8, 0, 0, 0, 0, 0,
   0'u8, 0, 0, 0, 0, 0,
@@ -22,12 +20,7 @@ pgm2.data = @[
   2, 2, 2, 2, 2, 2,
 ]
 
-var pgm2_2 = new PGM
-pgm2_2.fileDiscriptor = pgmFileDiscriptorP2
-pgm2_2.col = 6
-pgm2_2.row = 12
-pgm2_2.max = 20
-pgm2_2.data = @[
+let data2 = @[
   0'u8, 0, 0, 0, 0, 0,
   0'u8, 0, 0, 0, 0, 0,
   0'u8, 0, 0, 0, 0, 0,
@@ -41,6 +34,10 @@ pgm2_2.data = @[
   20, 20, 20, 20, 20, 20,
   20, 20, 20, 20, 20, 20,
 ]
+
+let pgm2 = newPGM(pgmFileDiscriptorP2, col, row, data)
+let pgm5 = newPGM(pgmFileDiscriptorP5, col, row, data)
+let pgm2_2 = newPGM(pgmFileDiscriptorP2, 6, 12, data2)
 
 const pgm2str = """P2
 6 12
@@ -73,13 +70,6 @@ const pgm2_2str = """P2
 20 20 20 20 20 20
 20 20 20 20 20 20
 20 20 20 20 20 20"""
-
-var pgm5 = new PGM
-pgm5.fileDiscriptor = pgmFileDiscriptorP5
-pgm5.col = pgm2.col
-pgm5.row = pgm2.row
-pgm5.max = pgm2.max
-pgm5.data = pgm2.data
 
 let pgm5bin = @[
   'P'.uint8, '5'.uint8, '\n'.uint8,
@@ -144,12 +134,9 @@ suite "parsePGM(openArray[uint8])":
 
 suite "usecase":
   test "write P2":
-    writeFile "tests/out/p2.pgm", pgm2.formatP2
+    writePGMFile("tests/out/p2.pgm", pgm2)
   test "write P5":
-    var f = open("tests/out/p5.pgm", fmWrite)
-    let bin = pgm5.formatP5
-    discard f.writeBytes(bin, 0, bin.len)
-    f.close
+    writePGMFile("tests/out/p5.pgm", pgm5)
   test "read P2":
     check readPGMFile("tests/out/p2.pgm")[] == pgm2[]
   test "read P5":

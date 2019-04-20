@@ -1,9 +1,70 @@
-## pbm is PBM(Portable bitmap) image encoder/decorder module.
+## pbm
+## ====
 ##
-## PBM example
-## ===========
+## pbm is parser/generator of PBM(Portable bitmap).
 ##
-## .. code-block:: text
+## Basic usage
+## -----------
+##
+## Reading PBM file
+## ^^^^^^^^^^^^^^^^
+##
+## `readPBMFile proc <#readPBMFile,string>`_ can read PBM (P1 and P4).
+##
+## .. code-block:: nim
+##
+##    import pnm
+##
+##    block:
+##      # P1
+##      let pbm = readPBMFile("tests/out/p1.pbm")
+##      echo pbm
+##
+##    block:
+##      # P4
+##      let pbm = readPBMFile("tests/out/p4.pbm")
+##      echo pbm
+##
+## Writing PBM file
+## ^^^^^^^^^^^^^^^^
+##
+## `writePBMFile proc <#writePBMFile,string,PBM>`_ can write PBM (P1 and P4).
+##
+## .. code-block:: nim
+##
+##    import pnm
+##
+##    let col = 32 # 8 (bit) x 4 (column) == 32
+##    let row = 12
+##    let data = @[
+##      0b11111111'u8, 0b00000000, 0b11111111, 0b00000000,
+##      0b11111111, 0b00000000, 0b11111111, 0b00000000,
+##      0b11111111, 0b00000000, 0b11111111, 0b00000000,
+##      0b11111111, 0b00000000, 0b11111111, 0b00000000,
+##      0b11111111, 0b11111111, 0b11111111, 0b11111111,
+##      0b11111111, 0b11111111, 0b11111111, 0b11111111,
+##      0b11111111, 0b11111111, 0b11111111, 0b11111111,
+##      0b11111111, 0b11111111, 0b11111111, 0b11111111,
+##      0b00000000, 0b00000000, 0b00000000, 0b00000000,
+##      0b00000000, 0b00000000, 0b00000000, 0b00000000,
+##      0b00000000, 0b00000000, 0b00000000, 0b00000000,
+##      0b00000000, 0b00000000, 0b00000000, 0b00000000,
+##    ]
+##
+##    block:
+##      # P1
+##      let p = newPBM(pbmFileDiscriptorP1, col, row, data)
+##      writePBMFile("tests/out/p1.pbm", p)
+##
+##    block:
+##      # P4
+##      let p = newPBM(pbmFileDiscriptorP4, col, row, data)
+##      writePBMFile("tests/out/p4.pbm", p)
+##
+## PBM format example
+## ------------------
+##
+## .. code-block::
 ##
 ##    P1
 ##    # comment
@@ -14,9 +75,6 @@
 ##    0 0 1 0 0
 ##    0 0 1 0 0
 ##    1 1 1 1 1
-##
-## See also:
-## * https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88)
 
 from strformat import `&`
 from sequtils import mapIt, filterIt, concat
@@ -34,6 +92,13 @@ type
     col*, row*: int
     data*: seq[uint8]
   PBM* = ref PBMObj
+
+proc newPBM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PBM =
+  new result
+  result.fileDiscriptor = fileDiscriptor
+  result.col = col
+  result.row = row
+  result.data = data
 
 proc formatP1*(self: PBM): string =
   let data = self.data.toBinString.toMatrixString(self.col)
@@ -119,6 +184,22 @@ proc readPBMFile*(fn: string): PBM =
   var f = open(fn)
   defer: f.close
   result = f.readPBM
+
+proc writePBM*(f: File, data: PBM) =
+  let fd = data.fileDiscriptor
+  case fd
+  of pbmFileDiscriptorP1:
+    f.write data.formatP1
+  of pbmFileDiscriptorP4:
+    let bin = data.formatP4
+    discard f.writeBytes(bin, 0, bin.len)
+  else:
+    raise newException(IllegalFileDiscriptorError, &"file discriptor is {fd}")
+
+proc writePBMFile*(fn: string, data: PBM) =
+  var f = open(fn, fmWrite)
+  defer: f.close
+  f.writePBM data
 
 proc `$`*(self: PBM): string =
   result = $self[]

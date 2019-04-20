@@ -1,3 +1,6 @@
+## pgm
+## ====
+##
 ## pgm is PGM(Portable graymap) image encoder/decorder module.
 ##
 ## PGM example
@@ -38,6 +41,14 @@ type
 const
   pgmFileDiscriptorP2* = "P2"
   pgmFileDiscriptorP5* = "P5"
+
+proc newPGM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PGM =
+  new result
+  result.fileDiscriptor = fileDiscriptor
+  result.col = col
+  result.row = row
+  result.max = data.max
+  result.data = data
 
 proc formatP2*(self: PGM): string =
   let data = self.data.toMatrixString(self.col)
@@ -143,6 +154,22 @@ proc readPGMFile*(fn: string): PGM =
   var f = open(fn)
   defer: f.close
   result = f.readPGM
+
+proc writePGM*(f: File, data: PGM) =
+  let fd = data.fileDiscriptor
+  case fd
+  of pgmFileDiscriptorP2:
+    f.write data.formatP2
+  of pgmFileDiscriptorP5:
+    let bin = data.formatP5
+    discard f.writeBytes(bin, 0, bin.len)
+  else:
+    raise newException(IllegalFileDiscriptorError, &"file discriptor is {fd}")
+
+proc writePGMFile*(fn: string, data: PGM) =
+  var f = open(fn, fmWrite)
+  defer: f.close
+  f.writePGM data
 
 proc `$`*(self: PGM): string =
   result = $self[]

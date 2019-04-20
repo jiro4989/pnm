@@ -2,12 +2,10 @@ import unittest
 
 include pnm/ppm
 
-var p1 = new PPM
-p1.fileDiscriptor = ppmFileDiscriptorP3
-p1.col = 3
-p1.row = 2
-p1.max = 255
-p1.data = @[
+let col = 3
+let row = 2
+let max = 255
+let data = @[
   255'u8, 0, 0,
   0, 255, 0,
   0, 0, 255,
@@ -15,6 +13,9 @@ p1.data = @[
   255, 255, 255,
   0, 0, 0,
 ]
+
+let p1 = newPPM(ppmFileDiscriptorP3, col, row, data)
+let p2 = newPPM(ppmFileDiscriptorP6, col, row, data)
 
 const p1str = """P3
 3 2
@@ -25,13 +26,6 @@ const p1str = """P3
 255 255 0
 255 255 255
 0 0 0"""
-
-var p2 = new PPM
-p2.fileDiscriptor = ppmFileDiscriptorP6
-p2.col = p1.col
-p2.row = p1.row
-p2.max = p1.max
-p2.data = p1.data
 
 let p2bin = @[
   'P'.uint8, '6'.uint8, '\n'.uint8,
@@ -90,12 +84,9 @@ suite "parsePPM(openArray[uint8])":
 
 suite "usecase":
   test "write P3":
-    writeFile "tests/out/p3.ppm", p1.formatP3
+    writePPMFile("tests/out/p3.ppm", p1)
   test "write P6":
-    var f = open("tests/out/p6.ppm", fmWrite)
-    let bin = p2.formatP6
-    discard f.writeBytes(bin, 0, bin.len)
-    f.close
+    writePPMFile("tests/out/p6.ppm", p2)
   test "read P2":
     check readPPMFile("tests/out/p3.ppm")[] == p1[]
   test "read P5":

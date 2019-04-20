@@ -1238,8 +1238,12 @@ function main() {
     </select>
   </div>
   <ul class="simple simple-toc" id="toc-list">
-<li><a class="reference" id="pbm-example_toc" href="#pbm-example">PBM example</a></li>
-<li>
+<li><a class="reference" id="pbm_toc" href="#pbm">pbm</a></li>
+<ul class="simple"><li><a class="reference" id="pbm-basic-usage_toc" href="#pbm-basic-usage">Basic usage</a></li>
+<ul class="simple"><li><a class="reference" id="basic-usage-reading-pbm-file_toc" href="#basic-usage-reading-pbm-file">Reading PBM file</a></li>
+<li><a class="reference" id="basic-usage-writing-pbm-file_toc" href="#basic-usage-writing-pbm-file">Writing PBM file</a></li>
+</ul><li><a class="reference" id="pbm-pbm-format-example_toc" href="#pbm-pbm-format-example">PBM format example</a></li>
+</ul><li>
   <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
   <ul class="simple simple-toc-section">
     
@@ -1266,7 +1270,9 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#formatP1%2CPBM"
+      <li><a class="reference" href="#newPBM%2Cstring%2Cint%2Cint%2Cseq%5Buint8%5D"
+    title="newPBM(fileDiscriptor: string; col, row: int; data: seq[uint8]): PBM"><wbr />new<wbr />PBM<span class="attachedType" style="visibility:hidden">PBM</span></a></li>
+  <li><a class="reference" href="#formatP1%2CPBM"
     title="formatP1(self: PBM): string"><wbr />format<wbr />P1<span class="attachedType" style="visibility:hidden">PBM</span></a></li>
   <li><a class="reference" href="#formatP4%2CPBM"
     title="formatP4(self: PBM): seq[uint8]"><wbr />format<wbr />P4<span class="attachedType" style="visibility:hidden">PBM</span></a></li>
@@ -1280,6 +1286,10 @@ function main() {
     title="readPBM(f: File): PBM"><wbr />read<wbr />PBM<span class="attachedType" style="visibility:hidden">PBM</span></a></li>
   <li><a class="reference" href="#readPBMFile%2Cstring"
     title="readPBMFile(fn: string): PBM"><wbr />read<wbr />PBMFile<span class="attachedType" style="visibility:hidden">PBM</span></a></li>
+  <li><a class="reference" href="#writePBM%2CFile%2CPBM"
+    title="writePBM(f: File; data: PBM)"><wbr />write<wbr />PBM<span class="attachedType" style="visibility:hidden">PBM</span></a></li>
+  <li><a class="reference" href="#writePBMFile%2Cstring%2CPBM"
+    title="writePBMFile(fn: string; data: PBM)"><wbr />write<wbr />PBMFile<span class="attachedType" style="visibility:hidden">PBM</span></a></li>
   <li><a class="reference" href="#%24%2CPBM"
     title="`$`(self: PBM): string"><wbr />`$`<span class="attachedType" style="visibility:hidden">PBM</span></a></li>
 
@@ -1291,20 +1301,60 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">pbm is PBM(Portable bitmap) image encoder/decorder module.
-<h1><a class="toc-backref" id="pbm-example" href="#pbm-example">PBM example</a></h1><pre class="listing">
-P1
-# comment
-5 6
-0 0 1 0 0
-0 1 1 0 0
-0 0 1 0 0
-0 0 1 0 0
-0 0 1 0 0
-1 1 1 1 1</pre><p>See also:</p>
-<ul class="simple"><li><a class="reference external" href="https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88">https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88</a>)</li>
-</ul>
-</p>
+  <p class="module-desc">
+<h1><a class="toc-backref" id="pbm" href="#pbm">pbm</a></h1><p>pbm is parser/generator of PBM(Portable bitmap).</p>
+
+<h2><a class="toc-backref" id="pbm-basic-usage" href="#pbm-basic-usage">Basic usage</a></h2>
+<h3><a class="toc-backref" id="basic-usage-reading-pbm-file" href="#basic-usage-reading-pbm-file">Reading PBM file</a></h3><p><a class="reference external" href="#readPBMFile,string">readPBMFile proc</a> can read PBM (P1 and P4).</p>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">pnm</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P1</span>
+  <span class="Keyword">let</span> <span class="Identifier">pbm</span> <span class="Operator">=</span> <span class="Identifier">readPBMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p1.pbm&quot;</span><span class="Punctuation">)</span>
+  <span class="Identifier">echo</span> <span class="Identifier">pbm</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P4</span>
+  <span class="Keyword">let</span> <span class="Identifier">pbm</span> <span class="Operator">=</span> <span class="Identifier">readPBMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p4.pbm&quot;</span><span class="Punctuation">)</span>
+  <span class="Identifier">echo</span> <span class="Identifier">pbm</span></pre>
+<h3><a class="toc-backref" id="basic-usage-writing-pbm-file" href="#basic-usage-writing-pbm-file">Writing PBM file</a></h3><p><a class="reference external" href="#writePBMFile,string,PBM">writePBMFile proc</a> can write PBM (P1 and P4).</p>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">pnm</span>
+
+<span class="Keyword">let</span> <span class="Identifier">col</span> <span class="Operator">=</span> <span class="DecNumber">32</span> <span class="Comment"># 8 (bit) x 4 (column) == 32</span>
+<span class="Keyword">let</span> <span class="Identifier">row</span> <span class="Operator">=</span> <span class="DecNumber">12</span>
+<span class="Keyword">let</span> <span class="Identifier">data</span> <span class="Operator">=</span> <span class="Operator">@</span><span class="Punctuation">[</span>
+  <span class="BinNumber">0b11111111'</span><span class="Identifier">u8</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span> <span class="BinNumber">0b11111111</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span>
+  <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span> <span class="BinNumber">0b00000000</span><span class="Punctuation">,</span>
+<span class="Punctuation">]</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P1</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">newPBM</span><span class="Punctuation">(</span><span class="Identifier">pbmFileDiscriptorP1</span><span class="Punctuation">,</span> <span class="Identifier">col</span><span class="Punctuation">,</span> <span class="Identifier">row</span><span class="Punctuation">,</span> <span class="Identifier">data</span><span class="Punctuation">)</span>
+  <span class="Identifier">writePBMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p1.pbm&quot;</span><span class="Punctuation">,</span> <span class="Identifier">p</span><span class="Punctuation">)</span>
+
+<span class="Keyword">block</span><span class="Punctuation">:</span>
+  <span class="Comment"># P4</span>
+  <span class="Keyword">let</span> <span class="Identifier">p</span> <span class="Operator">=</span> <span class="Identifier">newPBM</span><span class="Punctuation">(</span><span class="Identifier">pbmFileDiscriptorP4</span><span class="Punctuation">,</span> <span class="Identifier">col</span><span class="Punctuation">,</span> <span class="Identifier">row</span><span class="Punctuation">,</span> <span class="Identifier">data</span><span class="Punctuation">)</span>
+  <span class="Identifier">writePBMFile</span><span class="Punctuation">(</span><span class="StringLit">&quot;tests/out/p4.pbm&quot;</span><span class="Punctuation">,</span> <span class="Identifier">p</span><span class="Punctuation">)</span></pre>
+<h2><a class="toc-backref" id="pbm-pbm-format-example" href="#pbm-pbm-format-example">PBM format example</a></h2><pre class="listing"><span class="Identifier">P1</span>
+<span class="Comment"># comment</span>
+<span class="DecNumber">5</span> <span class="DecNumber">6</span>
+<span class="DecNumber">0</span> <span class="DecNumber">0</span> <span class="DecNumber">1</span> <span class="DecNumber">0</span> <span class="DecNumber">0</span>
+<span class="DecNumber">0</span> <span class="DecNumber">1</span> <span class="DecNumber">1</span> <span class="DecNumber">0</span> <span class="DecNumber">0</span>
+<span class="DecNumber">0</span> <span class="DecNumber">0</span> <span class="DecNumber">1</span> <span class="DecNumber">0</span> <span class="DecNumber">0</span>
+<span class="DecNumber">0</span> <span class="DecNumber">0</span> <span class="DecNumber">1</span> <span class="DecNumber">0</span> <span class="DecNumber">0</span>
+<span class="DecNumber">0</span> <span class="DecNumber">0</span> <span class="DecNumber">1</span> <span class="DecNumber">0</span> <span class="DecNumber">0</span>
+<span class="DecNumber">1</span> <span class="DecNumber">1</span> <span class="DecNumber">1</span> <span class="DecNumber">1</span> <span class="DecNumber">1</span></pre></p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
@@ -1341,6 +1391,13 @@ P1
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
+<a id="newPBM,string,int,int,seq[uint8]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">newPBM</span><span class="Other">(</span><span class="Identifier">fileDiscriptor</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">,</span> <span class="Identifier">row</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="pbm.html#PBM"><span class="Identifier">PBM</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+</dd>
 <a id="formatP1,PBM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">formatP1</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="pbm.html#PBM"><span class="Identifier">PBM</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1394,6 +1451,20 @@ P4用 事前にバリデーションしておくこと
 
 
 </dd>
+<a id="writePBM,File,PBM"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">writePBM</span><span class="Other">(</span><span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">File</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <a href="pbm.html#PBM"><span class="Identifier">PBM</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">]</span><span class="Other">,</span>
+                               <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="writePBMFile,string,PBM"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">writePBMFile</span><span class="Other">(</span><span class="Identifier">fn</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <a href="pbm.html#PBM"><span class="Identifier">PBM</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span>
+    <span class="Identifier">IllegalFileDiscriptorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+</dd>
 <a id="$,PBM"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">`$`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="pbm.html#PBM"><span class="Identifier">PBM</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1410,7 +1481,7 @@ P4用 事前にバリデーションしておくこと
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-20 01:44:57 UTC</small>
+        <small>Made with Nim. Generated: 2019-04-20 03:22:03 UTC</small>
       </div>
     </div>
   </div>

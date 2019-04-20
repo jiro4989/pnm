@@ -1,9 +1,5 @@
 ## errors is error type definition for pnm.
 ## Types are used when validating PNM format.
-##
-## See also
-## --------
-## * `Portable Anymap - Wikipedia <https://en.wikipedia.org/wiki/Netpbm_format>`_
 
 type
   IllegalFileDiscriptorError* = object of Defect

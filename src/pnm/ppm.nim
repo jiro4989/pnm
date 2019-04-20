@@ -1,4 +1,7 @@
-## PPM is PPM(Portable graymap) image encoder/decorder module.
+## ppm
+## ====
+##
+## ppm is PPM(Portable graymap) image encoder/decorder module.
 ##
 ## PPM example
 ## ===========
@@ -38,6 +41,14 @@ type
 const
   ppmFileDiscriptorP3* = "P3"
   ppmFileDiscriptorP6* = "P6"
+
+proc newPPM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PPM =
+  new result
+  result.fileDiscriptor = fileDiscriptor
+  result.col = col
+  result.row = row
+  result.max = data.max
+  result.data = data
 
 proc formatP3*(self: PPM): string =
   let data = self.data.toMatrixString 3
@@ -143,6 +154,22 @@ proc readPPMFile*(fn: string): PPM =
   var f = open(fn)
   defer: f.close
   result = f.readPPM
+
+proc writePPM*(f: File, data: PPM) =
+  let fd = data.fileDiscriptor
+  case fd
+  of ppmFileDiscriptorP3:
+    f.write data.formatP3
+  of ppmFileDiscriptorP6:
+    let bin = data.formatP6
+    discard f.writeBytes(bin, 0, bin.len)
+  else:
+    raise newException(IllegalFileDiscriptorError, &"file discriptor is {fd}")
+
+proc writePPMFile*(fn: string, data: PPM) =
+  var f = open(fn, fmWrite)
+  defer: f.close
+  f.writePPM data
 
 proc `$`*(self: PPM): string =
   result = $self[]

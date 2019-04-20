@@ -3,11 +3,9 @@ from sequtils import repeat
 
 include pnm/pbm
 
-var pbm1 = new PBM
-pbm1.fileDiscriptor = pbmFileDiscriptorP1
-pbm1.col = 32
-pbm1.row = 12
-pbm1.data = @[
+let col = 32
+let row = 12
+let data = @[
   0b11111111'u8, 0b00000000, 0b11111111, 0b00000000,
   0b11111111, 0b00000000, 0b11111111, 0b00000000,
   0b11111111, 0b00000000, 0b11111111, 0b00000000,
@@ -21,11 +19,9 @@ pbm1.data = @[
   0b00000000, 0b00000000, 0b00000000, 0b00000000,
   0b00000000, 0b00000000, 0b00000000, 0b00000000,
 ]
-var pbm4 = new PBM
-pbm4.fileDiscriptor = pbmFileDiscriptorP4
-pbm4.col = pbm1.col
-pbm4.row = pbm1.row
-pbm4.data = pbm1.data
+
+let pbm1 = newPBM(pbmFileDiscriptorP1, col, row, data)
+let pbm4 = newPBM(pbmFileDiscriptorP4, col, row, data)
 
 let pbm1str = """P1
 32 12
@@ -102,12 +98,9 @@ suite "parsePBM(openArray[uint8])":
 
 suite "usecase":
   test "write P1":
-    writeFile("tests/out/p1.pbm", pbm1.formatP1)
+    writePBMFile("tests/out/p1.pbm", pbm1)
   test "write P4":
-    var f = open("tests/out/p4.pbm", fmWrite)
-    let bin = pbm4.formatP4
-    discard f.writeBytes(bin, 0, bin.len)
-    f.close
+    writePBMFile("tests/out/p4.pbm", pbm4)
   test "read p1 file":
     check readPBMFile("tests/out/p1.pbm")[] == pbm1[]
   test "read p4 file":
