@@ -14,6 +14,6 @@ requires "nim >= 0.19.4"
 import strformat
 
 task docs, "Generate documents":
-  exec "nimble doc src/pnm.nim -o:docs/pnm.html"
   for f in ["errors", "pbm", "pgm", "ppm", "util", "validator"]:
     exec &"nimble doc src/pnm/{f}.nim -o:docs/{f}.html"
+  exec "nimble doc src/pnm.nim -o:docs/pnm.html"
