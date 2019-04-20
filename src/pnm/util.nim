@@ -22,7 +22,7 @@ proc toBinString*(data: openArray[uint8], col: int): string =
   ## Return binary string from each bits of uint8.
   runnableExamples:
     doAssert @[0b0000_1111'u8, 0b1010_1010].toBinString(8) == "0000111110101010"
-    doAssert @[0b1000_0000'u8, 0b0000_0000].toBinString(1) == "1\n0"
+    doAssert @[0b1000_0000'u8, 0b0000_0000].toBinString(1) == "10"
   for b in data.mapIt(it.toBinSeq.mapIt(it.`$`[0].char)):
     for i, c in b:
       if i < col:

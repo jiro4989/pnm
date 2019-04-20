@@ -172,6 +172,12 @@ proc parsePBM*(s: openArray[uint8]): PBM =
   ## This proc is function for PBM P4.
   ## You should validate string to use this proc with `validatePBM proc
   ## <#validatePBM,openArray[uint8]>`_ .
+  runnableExamples:
+    doAssert @[
+      'P'.uint8, '4'.uint8, '\n'.uint8,
+      '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+      0b1000_0000'u8,
+    ].parsePBM[] == newPBM(pbmFileDiscriptorP4, 1, 1, @[0b1000_0000'u8])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -198,6 +204,14 @@ proc validatePBM*(s: openArray[uint8]) =
   ##
   ## See also:
   ## * `errors module <errors.html>`_
+  runnableExamples:
+    ## No error
+    validatePBM(@['P'.uint8, '1'.uint8, '\n'.uint8,
+                  '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+                  '1'.uint8])
+    validatePBM(@['P'.uint8, '4'.uint8, '\n'.uint8,
+                  '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
+                  '1'.uint8])
   let s2 = s.removeCommentLine
   s2.validateFileDiscriptor(pbmFileDiscriptorP1, pbmFileDiscriptorP4)
   s2.validateColumnAndRow 3
