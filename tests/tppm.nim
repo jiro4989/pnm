@@ -27,6 +27,12 @@ const p1str = """P3
 255 255 255
 0 0 0"""
 
+const p1str2 = """P3
+3 2
+255
+255 0   0   0   255 0   0 0 255
+255 255 0   255 255 255 0 0 0"""
+
 const p1str_whitespace = """P3
 3 2
 255
@@ -97,6 +103,8 @@ suite "validatePPM":
 suite "parsePPM(string)":
   test "normal":
     check p1str.parsePPM[] == p1[]
+  test "multi column":
+    check p1str2.parsePPM[] == p1[]
   test "multi whitespace":
     check p1str_whitespace.parsePPM[] == p1[]
 
