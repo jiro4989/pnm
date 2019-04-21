@@ -27,6 +27,16 @@ const p1str = """P3
 255 255 255
 0 0 0"""
 
+const p1str_whitespace = """P3
+3 2
+255
+255 0   0  
+0   255 0  
+0   0   255
+255 255 0  
+255 255 255
+0   0   0  """
+
 let p2bin = @[
   'P'.uint8, '6'.uint8, '\n'.uint8,
   '3'.uint8, ' '.uint8, '2'.uint8, '\n'.uint8,
@@ -87,6 +97,8 @@ suite "validatePPM":
 suite "parsePPM(string)":
   test "normal":
     check p1str.parsePPM[] == p1[]
+  test "multi whitespace":
+    check p1str_whitespace.parsePPM[] == p1[]
 
 suite "parsePPM(openArray[uint8])":
   test "normal":

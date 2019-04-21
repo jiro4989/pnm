@@ -101,3 +101,17 @@ proc removeCommentLine*(s: openArray[uint8]): seq[uint8] =
       continue
     if not commentLineFound:
       result.add b
+
+proc replaceWhiteSpace*(s: string): string =
+  ## Replace continued whitespace to simgle whitespace.
+  var ignoreWhiteSpace = false
+  for c in s:
+    if ignoreWhiteSpace == false and c == ' ':
+      ignoreWhiteSpace = true
+      result.add c
+      continue
+    if ignoreWhiteSpace:
+      if c == ' ':
+        continue
+    ignoreWhiteSpace = false
+    result.add c

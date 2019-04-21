@@ -160,7 +160,7 @@ proc parsePGM*(s: string): PGM =
     doAssert "P5\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDiscriptorP5, 1, 1, @[2'u8])[]
   new(result)
   var lines: seq[string]
-  for line in s.splitLines:
+  for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
     if not line.startsWith "#":
       lines.add line
 

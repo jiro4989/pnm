@@ -53,3 +53,13 @@ suite "removeCommentLine":
             ].removeCommentLine == @['a'.uint8, 'b'.uint8, 'c'.uint8]
   test "empty":
     check s.removeCommentLine == s
+
+suite "replaceWhiteSpace":
+  test "normal":
+    check "a b  c            d".replaceWhiteSpace == "a b c d"
+  test "line field":
+    check "ab  cd  e   f\n1 2".replaceWhiteSpace == "ab cd e f\n1 2"
+  test "no whitespace":
+    check "abc".replaceWhiteSpace == "abc"
+  test "single whitespace":
+    check "a b c".replaceWhiteSpace == "a b c"

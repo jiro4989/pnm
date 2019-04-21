@@ -71,6 +71,22 @@ const pgm2_2str = """P2
 20 20 20 20 20 20
 20 20 20 20 20 20"""
 
+const pgm2_2str_whitespace = """P2
+6 12
+20
+0  0  0  0  0  0 
+0  0  0  0  0  0 
+0  0  0  0  0  0 
+0  0  0  0  0  0 
+10 10 10 10 10 10
+10 10 10 10 10 10
+10 10 10 10 10 10
+10 10 10 10 10 10
+20 20 20 20 20 20
+20 20 20 20 20 20
+20 20 20 20 20 20
+20 20 20 20 20 20"""
+
 let pgm5bin = @[
   'P'.uint8, '5'.uint8, '\n'.uint8,
   '6'.uint8, ' '.uint8, '1'.uint8, '2'.uint8, '\n'.uint8,
@@ -137,6 +153,8 @@ suite "validatePGM":
 suite "parsePGM(string)":
   test "normal":
     check pgm2str.parsePGM[] == pgm2[]
+  test "multi whitespace":
+    check pgm2_2str_whitespace.parsePGM[] == pgm2_2[]
 
 suite "parsePGM(openArray[uint8])":
   test "normal":

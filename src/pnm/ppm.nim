@@ -158,7 +158,7 @@ proc parsePPM*(s: string): PPM =
     doAssert "P3\n1 1\n255\n255 255 255".parsePPM[] == newPPM(ppmFileDiscriptorP3, 1, 1, @[255'u8, 255, 255])[]
   new(result)
   var lines: seq[string]
-  for line in s.splitLines:
+  for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
     if not line.startsWith "#":
       lines.add line
 
