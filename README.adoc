@@ -3,28 +3,127 @@
 
 = pnm
 
-Image library in pure Nim.
+PNM (Portable Anymap) generator/parser library in pure Nim.
 
 image:https://travis-ci.org/jiro4989/pnm.svg?branch=master["Build Status", link="https://travis-ci.org/jiro4989/pnm"]
 
-WARN:: Developing now.
+== Development
+
+nim -v
+
+  Nim Compiler Version 0.19.4 [Linux: amd64]
+  Compiled at 2019-02-01
+  Copyright (c) 2006-2018 by Andreas Rumpf
+
+  git hash: b6d96cafc8bcad1f3d32f2910b25cd11a93f7751
+  active boot switches: -d:release
+
+
+nimble -v
+
+  nimble v0.9.0 compiled at 2018-10-27 18:10:03
+  git hash: couldn't determine git hash
+
+== Install
+
+[source,bash]
+nimble install pnm
 
 == Usage
+
+=== Reading PGM file
 
 [source,nim]
 ----
 import pnm
 
 block:
-    let f = open("p1.pbm")
-    let pbm = f.readPBM()
-    echo pbm
+  # P2
+  let p = readPGMFile("tests/out/p2.pgm")
+  echo p
 
 block:
-    let pbm = f.readPBMFile("p4.pbm")
-    echo pbm
-
+  # P5
+  let p = readPGMFile("tests/out/p5.pgm")
+  echo p
 ----
+
+=== Writing PGM file
+
+[source,nim]
+----
+import pnm
+
+let col = 6
+let row = 12
+let max = 2
+let data = @[
+  0'u8, 0, 0, 0, 0, 0,
+  0'u8, 0, 0, 0, 0, 0,
+  0'u8, 0, 0, 0, 0, 0,
+  0'u8, 0, 0, 0, 0, 0,
+  1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1,
+  2, 2, 2, 2, 2, 2,
+  2, 2, 2, 2, 2, 2,
+  2, 2, 2, 2, 2, 2,
+  2, 2, 2, 2, 2, 2,
+]
+
+block:
+  # P2
+  let p = newPGM(pgmFileDiscriptorP2, col, row, data)
+  writePGMFile("tests/out/p2.pgm", p)
+
+block:
+  # P5
+  let p = newPGM(pgmFileDiscriptorP5, col, row, data)
+  writePGMFile("tests/out/p5.pgm", p)
+----
+
+=== Other examples
+
+See `examples` directory.
+Run example code.
+
+Generating PBM.
+
+[source,bash]
+nim c -d:release examples/pbm_example.nim
+./examples/pbm_example
+
+image:docs/pbm_example.png["PBM example"]
+
+Generating PGM.
+
+[source,bash]
+nim c -d:release examples/pgm_example.nim
+./examples/pgm_example
+
+image:docs/pgm_example.png["PGM example"]
+
+Generating PPM.
+
+[source,bash]
+nim c -d:release examples/ppm_example.nim
+./examples/ppm_example
+
+image:docs/ppm_example1.png["PPM example1"]
+image:docs/ppm_example2.png["PPM example2"]
+
+Controling generated PNM files.
+
+[source,bash]
+nim c -d:release examples/convert.nim
+./examples/convert
+
+image:docs/ppm_example1.convert.png["Converted PPM example1"]
+
+== Warning
+
+Available color byte of PGM and PPM is 1 byte (0~255).
 
 == Document
 
