@@ -56,7 +56,6 @@ import pnm
 
 let col = 6
 let row = 12
-let max = 2
 let data = @[
   0'u8, 0, 0, 0, 0, 0,
   0'u8, 0, 0, 0, 0, 0,
