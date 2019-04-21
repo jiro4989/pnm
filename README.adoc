@@ -3,7 +3,7 @@
 
 = pnm
 
-PNM (Portable Anymap) generator/parser library in pure Nim.
+https://en.wikipedia.org/wiki/Netpbm_format[PNM (Portable Anymap)] parser/generator library in pure Nim.
 
 image:https://travis-ci.org/jiro4989/pnm.svg?branch=master["Build Status", link="https://travis-ci.org/jiro4989/pnm"]
 
