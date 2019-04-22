@@ -19,21 +19,15 @@ task docs, "Generate documents":
   exec "nimble doc src/pnm.nim -o:docs/pnm.html"
 
 task examples, "Execute example code":
-  exec "nim c -d:release examples/pbm_example.nim"
-  exec "./examples/pbm_example"
-
-  exec "nim c -d:release examples/pgm_example.nim"
-  exec "./examples/pgm_example"
-
-  exec "nim c -d:release examples/ppm_example.nim"
-  exec "./examples/ppm_example"
-
-  exec "nim c -d:release examples/convert.nim"
-  exec "./examples/convert"
+  for d in ["write_pbm", "write_pgm", "write_ppm", "read_file"]:
+    withDir &"examples/{d}":
+      exec "nim c -d:release main.nim"
+      exec "./main"
+      exec "echo -----------------------------"
 
 task convert, "PNM to PNG":
-  exec "convert examples/pbm_example.pbm -scale 200x200 docs/pbm_example.png"
-  exec "convert examples/pgm_example.pgm -scale 500x400 docs/pgm_example.png"
-  exec "convert examples/ppm_example1.ppm -scale 512x512 docs/ppm_example1.png"
-  exec "convert examples/ppm_example2.ppm -scale 512x512 docs/ppm_example2.png"
-  exec "convert examples/ppm_example1.convert.ppm -scale 512x512 docs/ppm_example1.convert.png"
+  exec "convert examples/write_pbm/out.pbm -scale 200x200 docs/pbm_example.png"
+  exec "convert examples/write_pgm/out.pgm -scale 500x400 docs/pgm_example.png"
+  exec "convert examples/write_ppm/out1.ppm -scale 512x512 docs/ppm_example1.png"
+  exec "convert examples/write_ppm/out2.ppm -scale 512x512 docs/ppm_example2.png"
+  exec "convert examples/read_file/out1.ppm -scale 512x512 docs/ppm_example1.convert.png"

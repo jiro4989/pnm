@@ -6,7 +6,7 @@ from sequtils import repeat, concat
 from strformat import `&`
 
 let
-  fn = "examples/pbm_example.pbm"
+  fn = "out.pbm"
   blockSize = 20
   now = cpuTime()
   col = 20
@@ -29,4 +29,3 @@ let pbm = newPBM(pbmFileDiscriptorP4, col*blockSize, row, data.toBin)
 writePBMFile fn, pbm
 
 echo &"Success generating {fn}. times {cpuTime() - now} sec"
-echo "--------------------------------"

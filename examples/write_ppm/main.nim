@@ -9,7 +9,7 @@ let blockSize = 2
 block:
   let
     now = cpuTime()
-    fn = "examples/ppm_example1.ppm"
+    fn = "out1.ppm"
     col = 255
     row = 255
     b = 0'u8
@@ -30,7 +30,7 @@ block:
 
 block:
   let
-    fn = "examples/ppm_example2.ppm"
+    fn = "out2.ppm"
     now = cpuTime()
     col = 255
     row = 255
@@ -47,4 +47,3 @@ block:
   writePPMFile fn, ppm
 
   echo &"Success generating {fn}. times {cpuTime() - now} sec"
-  echo "--------------------------------"

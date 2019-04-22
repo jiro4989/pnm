@@ -5,7 +5,7 @@ from sequtils import repeat, concat
 from strformat import `&`
 
 let
-  fn = "examples/ppm_example1.ppm"
+  fn = "out.pgm"
   blockSize = 5
   now = cpuTime()
   col = 100
@@ -22,4 +22,3 @@ let pgm = newPGM(pgmFileDiscriptorP5, col*blockSize, row, data)
 writePGMFile fn, pgm
 
 echo &"Success generating {fn}. times {cpuTime() - now} sec"
-echo "--------------------------------"
