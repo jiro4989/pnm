@@ -90,24 +90,27 @@ Run example code.
 Generating PBM.
 
 [source,bash]
-nim c -d:release examples/pbm_example.nim
-./examples/pbm_example
+cd write_pbm
+nim c -d:release main.nim
+./main
 
 image:docs/pbm_example.png["PBM example"]
 
 Generating PGM.
 
 [source,bash]
-nim c -d:release examples/pgm_example.nim
-./examples/pgm_example
+cd write_pgm
+nim c -d:release main.nim
+./main
 
 image:docs/pgm_example.png["PGM example"]
 
 Generating PPM.
 
 [source,bash]
-nim c -d:release examples/ppm_example.nim
-./examples/ppm_example
+cd write_ppm
+nim c -d:release main.nim
+./main
 
 image:docs/ppm_example1.png["PPM example1"]
 image:docs/ppm_example2.png["PPM example2"]
@@ -115,8 +118,9 @@ image:docs/ppm_example2.png["PPM example2"]
 Controling generated PNM files.
 
 [source,bash]
-nim c -d:release examples/convert.nim
-./examples/convert
+cd read_file
+nim c -d:release main.nim
+./main
 
 image:docs/ppm_example1.convert.png["Converted PPM example1"]
 
