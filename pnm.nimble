@@ -18,7 +18,7 @@ task docs, "Generate documents":
     exec &"nimble doc src/pnm/{f}.nim -o:docs/{f}.html"
   exec "nimble doc src/pnm.nim -o:docs/pnm.html"
 
-task examples, "Execute example code":
+task examples, "Run example code":
   for d in ["write_pbm", "write_pgm", "write_ppm", "read_file"]:
     withDir &"examples/{d}":
       exec "nim c -d:release main.nim"
@@ -31,3 +31,8 @@ task convert, "PNM to PNG":
   exec "convert examples/write_ppm/out1.ppm -scale 512x512 docs/ppm_example1.png"
   exec "convert examples/write_ppm/out2.ppm -scale 512x512 docs/ppm_example2.png"
   exec "convert examples/read_file/out1.ppm -scale 512x512 docs/ppm_example1.convert.png"
+
+task ci, "Run CI tasks":
+  exec "nimble test"
+  exec "nimble docs"
+  exec "nimble examples"
