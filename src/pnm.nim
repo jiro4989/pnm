@@ -645,9 +645,6 @@ proc validatePBM*(s: openArray[uint8]) =
   ##
   ## Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was
   ## found.
-  ##
-  ## See also:
-  ## * `errors module <errors.html>`_
   runnableExamples:
     ## No error
     validatePBM(@['P'.uint8, '1'.uint8, '\n'.uint8,
@@ -670,9 +667,6 @@ proc validatePGM*(s: openArray[uint8]) =
   ##
   ## Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was
   ## found.
-  ##
-  ## See also:
-  ## * `errors module <errors.html>`_
   runnableExamples:
     ## No error
     validatePGM(@['P'.uint8, '2'.uint8, '\n'.uint8,
@@ -704,9 +698,6 @@ proc validatePPM*(s: openArray[uint8]) =
   ##
   ## Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was
   ## found.
-  ##
-  ## See also:
-  ## * `errors module <errors.html>`_
   runnableExamples:
     ## No error
     validatePPM(@['P'.uint8, '3'.uint8, '\n'.uint8,
