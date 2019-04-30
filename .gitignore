@@ -1,5 +1,3 @@
-tests/tpbm
-tests/tpgm
-tests/tppm
+tests/tpnm
 tests/tutil
 main
