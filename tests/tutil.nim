@@ -31,6 +31,10 @@ suite "toBin":
     check @[1'u8, 1, 1, 1, 0, 0, 0, 0].toBin == @[0b1111_0000'u8]
   test "1 1 1 1 1 1":
     check @[1'u8, 1, 1, 1, 1, 1].toBin == @[0b1111_1100'u8]
+  test "2行のデータ。1行8bit":
+    check @[1'u8, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1].toBin == @[0b1111_0000'u8, 0b0000_1111]
+  test "2行のデータ。1行5bit":
+    check @[1'u8, 1, 1, 0, 1, 1, 1, 1, 0, 1].toBin(5) == @[0b1110_1000'u8, 0b1110_1000]
   test "empty":
     var s: seq[uint8]
     check s.toBin == s

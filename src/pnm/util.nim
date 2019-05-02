@@ -61,7 +61,7 @@ proc toMatrixString*(s: string, col: int): string =
     lines.add line
   result = lines.mapIt(it.join(" ")).join("\n")
 
-proc toBin*(arr: openArray[uint8]): seq[uint8] =
+proc toBin*(arr: openArray[uint8], bitSize: int =  8): seq[uint8] =
   ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
   runnableExamples:
     doAssert @[1'u8, 1, 1, 1, 0, 0, 0, 0].toBin == @[0b1111_0000'u8]
@@ -74,12 +74,13 @@ proc toBin*(arr: openArray[uint8]): seq[uint8] =
     data = data shl 1
     data += u
     i.inc
-    if i mod 8 == 0:
+    if i mod bitSize == 0:
+      data = data shl (8 - bitSize)
       result.add data
       data = 0'u8
       i = 0
   if data != 0:
-    result.add data shl (8 - i)
+    result.add data shl (bitSize - i)
 
 proc removeCommentLine*(s: openArray[uint8]): seq[uint8] =
   ## Return sequence that removed comment line.
