@@ -1249,8 +1249,8 @@ function main() {
     title="toMatrixString(data: openArray[uint8]; col: int): string"><wbr />to<wbr />Matrix<wbr />String<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#toMatrixString%2Cstring%2Cint"
     title="toMatrixString(s: string; col: int): string"><wbr />to<wbr />Matrix<wbr />String<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#toBin%2CopenArray%5Buint8%5D"
-    title="toBin(arr: openArray[uint8]): seq[uint8]"><wbr />to<wbr />Bin<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#toBin%2CopenArray%5Buint8%5D%2Cint"
+    title="toBin(arr: openArray[uint8]; col: int = 8): seq[uint8]"><wbr />to<wbr />Bin<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#removeCommentLine%2CopenArray%5Buint8%5D"
     title="removeCommentLine(s: openArray[uint8]): seq[uint8]"><wbr />remove<wbr />Comment<wbr />Line<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#replaceWhiteSpace%2Cstring"
@@ -1311,8 +1311,8 @@ Return matrix string from decimal sequence. Matrix string is joined by whitespac
     <span class="StringLit">&quot;1 1 1 1 1 1 1 1\n0 0 0 0 0 0 0 0&quot;</span></pre>
 
 </dd>
-<a id="toBin,openArray[uint8]"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">toBin</span><span class="Other">(</span><span class="Identifier">arr</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="toBin,openArray[uint8],int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">toBin</span><span class="Other">(</span><span class="Identifier">arr</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">8</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">uint8</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns sequences that binary sequence is converted to uint8 every 8 bits.
 <p><strong class="examples_text">Examples:</strong></p>
@@ -1351,7 +1351,7 @@ Replace continued whitespace to simgle whitespace.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-30 08:02:49 UTC</small>
+        <small>Made with Nim. Generated: 2019-05-02 10:09:08 UTC</small>
       </div>
     </div>
   </div>
