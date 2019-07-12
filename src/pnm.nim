@@ -53,12 +53,12 @@
 ##
 ##    block:
 ##      # P1
-##      let p = newPBM(pbmFileDiscriptorP1, col, row, data)
+##      let p = newPBM(pbmFileDescriptorP1, col, row, data)
 ##      writePBMFile("tests/out/p1.pbm", p)
 ##
 ##    block:
 ##      # P4
-##      let p = newPBM(pbmFileDiscriptorP4, col, row, data)
+##      let p = newPBM(pbmFileDescriptorP4, col, row, data)
 ##      writePBMFile("tests/out/p4.pbm", p)
 ##
 ## PGM (Portable graymap)
@@ -112,12 +112,12 @@
 ##
 ##    block:
 ##      # P2
-##      let p = newPGM(pgmFileDiscriptorP2, col, row, data)
+##      let p = newPGM(pgmFileDescriptorP2, col, row, data)
 ##      writePGMFile("tests/out/p2.pgm", p)
 ##
 ##    block:
 ##      # P5
-##      let p = newPGM(pgmFileDiscriptorP5, col, row, data)
+##      let p = newPGM(pgmFileDescriptorP5, col, row, data)
 ##      writePGMFile("tests/out/p5.pgm", p)
 ##
 ## PPM (Portable pixmap)
@@ -171,12 +171,12 @@
 ##
 ##    block:
 ##      # P3
-##      let p = newPPM(ppmFileDiscriptorP3, col, row, data)
+##      let p = newPPM(ppmFileDescriptorP3, col, row, data)
 ##      writePPMFile("tests/out/p3.ppm", p)
 ##
 ##    block:
 ##      # P6
-##      let p = newPPM(ppmFileDiscriptorP6, col, row, data)
+##      let p = newPPM(ppmFileDescriptorP6, col, row, data)
 ##      writePPMFile("tests/out/p6.ppm", p)
 ##
 ## PNM format examples
@@ -245,7 +245,7 @@ type
   PBMObj* = object
     ## PBM object.
     ## Don't directly use this type.
-    fileDiscriptor*: string ## File discriptor (P1 or P4)
+    fileDescriptor*: string ## File descriptor (P1 or P4)
     col*, row*: int         ## Column count
     data*: seq[uint8]       ## Byte (pixel) data
   PBM* = ref PBMObj
@@ -254,7 +254,7 @@ type
   PGMObj* = object
     ## PGM object.
     ## Don't directly use this type.
-    fileDiscriptor*: string ## File discriptor (P2 or P5)
+    fileDescriptor*: string ## File descriptor (P2 or P5)
     col*, row*: int         ## Column count
     max*: uint8             ## Max value
     data*: seq[uint8]       ## Byte (pixel) data
@@ -264,59 +264,59 @@ type
   PPMObj* = object
     ## PPM object.
     ## Don't directly use this type.
-    fileDiscriptor*: string ## File discriptor (P3 or P6)
+    fileDescriptor*: string ## File descriptor (P3 or P6)
     col*, row*: int         ## Column count
     max*: uint8             ## Max value
     data*: seq[uint8]       ## Byte (pixel) data
   PPM* = ref PPMObj
     ## PPM ref object.
     ## Procedures use this type. Not PPMObj.
-  IllegalFileDiscriptorError* = object of Defect
-    ## Return this when file discriptor is wrong.
-    ## filediscriptors are P1 or P2 or P3 or P4 or P5 or P6.
+  IllegalFileDescriptorError* = object of Defect
+    ## Return this when file descriptor is wrong.
+    ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
   IllegalColumnRowError* = object of Defect
     ## Return this when column or row value is wrong.
   IllegalMaxValueError* = object of Defect
     ## Return this when max value is wrong.
 
 const
-  pbmFileDiscriptorP1* = "P1"
-  pgmFileDiscriptorP2* = "P2"
-  ppmFileDiscriptorP3* = "P3"
-  pbmFileDiscriptorP4* = "P4"
-  pgmFileDiscriptorP5* = "P5"
-  ppmFileDiscriptorP6* = "P6"
+  pbmFileDescriptorP1* = "P1"
+  pgmFileDescriptorP2* = "P2"
+  ppmFileDescriptorP3* = "P3"
+  pbmFileDescriptorP4* = "P4"
+  pgmFileDescriptorP5* = "P5"
+  ppmFileDescriptorP6* = "P6"
 
-proc newPBM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PBM =
+proc newPBM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PBM =
   ## Return new PBM.
   runnableExamples:
-    let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[1'u8])
-    let p4 = newPBM(pbmFileDiscriptorP4, 1, 1, @[1'u8])
+    let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
+    let p4 = newPBM(pbmFileDescriptorP4, 1, 1, @[1'u8])
   new result
-  result.fileDiscriptor = fileDiscriptor
+  result.fileDescriptor = fileDescriptor
   result.col = col
   result.row = row
   result.data = data
 
-proc newPGM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PGM =
+proc newPGM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PGM =
   ## Return new PGM.
   runnableExamples:
-    let p2 = newPGM(pgmFileDiscriptorP2, 1, 1, @[1'u8])
-    let p5 = newPGM(pgmFileDiscriptorP5, 1, 1, @[1'u8])
+    let p2 = newPGM(pgmFileDescriptorP2, 1, 1, @[1'u8])
+    let p5 = newPGM(pgmFileDescriptorP5, 1, 1, @[1'u8])
   new result
-  result.fileDiscriptor = fileDiscriptor
+  result.fileDescriptor = fileDescriptor
   result.col = col
   result.row = row
   result.max = data.max
   result.data = data
 
-proc newPPM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PPM =
+proc newPPM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PPM =
   ## Return new PPM.
   runnableExamples:
-    let p3 = newPPM(ppmFileDiscriptorP3, 1, 1, @[255'u8, 255, 255])
-    let p6 = newPPM(ppmFileDiscriptorP6, 1, 1, @[255'u8, 255, 255])
+    let p3 = newPPM(ppmFileDescriptorP3, 1, 1, @[255'u8, 255, 255])
+    let p6 = newPPM(ppmFileDescriptorP6, 1, 1, @[255'u8, 255, 255])
   new result
-  result.fileDiscriptor = fileDiscriptor
+  result.fileDescriptor = fileDescriptor
   result.col = col
   result.row = row
   result.max = data.max
@@ -325,20 +325,20 @@ proc newPPM*(fileDiscriptor: string, col, row: int, data: seq[uint8]): PPM =
 proc formatP1*(self: PBM): string =
   ## Return formatted string for PBM P1.
   runnableExamples:
-    let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[0b1000_0000'u8])
+    let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8])
     doAssert p1.formatP1 == "P1\n1 1\n1"
   let data = self.data.toBinString(self.col).toMatrixString(self.col)
-  result = &"""{self.fileDiscriptor}
+  result = &"""{self.fileDescriptor}
 {self.col} {self.row}
 {data}"""
 
 proc formatP2*(self: PGM): string =
   ## Return formatted string for PGM P2.
   runnableExamples:
-    let p = newPGM(pgmFileDiscriptorP2, 1, 1, @[2'u8])
+    let p = newPGM(pgmFileDescriptorP2, 1, 1, @[2'u8])
     doAssert p.formatP2 == "P2\n1 1\n2\n2"
   let data = self.data.toMatrixString(self.col)
-  result = &"""{self.fileDiscriptor}
+  result = &"""{self.fileDescriptor}
 {self.col} {self.row}
 {self.max}
 {data}"""
@@ -346,10 +346,10 @@ proc formatP2*(self: PGM): string =
 proc formatP3*(self: PPM): string =
   ## Return formatted string for PPM P3.
   runnableExamples:
-    let p = newPPM(ppmFileDiscriptorP3, 1, 1, @[255'u8, 255, 255])
+    let p = newPPM(ppmFileDescriptorP3, 1, 1, @[255'u8, 255, 255])
     doAssert p.formatP3 == "P3\n1 1\n255\n255 255 255"
   let data = self.data.toMatrixString 3
-  result = &"""{self.fileDiscriptor}
+  result = &"""{self.fileDescriptor}
 {self.col} {self.row}
 {self.max}
 {data}"""
@@ -357,7 +357,7 @@ proc formatP3*(self: PPM): string =
 proc formatP4*(self: PBM): seq[uint8] =
   ## Return formatted byte data for PBM P4.
   runnableExamples:
-    let p4 = newPBM(pbmFileDiscriptorP4, 1, 1, @[0b1000_0000'u8])
+    let p4 = newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8])
     doAssert p4.formatP4 == @[
       'P'.uint8, '4'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
@@ -365,8 +365,8 @@ proc formatP4*(self: PBM): seq[uint8] =
     ]
   # header part
   # -----------
-  # file discriptor
-  result.add self.fileDiscriptor.mapIt(it.uint8)
+  # file descriptor
+  result.add self.fileDescriptor.mapIt(it.uint8)
   result.add '\n'.uint8
   # col and row
   result.add self.col.`$`.mapIt(it.uint8)
@@ -380,7 +380,7 @@ proc formatP4*(self: PBM): seq[uint8] =
 proc formatP5*(self: PGM): seq[uint8] =
   ## Return formatted byte data for PGM P5.
   runnableExamples:
-    let p = newPGM(pgmFileDiscriptorP5, 1, 1, @[2'u8])
+    let p = newPGM(pgmFileDescriptorP5, 1, 1, @[2'u8])
     doAssert p.formatP5 == @[
       'P'.uint8, '5'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
@@ -389,8 +389,8 @@ proc formatP5*(self: PGM): seq[uint8] =
     ]
   # header part
   # -----------
-  # file discriptor
-  result.add self.fileDiscriptor.mapIt(it.uint8)
+  # file descriptor
+  result.add self.fileDescriptor.mapIt(it.uint8)
   result.add '\n'.uint8
   # col and row
   result.add self.col.`$`.mapIt(it.uint8)
@@ -406,7 +406,7 @@ proc formatP5*(self: PGM): seq[uint8] =
 proc formatP6*(self: PPM): seq[uint8] =
   ## Return formatted byte data for PPM P6.
   runnableExamples:
-    let p = newPPM(ppmFileDiscriptorP6, 1, 1, @[255'u8, 255, 255])
+    let p = newPPM(ppmFileDescriptorP6, 1, 1, @[255'u8, 255, 255])
     doAssert p.formatP6 == @[
       'P'.uint8, '6'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
@@ -415,8 +415,8 @@ proc formatP6*(self: PPM): seq[uint8] =
     ]
   # header part
   # -----------
-  # file discriptor
-  result.add self.fileDiscriptor.mapIt(it.uint8)
+  # file descriptor
+  result.add self.fileDescriptor.mapIt(it.uint8)
   result.add '\n'.uint8
   # col and row
   result.add self.col.`$`.mapIt(it.uint8)
@@ -435,7 +435,7 @@ proc parsePBM*(s: string): PBM =
   ## You should validate string to use this proc with `validatePBM proc
   ## <#validatePBM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDiscriptorP1, 1, 1, @[0b1000_0000'u8])[]
+    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8])[]
   ## P1用
   new(result)
   var lines: seq[string]
@@ -449,7 +449,7 @@ proc parsePBM*(s: string): PBM =
   if colRow.len < 2:
     return
 
-  result.fileDiscriptor = lines[0]
+  result.fileDescriptor = lines[0]
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
   for line in lines[2..^1]:
@@ -465,7 +465,7 @@ proc parsePBM*(s: openArray[uint8]): PBM =
       'P'.uint8, '4'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
       0b1000_0000'u8,
-    ].parsePBM[] == newPBM(pbmFileDiscriptorP4, 1, 1, @[0b1000_0000'u8])[]
+    ].parsePBM[] == newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -475,7 +475,7 @@ proc parsePBM*(s: openArray[uint8]): PBM =
       break
     colRowLine.add b.char
   let colRow = colRowLine.split(" ")
-  result.fileDiscriptor = s[0..1].mapIt(it.char).join("")
+  result.fileDescriptor = s[0..1].mapIt(it.char).join("")
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
   result.data = s[dataPos..^1]
@@ -486,8 +486,8 @@ proc parsePGM*(s: string): PGM =
   ## You should validate string to use this proc with `validatePGM proc
   ## <#validatePGM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P2\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDiscriptorP2, 1, 1, @[2'u8])[]
-    doAssert "P5\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDiscriptorP5, 1, 1, @[2'u8])[]
+    doAssert "P2\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, @[2'u8])[]
+    doAssert "P5\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, @[2'u8])[]
   new(result)
   var lines: seq[string]
   for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
@@ -500,7 +500,7 @@ proc parsePGM*(s: string): PGM =
   if colRow.len < 2:
     return
 
-  result.fileDiscriptor = lines[0]
+  result.fileDescriptor = lines[0]
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
   result.max = lines[2].parseUint.uint8
@@ -517,7 +517,7 @@ proc parsePGM*(s: openArray[uint8]): PGM =
                '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
                '2'.uint8, '\n'.uint8,
                2'u8,
-    ].parsePGM[] == newPGM(pgmFileDiscriptorP2, 1, 1, @[2'u8])[]
+    ].parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, @[2'u8])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -527,7 +527,7 @@ proc parsePGM*(s: openArray[uint8]): PGM =
       break
     colRowLine.add b.char
   let colRow = colRowLine.split(" ")
-  result.fileDiscriptor = s[0..1].mapIt(it.char).join("")
+  result.fileDescriptor = s[0..1].mapIt(it.char).join("")
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
   var maxV: string
@@ -545,7 +545,7 @@ proc parsePPM*(s: string): PPM =
   ## You should validate string to use this proc with `validatePPM proc
   ## <#validatePPM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P3\n1 1\n255\n255 255 255".parsePPM[] == newPPM(ppmFileDiscriptorP3, 1, 1, @[255'u8, 255, 255])[]
+    doAssert "P3\n1 1\n255\n255 255 255".parsePPM[] == newPPM(ppmFileDescriptorP3, 1, 1, @[255'u8, 255, 255])[]
   new(result)
   var lines: seq[string]
   for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
@@ -558,7 +558,7 @@ proc parsePPM*(s: string): PPM =
   if colRow.len < 2:
     return
 
-  result.fileDiscriptor = lines[0]
+  result.fileDescriptor = lines[0]
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
   result.max = lines[2].parseUint.uint8
@@ -575,7 +575,7 @@ proc parsePPM*(s: openArray[uint8]): PPM =
                '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
                '2'.uint8, '5'.uint8, '5'.uint8, '\n'.uint8,
                255'u8, 255, 255
-    ].parsePPM[] == newPPM(ppmFileDiscriptorP6, 1, 1, @[255'u8, 255, 255])[]
+    ].parsePPM[] == newPPM(ppmFileDescriptorP6, 1, 1, @[255'u8, 255, 255])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -585,7 +585,7 @@ proc parsePPM*(s: openArray[uint8]): PPM =
       break
     colRowLine.add b.char
   let colRow = colRowLine.split(" ")
-  result.fileDiscriptor = s[0..1].mapIt(it.char).join("")
+  result.fileDescriptor = s[0..1].mapIt(it.char).join("")
   result.col = colRow[0].parseInt
   result.row = colRow[1].parseInt
   var maxV: string
@@ -597,13 +597,13 @@ proc parsePPM*(s: openArray[uint8]): PPM =
   result.max = maxV.parseUint.uint8
   result.data = s[dataPos..^1]
 
-proc validateFileDiscriptor(s: openArray[uint8], fds: varargs[string]) =
-  ## Validate file discriptor of `s`.
+proc validateFileDescriptor(s: openArray[uint8], fds: varargs[string]) =
+  ## Validate file descriptor of `s`.
   ## Validation targets are `fds`.
-  ## Raise IllegalFileDiscriptorError when illegal was found.
+  ## Raise IllegalFileDescriptorError when illegal was found.
   let fd = s[0..1].mapIt(it.char).join("")
   if fd notin fds:
-    raise newException(IllegalFileDiscriptorError, &"IllegalFileDiscriptor: file discriptor is {fd}")
+    raise newException(IllegalFileDescriptorError, &"IllegalFileDescriptor: file descriptor is {fd}")
 
 proc validateColumnAndRow(s: openArray[uint8], start: int) =
   ## Validate column and row value of `s`.
@@ -643,7 +643,7 @@ proc validatePBM*(s: openArray[uint8]) =
   ## 1. It is P1 or P4 that 2 byte data at the head.
   ## 2. It is decimal number that data on 2 line.
   ##
-  ## Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was
+  ## Raise IllegalFileDescriptorError or IllegalColumnRowError when illegal was
   ## found.
   runnableExamples:
     ## No error
@@ -654,7 +654,7 @@ proc validatePBM*(s: openArray[uint8]) =
                   '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
                   '1'.uint8])
   let s2 = s.removeCommentLine
-  s2.validateFileDiscriptor(pbmFileDiscriptorP1, pbmFileDiscriptorP4)
+  s2.validateFileDescriptor(pbmFileDescriptorP1, pbmFileDescriptorP4)
   s2.validateColumnAndRow 3
 
 proc validatePGM*(s: openArray[uint8]) =
@@ -665,7 +665,7 @@ proc validatePGM*(s: openArray[uint8]) =
   ## 2. It is decimal number that data on 2 line.
   ## 3. It is max value of data that data on 3 line.
   ##
-  ## Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was
+  ## Raise IllegalFileDescriptorError or IllegalColumnRowError when illegal was
   ## found.
   runnableExamples:
     ## No error
@@ -676,7 +676,7 @@ proc validatePGM*(s: openArray[uint8]) =
                   '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
                   '1'.uint8])
   let s2 = s.removeCommentLine
-  s2.validateFileDiscriptor(pgmFileDiscriptorP2, pgmFileDiscriptorP5)
+  s2.validateFileDescriptor(pgmFileDescriptorP2, pgmFileDescriptorP5)
   s2.validateColumnAndRow 3
   var lfCnt: int
   var pos: int
@@ -696,7 +696,7 @@ proc validatePPM*(s: openArray[uint8]) =
   ## 2. It is decimal number that data on 2 line.
   ## 3. It is max value of data that data on 3 line.
   ##
-  ## Raise IllegalFileDiscriptorError or IllegalColumnRowError when illegal was
+  ## Raise IllegalFileDescriptorError or IllegalColumnRowError when illegal was
   ## found.
   runnableExamples:
     ## No error
@@ -709,7 +709,7 @@ proc validatePPM*(s: openArray[uint8]) =
                   '1'.uint8, '\n'.uint8,
                   '1'.uint8])
   let s2 = s.removeCommentLine
-  s2.validateFileDiscriptor(ppmFileDiscriptorP3, ppmFileDiscriptorP6)
+  s2.validateFileDescriptor(ppmFileDescriptorP3, ppmFileDescriptorP6)
   s2.validateColumnAndRow 3
   var lfCnt: int
   var pos: int
@@ -740,9 +740,9 @@ proc readPBM*(f: File): PBM =
   let fd = f.readLine
   f.setFilePos 0
   case fd
-  of pbmFileDiscriptorP1:
+  of pbmFileDescriptorP1:
     result = f.readAll.parsePBM
-  of pbmFileDiscriptorP4:
+  of pbmFileDescriptorP4:
     result = data.parsePBM
   else: discard
 
@@ -765,9 +765,9 @@ proc readPGM*(f: File): PGM =
   let fd = f.readLine
   f.setFilePos 0
   case fd
-  of pgmFileDiscriptorP2:
+  of pgmFileDescriptorP2:
     result = f.readAll.parsePGM
-  of pgmFileDiscriptorP5:
+  of pgmFileDescriptorP5:
     result = data.parsePGM
   else: discard
 
@@ -790,9 +790,9 @@ proc readPPM*(f: File): PPM =
   let fd = f.readLine
   f.setFilePos 0
   case fd
-  of ppmFileDiscriptorP3:
+  of ppmFileDescriptorP3:
     result = f.readAll.parsePPM
-  of ppmFileDiscriptorP6:
+  of ppmFileDescriptorP6:
     result = data.parsePPM
   else: discard
 
@@ -840,84 +840,84 @@ proc readPPMFile*(fn: string): PPM =
 
 proc writePBM*(f: File, data: PBM) =
   ## Write PBM (P1 or P4) to file.
-  ## Raise IllegalFileDiscriptorError when illegal was found from file
-  ## discriptor.
+  ## Raise IllegalFileDescriptorError when illegal was found from file
+  ## descriptor.
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[1'u8])
+      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
       var f = open("p1.pbm", fmWrite)
       f.writePBM p1
       f.close
       removeFile "p1.pbm"
     except:
       stderr.writeLine getCurrentExceptionMsg()
-  let fd = data.fileDiscriptor
+  let fd = data.fileDescriptor
   case fd
-  of pbmFileDiscriptorP1:
+  of pbmFileDescriptorP1:
     f.write data.formatP1
-  of pbmFileDiscriptorP4:
+  of pbmFileDescriptorP4:
     let bin = data.formatP4
     discard f.writeBytes(bin, 0, bin.len)
   else:
-    raise newException(IllegalFileDiscriptorError, &"file discriptor is {fd}")
+    raise newException(IllegalFileDescriptorError, &"file descriptor is {fd}")
 
 proc writePGM*(f: File, data: PGM) =
   ## Write PGM (P2 or P5) to file.
-  ## Raise IllegalFileDiscriptorError when illegal was found from file
-  ## discriptor.
+  ## Raise IllegalFileDescriptorError when illegal was found from file
+  ## descriptor.
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPGM(pgmFileDiscriptorP2, 1, 1, @[1'u8])
+      let p1 = newPGM(pgmFileDescriptorP2, 1, 1, @[1'u8])
       var f = open("p2.pgm", fmWrite)
       f.writePGM p1
       f.close
       removeFile "p2.pgm"
     except:
       stderr.writeLine getCurrentExceptionMsg()
-  let fd = data.fileDiscriptor
+  let fd = data.fileDescriptor
   case fd
-  of pgmFileDiscriptorP2:
+  of pgmFileDescriptorP2:
     f.write data.formatP2
-  of pgmFileDiscriptorP5:
+  of pgmFileDescriptorP5:
     let bin = data.formatP5
     discard f.writeBytes(bin, 0, bin.len)
   else:
-    raise newException(IllegalFileDiscriptorError, &"file discriptor is {fd}")
+    raise newException(IllegalFileDescriptorError, &"file descriptor is {fd}")
 
 proc writePPM*(f: File, data: PPM) =
   ## Write PPM (P3 or P6) to file.
-  ## Raise IllegalFileDiscriptorError when illegal was found from file
-  ## discriptor.
+  ## Raise IllegalFileDescriptorError when illegal was found from file
+  ## descriptor.
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPPM(ppmFileDiscriptorP3, 1, 1, @[1'u8])
+      let p1 = newPPM(ppmFileDescriptorP3, 1, 1, @[1'u8])
       var f = open("p3.ppm", fmWrite)
       f.writePPM p1
       f.close
       removeFile "p3.ppm"
     except:
       stderr.writeLine getCurrentExceptionMsg()
-  let fd = data.fileDiscriptor
+  let fd = data.fileDescriptor
   case fd
-  of ppmFileDiscriptorP3:
+  of ppmFileDescriptorP3:
     f.write data.formatP3
-  of ppmFileDiscriptorP6:
+  of ppmFileDescriptorP6:
     let bin = data.formatP6
     discard f.writeBytes(bin, 0, bin.len)
   else:
-    raise newException(IllegalFileDiscriptorError, &"file discriptor is {fd}")
+    raise newException(IllegalFileDescriptorError, &"file descriptor is {fd}")
 
 proc writePBMFile*(fn: string, data: PBM) =
   ## Write PBM (P1 or P4) to file.
-  ## Raise IllegalFileDiscriptorError when illegal was found from file
-  ## discriptor.
+  ## Raise IllegalFileDescriptorError when illegal was found from file
+  ## descriptor.
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPBM(pbmFileDiscriptorP1, 1, 1, @[1'u8])
+      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
       writePBMFile "p1.pbm", p1
       removeFile "p1.pbm"
     except:
@@ -928,12 +928,12 @@ proc writePBMFile*(fn: string, data: PBM) =
 
 proc writePGMFile*(fn: string, data: PGM) =
   ## Write PGM (P2 or P5) to file.
-  ## Raise IllegalFileDiscriptorError when illegal was found from file
-  ## discriptor.
+  ## Raise IllegalFileDescriptorError when illegal was found from file
+  ## descriptor.
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPGM(pgmFileDiscriptorP2, 1, 1, @[1'u8])
+      let p1 = newPGM(pgmFileDescriptorP2, 1, 1, @[1'u8])
       writePGMFile "p2.pgm", p1
       removeFile "p2.pgm"
     except:
@@ -944,12 +944,12 @@ proc writePGMFile*(fn: string, data: PGM) =
 
 proc writePPMFile*(fn: string, data: PPM) =
   ## Write PPM (P3 or P6) to file.
-  ## Raise IllegalFileDiscriptorError when illegal was found from file
-  ## discriptor.
+  ## Raise IllegalFileDescriptorError when illegal was found from file
+  ## descriptor.
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPPM(ppmFileDiscriptorP3, 1, 1, @[1'u8])
+      let p1 = newPPM(ppmFileDescriptorP3, 1, 1, @[1'u8])
       writePPMFile "p3.ppm", p1
       removeFile "p3.ppm"
     except:
