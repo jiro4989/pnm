@@ -22,7 +22,7 @@ block:
       for color in @[r, g, b].repeat(blockSize):
         data = data.concat color
 
-  let ppm = newPPM(ppmFileDiscriptorP6, col*blockSize, row, data)
+  let ppm = newPPM(ppmFileDescriptorP6, col*blockSize, row, data)
   writePPMFile fn, ppm
 
   echo &"Success generating {fn}. times {cpuTime() - now} sec"
@@ -43,7 +43,7 @@ block:
       for color in @[r, g, r*g].repeat(blockSize):
         data = data.concat color
 
-  let ppm = newPPM(ppmFileDiscriptorP6, col*blockSize, row, data)
+  let ppm = newPPM(ppmFileDescriptorP6, col*blockSize, row, data)
   writePPMFile fn, ppm
 
   echo &"Success generating {fn}. times {cpuTime() - now} sec"

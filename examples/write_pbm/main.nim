@@ -26,7 +26,7 @@ block:
     if i mod blockSize == 0:
       bin = bin xor 1
 
-  let pbm = newPBM(pbmFileDiscriptorP4, col*blockSize, row, data.toBin)
+  let pbm = newPBM(pbmFileDescriptorP4, col*blockSize, row, data.toBin)
   writePBMFile fn, pbm
 
   echo &"Success generating {fn}. times {cpuTime() - now} sec"
@@ -41,5 +41,5 @@ block:
     0,    0, 1, 0, 0,
     0,    1, 1, 1, 0,
   ]
-  let pbm = newPBM(pbmFileDiscriptorP4, col, row, data.toBin(5))
+  let pbm = newPBM(pbmFileDescriptorP4, col, row, data.toBin(5))
   writePBMFile("1.pbm", pbm)

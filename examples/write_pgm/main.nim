@@ -18,7 +18,7 @@ for i in 1..row:
   for j in 1'u8..col.uint8:
     data = data.concat j.repeat(blockSize)
 
-let pgm = newPGM(pgmFileDiscriptorP5, col*blockSize, row, data)
+let pgm = newPGM(pgmFileDescriptorP5, col*blockSize, row, data)
 writePGMFile fn, pgm
 
 echo &"Success generating {fn}. times {cpuTime() - now} sec"

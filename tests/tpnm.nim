@@ -23,8 +23,8 @@ block:
     0b00000000, 0b00000000, 0b00000000, 0b00000000,
   ]
 
-  let pbm1 = newPBM(pbmFileDiscriptorP1, col, row, data)
-  let pbm4 = newPBM(pbmFileDiscriptorP4, col, row, data)
+  let pbm1 = newPBM(pbmFileDescriptorP1, col, row, data)
+  let pbm4 = newPBM(pbmFileDescriptorP4, col, row, data)
 
   let pbm1str = """P1
 32 12
@@ -62,13 +62,13 @@ block:
     test "normal":
       check pbm1.formatP1 == pbm1str
     test "column size is 1":
-      check newPBM(pbmFileDiscriptorP1, 1, 1, @[0b1000_0000'u8]).formatP1 == "P1\n1 1\n1"
+      check newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8]).formatP1 == "P1\n1 1\n1"
 
   suite "formatP4":
     test "normal":
       check pbm1.formatP4 == pbm1bin
     test "column size is 1":
-      check newPBM(pbmFileDiscriptorP4, 1, 1, @[0b1000_0000'u8]).formatP4 == @[
+      check newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8]).formatP4 == @[
         'P'.uint8, '4'.uint8, '\n'.uint8,
         '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
         0b1000_0000'u8, 
@@ -82,8 +82,8 @@ block:
       validatePBM(@['P'.uint8, '4'.uint8, '\n'.uint8,
                     '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
                     '1'.uint8])
-    test "IllegalFileDiscriptorError":
-      expect IllegalFileDiscriptorError:
+    test "IllegalFileDescriptorError":
+      expect IllegalFileDescriptorError:
         validatePBM(@['P'.uint8, '9'.uint8, '\n'.uint8,
                       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
                       '1'.uint8])
@@ -153,9 +153,9 @@ block:
     20, 20, 20, 20, 20, 20,
   ]
 
-  let pgm2 = newPGM(pgmFileDiscriptorP2, col, row, data)
-  let pgm5 = newPGM(pgmFileDiscriptorP5, col, row, data)
-  let pgm2_2 = newPGM(pgmFileDiscriptorP2, 6, 12, data2)
+  let pgm2 = newPGM(pgmFileDescriptorP2, col, row, data)
+  let pgm5 = newPGM(pgmFileDescriptorP5, col, row, data)
+  let pgm2_2 = newPGM(pgmFileDescriptorP2, 6, 12, data2)
 
   const pgm2str = """P2
 6 12
@@ -230,13 +230,13 @@ block:
     test "number of data part is over 10":
       check pgm2_2.formatP2 == pgm2_2str
     test "column size is 1":
-      check newPGM(pgmFileDiscriptorP2, 1, 2, @[0b1000_0000'u8, 0b1000_0000'u8]).formatP2 == "P2\n1 2\n128\n128\n128"
+      check newPGM(pgmFileDescriptorP2, 1, 2, @[0b1000_0000'u8, 0b1000_0000'u8]).formatP2 == "P2\n1 2\n128\n128\n128"
 
   suite "formatP5":
     test "normal":
       check pgm5.formatP5 == pgm5bin
     test "column size is 1":
-      check newPGM(pgmFileDiscriptorP5, 1, 1, @[0b1000_0000'u8, 0b1000_0000'u8]).formatP5 == @[
+      check newPGM(pgmFileDescriptorP5, 1, 1, @[0b1000_0000'u8, 0b1000_0000'u8]).formatP5 == @[
         'P'.uint8, '5'.uint8, '\n'.uint8,
         '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
         '1'.uint8, '2'.uint8, '8'.uint8, '\n'.uint8,
@@ -249,8 +249,8 @@ block:
       @['P'.uint8, '2'.uint8, '\n'.uint8, '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8, '1'.uint8, '\n'.uint8, '1'.uint8,].validatePGM
     test "NoError P5":
       @['P'.uint8, '5'.uint8, '\n'.uint8, '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8, '1'.uint8, '\n'.uint8, '1'.uint8,].validatePGM
-    test "IllegalFileDiscriptorError":
-      expect IllegalFileDiscriptorError:
+    test "IllegalFileDescriptorError":
+      expect IllegalFileDescriptorError:
         @['P'.uint8, '3'.uint8, '\n'.uint8].validatePGM
         @['P'.uint8].validatePGM
         @[].validatePGM
@@ -301,8 +301,8 @@ block:
     0, 0, 0,
   ]
 
-  let p1 = newPPM(ppmFileDiscriptorP3, col, row, data)
-  let p2 = newPPM(ppmFileDiscriptorP6, col, row, data)
+  let p1 = newPPM(ppmFileDescriptorP3, col, row, data)
+  let p2 = newPPM(ppmFileDescriptorP6, col, row, data)
 
   const p1str = """P3
 3 2
@@ -347,13 +347,13 @@ block:
     test "normal":
       check p1.formatP3 == p1str
     test "column size is 1":
-      check newPPM(ppmFileDiscriptorP3, 1, 2, @[128'u8, 128, 128, 0, 0, 0]).formatP3 == "P3\n1 2\n128\n128 128 128\n0 0 0"
+      check newPPM(ppmFileDescriptorP3, 1, 2, @[128'u8, 128, 128, 0, 0, 0]).formatP3 == "P3\n1 2\n128\n128 128 128\n0 0 0"
 
   suite "formatP6":
     test "normal":
       check p2.formatP6 == p2bin
     test "column size is 1":
-      check newPPM(ppmFileDiscriptorP6, 1, 2, @[128'u8, 128, 128, 0, 0, 0]).formatP6 == @[
+      check newPPM(ppmFileDescriptorP6, 1, 2, @[128'u8, 128, 128, 0, 0, 0]).formatP6 == @[
         'P'.uint8, '6'.uint8, '\n'.uint8,
         '1'.uint8, ' '.uint8, '2'.uint8, '\n'.uint8,
         '1'.uint8, '2'.uint8, '8'.uint8, '\n'.uint8,
@@ -366,8 +366,8 @@ block:
       @['P'.uint8, '3'.uint8, '\n'.uint8, '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8, '1'.uint8, '\n'.uint8, '1'.uint8,].validatePPM
     test "NoError P6":
       @['P'.uint8, '6'.uint8, '\n'.uint8, '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8, '1'.uint8, '\n'.uint8, '1'.uint8,].validatePPM
-    test "IllegalFileDiscriptorError":
-      expect IllegalFileDiscriptorError:
+    test "IllegalFileDescriptorError":
+      expect IllegalFileDescriptorError:
         @['P'.uint8, '4'.uint8, '\n'.uint8].validatePPM
         @['P'.uint8, 'a'.uint8, '\n'.uint8].validatePPM
         @['P'.uint8].validatePPM
