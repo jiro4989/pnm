@@ -73,12 +73,12 @@ let data = @[
 
 block:
   # P2
-  let p = newPGM(pgmFileDiscriptorP2, col, row, data)
+  let p = newPGM(pgmFileDescriptorP2, col, row, data)
   writePGMFile("tests/out/p2.pgm", p)
 
 block:
   # P5
-  let p = newPGM(pgmFileDiscriptorP5, col, row, data)
+  let p = newPGM(pgmFileDescriptorP5, col, row, data)
   writePGMFile("tests/out/p5.pgm", p)
 ----
 
