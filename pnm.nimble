@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.1.1"
+version       = "2.0.0"
 author        = "jiro4989"
 description   = "pnm is library for PNM (Portable AnyMap)."
 license       = "MIT"
