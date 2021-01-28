@@ -26,8 +26,3 @@ task convert, "PNM to PNG":
   exec "convert examples/write_ppm/out1.ppm -scale 512x512 docs/ppm_example1.png"
   exec "convert examples/write_ppm/out2.ppm -scale 512x512 docs/ppm_example2.png"
   exec "convert examples/read_file/out1.ppm -scale 512x512 docs/ppm_example1.convert.png"
-
-task ci, "Run CI tasks":
-  exec "nimble test"
-  exec "nimble docs"
-  exec "nimble examples"
