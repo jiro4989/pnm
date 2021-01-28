@@ -1,0 +1,7 @@
+toBinSeq	pnm/util.html#toBinSeq,uint8	util: toBinSeq(b: uint8): seq[uint8]	
+toBinString	pnm/util.html#toBinString,openArray[uint8],int	util: toBinString(data: openArray[uint8]; col: int): string	
+toMatrixString	pnm/util.html#toMatrixString,openArray[uint8],int	util: toMatrixString(data: openArray[uint8]; col: int): string	
+toMatrixString	pnm/util.html#toMatrixString,string,int	util: toMatrixString(s: string; col: int): string	
+toBin	pnm/util.html#toBin,openArray[uint8],int	util: toBin(arr: openArray[uint8]; col: int = 8): seq[uint8]	
+removeCommentLine	pnm/util.html#removeCommentLine,openArray[uint8]	util: removeCommentLine(s: openArray[uint8]): seq[uint8]	
+replaceWhiteSpace	pnm/util.html#replaceWhiteSpace,string	util: replaceWhiteSpace(s: string): string	

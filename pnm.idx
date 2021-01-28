@@ -1,0 +1,63 @@
+Basic usage	pnm.html#basic-usage	 Basic usage	
+PBM (Portable bitmap)	pnm.html#basic-usage-pbm-portable-bitmap	  PBM (Portable bitmap)	
+Reading PBM file	pnm.html#pbm-portable-bitmap-reading-pbm-file	   Reading PBM file	
+Writing PBM file	pnm.html#pbm-portable-bitmap-writing-pbm-file	   Writing PBM file	
+PGM (Portable graymap)	pnm.html#basic-usage-pgm-portable-graymap	  PGM (Portable graymap)	
+Reading PGM file	pnm.html#pgm-portable-graymap-reading-pgm-file	   Reading PGM file	
+Writing PGM file	pnm.html#pgm-portable-graymap-writing-pgm-file	   Writing PGM file	
+PPM (Portable pixmap)	pnm.html#basic-usage-ppm-portable-pixmap	  PPM (Portable pixmap)	
+Reading PPM file	pnm.html#ppm-portable-pixmap-reading-ppm-file	   Reading PPM file	
+Writing PPM file	pnm.html#ppm-portable-pixmap-writing-ppm-file	   Writing PPM file	
+PNM format examples	pnm.html#pnm-format-examples	 PNM format examples	
+PBM	pnm.html#pnm-format-examples-pbm	  PBM	
+PGM	pnm.html#pnm-format-examples-pgm	  PGM	
+PPM	pnm.html#pnm-format-examples-ppm	  PPM	
+See also	pnm.html#see-also	 See also	
+PBMObj	pnm.html#PBMObj	pnm: PBMObj	
+PBM	pnm.html#PBM	pnm: PBM	
+PGMObj	pnm.html#PGMObj	pnm: PGMObj	
+PGM	pnm.html#PGM	pnm: PGM	
+PPMObj	pnm.html#PPMObj	pnm: PPMObj	
+PPM	pnm.html#PPM	pnm: PPM	
+IllegalFileDescriptorError	pnm.html#IllegalFileDescriptorError	pnm: IllegalFileDescriptorError	
+IllegalColumnRowError	pnm.html#IllegalColumnRowError	pnm: IllegalColumnRowError	
+IllegalMaxValueError	pnm.html#IllegalMaxValueError	pnm: IllegalMaxValueError	
+pbmFileDescriptorP1	pnm.html#pbmFileDescriptorP1	pnm: pbmFileDescriptorP1	
+pgmFileDescriptorP2	pnm.html#pgmFileDescriptorP2	pnm: pgmFileDescriptorP2	
+ppmFileDescriptorP3	pnm.html#ppmFileDescriptorP3	pnm: ppmFileDescriptorP3	
+pbmFileDescriptorP4	pnm.html#pbmFileDescriptorP4	pnm: pbmFileDescriptorP4	
+pgmFileDescriptorP5	pnm.html#pgmFileDescriptorP5	pnm: pgmFileDescriptorP5	
+ppmFileDescriptorP6	pnm.html#ppmFileDescriptorP6	pnm: ppmFileDescriptorP6	
+newPBM	pnm.html#newPBM,string,int,int,seq[uint8]	pnm: newPBM(fileDescriptor: string; col, row: int; data: seq[uint8]): PBM	
+newPGM	pnm.html#newPGM,string,int,int,seq[uint8]	pnm: newPGM(fileDescriptor: string; col, row: int; data: seq[uint8]): PGM	
+newPPM	pnm.html#newPPM,string,int,int,seq[uint8]	pnm: newPPM(fileDescriptor: string; col, row: int; data: seq[uint8]): PPM	
+formatP1	pnm.html#formatP1,PBM	pnm: formatP1(self: PBM): string	
+formatP2	pnm.html#formatP2,PGM	pnm: formatP2(self: PGM): string	
+formatP3	pnm.html#formatP3,PPM	pnm: formatP3(self: PPM): string	
+formatP4	pnm.html#formatP4,PBM	pnm: formatP4(self: PBM): seq[uint8]	
+formatP5	pnm.html#formatP5,PGM	pnm: formatP5(self: PGM): seq[uint8]	
+formatP6	pnm.html#formatP6,PPM	pnm: formatP6(self: PPM): seq[uint8]	
+parsePBM	pnm.html#parsePBM,string	pnm: parsePBM(s: string): PBM	
+parsePBM	pnm.html#parsePBM,openArray[uint8]	pnm: parsePBM(s: openArray[uint8]): PBM	
+parsePGM	pnm.html#parsePGM,string	pnm: parsePGM(s: string): PGM	
+parsePGM	pnm.html#parsePGM,openArray[uint8]	pnm: parsePGM(s: openArray[uint8]): PGM	
+parsePPM	pnm.html#parsePPM,string	pnm: parsePPM(s: string): PPM	
+parsePPM	pnm.html#parsePPM,openArray[uint8]	pnm: parsePPM(s: openArray[uint8]): PPM	
+validatePBM	pnm.html#validatePBM,openArray[uint8]	pnm: validatePBM(s: openArray[uint8])	
+validatePGM	pnm.html#validatePGM,openArray[uint8]	pnm: validatePGM(s: openArray[uint8])	
+validatePPM	pnm.html#validatePPM,openArray[uint8]	pnm: validatePPM(s: openArray[uint8])	
+readPBM	pnm.html#readPBM,File	pnm: readPBM(f: File): PBM	
+readPGM	pnm.html#readPGM,File	pnm: readPGM(f: File): PGM	
+readPPM	pnm.html#readPPM,File	pnm: readPPM(f: File): PPM	
+readPBMFile	pnm.html#readPBMFile,string	pnm: readPBMFile(fn: string): PBM	
+readPGMFile	pnm.html#readPGMFile,string	pnm: readPGMFile(fn: string): PGM	
+readPPMFile	pnm.html#readPPMFile,string	pnm: readPPMFile(fn: string): PPM	
+writePBM	pnm.html#writePBM,File,PBM	pnm: writePBM(f: File; data: PBM)	
+writePGM	pnm.html#writePGM,File,PGM	pnm: writePGM(f: File; data: PGM)	
+writePPM	pnm.html#writePPM,File,PPM	pnm: writePPM(f: File; data: PPM)	
+writePBMFile	pnm.html#writePBMFile,string,PBM	pnm: writePBMFile(fn: string; data: PBM)	
+writePGMFile	pnm.html#writePGMFile,string,PGM	pnm: writePGMFile(fn: string; data: PGM)	
+writePPMFile	pnm.html#writePPMFile,string,PPM	pnm: writePPMFile(fn: string; data: PPM)	
+`$`	pnm.html#$,PBM	pnm: `$`(self: PBM): string	
+`$`	pnm.html#$,PGM	pnm: `$`(self: PGM): string	
+`$`	pnm.html#$,PPM	pnm: `$`(self: PPM): string	
