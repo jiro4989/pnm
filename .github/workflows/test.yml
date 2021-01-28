@@ -11,23 +11,11 @@ on:
       - "docs/*"
 
 jobs:
-  skip:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Skip job"
-
-  before:
-    runs-on: ubuntu-latest
-    if: "! contains(github.event.head_commit.message, '[skip ci]')"
-    steps:
-      - run: echo "not contains '[skip ci]'"
-
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         nim-version: ['1.0.x', '1.2.x', 'stable']
-    needs: before
     steps:
       - uses: actions/checkout@v1
       - uses: jiro4989/setup-nim-action@v1
