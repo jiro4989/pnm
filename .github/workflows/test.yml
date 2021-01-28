@@ -35,7 +35,7 @@ jobs:
           nim-version: ${{ matrix.nim-version }}
       - name: Install test
         run: nimble install -Y
-      - name: Run test
+      - name: Unit test
         run: nimble test -Y
       - name: Examples test
         run: |
@@ -43,6 +43,8 @@ jobs:
             (
               cd "$dir"
               nim c -d:release main.nim
-              time ./main
+              ./main
+              false
             )
           done
+          true
