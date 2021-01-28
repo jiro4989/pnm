@@ -13,11 +13,6 @@ requires "nim >= 0.19.4"
 
 import strformat
 
-task docs, "Generate documents":
-  for f in ["util"]:
-    exec &"nimble doc src/pnm/{f}.nim -o:docs/{f}.html"
-  exec "nimble doc src/pnm.nim -o:docs/pnm.html"
-
 task examples, "Run example code":
   for d in ["write_pbm", "write_pgm", "write_ppm", "read_file"]:
     withDir &"examples/{d}":
