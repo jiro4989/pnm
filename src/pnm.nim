@@ -310,6 +310,13 @@ proc newPGM*(fileDescriptor: string, col, row: int, max: uint8, data: seq[uint8]
   result.max = max
   result.data = data
 
+proc newPGM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PGM =
+  ## Return a new PGM with the maximum brightness of the data as the maximum brightness of the image.
+  runnableExamples:
+    let p2 = newPGM(pgmFileDescriptorP2, 1, 1, @[1'u8])
+    let p5 = newPGM(pgmFileDescriptorP5, 1, 1, @[1'u8])
+  result = newPGM(fileDescriptor, col, row, data.max, data)
+
 proc newPPM*(fileDescriptor: string, col, row: int, max: uint8, data: seq[uint8]): PPM =
   ## Return new PPM.
   runnableExamples:
@@ -321,6 +328,13 @@ proc newPPM*(fileDescriptor: string, col, row: int, max: uint8, data: seq[uint8]
   result.row = row
   result.max = max
   result.data = data
+
+proc newPPM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PPM =
+  ## Return a new PPM with the maximum brightness of the data as the maximum brightness of the image.
+  runnableExamples:
+    let p3 = newPPM(ppmFileDescriptorP3, 1, 1, @[255'u8, 255, 255])
+    let p6 = newPPM(ppmFileDescriptorP6, 1, 1, @[255'u8, 255, 255])
+  result = newPPM(fileDescriptor, col, row, data.max, data)
 
 proc formatP1*(self: PBM): string =
   ## Return formatted string for PBM P1.
