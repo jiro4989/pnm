@@ -44,7 +44,5 @@ jobs:
               cd "$dir"
               nim c -d:release main.nim
               ./main
-              false
             )
           done
-          true
