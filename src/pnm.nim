@@ -500,8 +500,8 @@ proc parsePGM*(s: string): PGM =
   ## You should validate string to use this proc with `validatePGM proc
   ## <#validatePGM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P2\n1 1\n2\n255".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
-    doAssert "P5\n1 1\n2\n255".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[2'u8])[]
+    doAssert "P2\n1 1\n255\n2".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
+    doAssert "P5\n1 1\n255\n2".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[2'u8])[]
   new(result)
   var lines: seq[string]
   for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
