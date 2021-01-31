@@ -156,6 +156,8 @@ block:
   let pgm2 = newPGM(pgmFileDescriptorP2, col, row, data)
   let pgm5 = newPGM(pgmFileDescriptorP5, col, row, data)
   let pgm2_2 = newPGM(pgmFileDescriptorP2, 6, 12, data2)
+  let pgm2_3 = newPGM(pgmFileDescriptorP2, col, row, 255, data)
+  let pgm5_2 = newPGM(pgmFileDescriptorP5, col, row, 255, data)
 
   const pgm2str = """P2
 6 12
@@ -205,6 +207,22 @@ block:
 20 20 20 20 20 20
 20 20 20 20 20 20"""
 
+  const pgm2_3str = """P2
+6 12
+255
+0 0 0 0 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0
+1 1 1 1 1 1
+1 1 1 1 1 1
+1 1 1 1 1 1
+1 1 1 1 1 1
+2 2 2 2 2 2
+2 2 2 2 2 2
+2 2 2 2 2 2
+2 2 2 2 2 2"""
+
   let pgm5bin = @[
     'P'.uint8, '5'.uint8, '\n'.uint8,
     '6'.uint8, ' '.uint8, '1'.uint8, '2'.uint8, '\n'.uint8,
@@ -223,18 +241,39 @@ block:
     2, 2, 2, 2, 2, 2,
   ]
 
+  let pgm5_2bin = @[
+    'P'.uint8, '5'.uint8, '\n'.uint8,
+    '6'.uint8, ' '.uint8, '1'.uint8, '2'.uint8, '\n'.uint8,
+    '2'.uint8, '5'.uint8, '5'.uint8, '\n'.uint8,
+    0'u8, 0, 0, 0, 0, 0,
+    0'u8, 0, 0, 0, 0, 0,
+    0'u8, 0, 0, 0, 0, 0,
+    0'u8, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2,
+  ]
 
   suite "formatP2":
     test "normal":
       check pgm2.formatP2 == pgm2str
     test "number of data part is over 10":
       check pgm2_2.formatP2 == pgm2_2str
+    test "the maximum brightness is set":
+      check pgm2_3.formatP2 == pgm2_3str
     test "column size is 1":
       check newPGM(pgmFileDescriptorP2, 1, 2, @[0b1000_0000'u8, 0b1000_0000'u8]).formatP2 == "P2\n1 2\n128\n128\n128"
 
   suite "formatP5":
     test "normal":
       check pgm5.formatP5 == pgm5bin
+    test "the maximum brightness is set":
+      check pgm5_2.formatP5 == pgm5_2bin
     test "column size is 1":
       check newPGM(pgmFileDescriptorP5, 1, 1, @[0b1000_0000'u8, 0b1000_0000'u8]).formatP5 == @[
         'P'.uint8, '5'.uint8, '\n'.uint8,
@@ -301,8 +340,19 @@ block:
     0, 0, 0,
   ]
 
+  let data2 = @[
+    100'u8, 0, 0,
+    0, 100, 0,
+    0, 0, 100,
+    100, 100, 0,
+    100, 100, 100,
+    0, 0, 0
+  ]
+
   let p1 = newPPM(ppmFileDescriptorP3, col, row, data)
   let p2 = newPPM(ppmFileDescriptorP6, col, row, data)
+  let p1_2 = newPPM(ppmFileDescriptorP3, col, row, 255, data2)
+  let p2_2 = newPPM(ppmFileDescriptorP6, col, row, 255, data2)
 
   const p1str = """P3
 3 2
@@ -330,6 +380,16 @@ block:
 255 255 255
 0   0   0  """
 
+  const p1_2str = """P3
+3 2
+255
+100 0 0
+0 100 0
+0 0 100
+100 100 0
+100 100 100
+0 0 0"""
+
   let p2bin = @[
     'P'.uint8, '6'.uint8, '\n'.uint8,
     '3'.uint8, ' '.uint8, '2'.uint8, '\n'.uint8,
@@ -342,16 +402,32 @@ block:
     0, 0, 0,
   ]
 
+  let p2_2bin = @[
+    'P'.uint8, '6'.uint8, '\n'.uint8,
+    '3'.uint8, ' '.uint8, '2'.uint8, '\n'.uint8,
+    '2'.uint8, '5'.uint8, '5'.uint8, '\n'.uint8,
+    100'u8, 0, 0,
+    0, 100'u8, 0,
+    0, 0, 100'u8,
+    100, 100, 0,
+    100, 100, 100,
+    0, 0, 0,
+  ]
+
 
   suite "formatP3":
     test "normal":
       check p1.formatP3 == p1str
+    test "the maximum brightness is set":
+      check p1_2.formatP3 == p1_2str
     test "column size is 1":
       check newPPM(ppmFileDescriptorP3, 1, 2, @[128'u8, 128, 128, 0, 0, 0]).formatP3 == "P3\n1 2\n128\n128 128 128\n0 0 0"
 
   suite "formatP6":
     test "normal":
       check p2.formatP6 == p2bin
+    test "the maximum brightness is set":
+      check p2_2.formatP6 == p2_2bin
     test "column size is 1":
       check newPPM(ppmFileDescriptorP6, 1, 2, @[128'u8, 128, 128, 0, 0, 0]).formatP6 == @[
         'P'.uint8, '6'.uint8, '\n'.uint8,

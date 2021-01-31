@@ -298,34 +298,48 @@ proc newPBM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PBM =
   result.row = row
   result.data = data
 
-proc newPGM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PGM =
+proc newPGM*(fileDescriptor: string, col, row: int, max: uint8, data: seq[uint8]): PGM =
   ## Return new PGM.
+  runnableExamples:
+    let p2 = newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[1'u8])
+    let p5 = newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[1'u8])
+  new result
+  result.fileDescriptor = fileDescriptor
+  result.col = col
+  result.row = row
+  result.max = max
+  result.data = data
+
+proc newPGM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PGM =
+  ## Return a new PGM with the maximum brightness of the data as the maximum brightness of the image.
   runnableExamples:
     let p2 = newPGM(pgmFileDescriptorP2, 1, 1, @[1'u8])
     let p5 = newPGM(pgmFileDescriptorP5, 1, 1, @[1'u8])
+  result = newPGM(fileDescriptor, col, row, data.max, data)
+
+proc newPPM*(fileDescriptor: string, col, row: int, max: uint8, data: seq[uint8]): PPM =
+  ## Return new PPM.
+  runnableExamples:
+    let p3 = newPPM(ppmFileDescriptorP3, 1, 1, 255'u8, @[255'u8, 255, 255])
+    let p6 = newPPM(ppmFileDescriptorP6, 1, 1, 255'u8, @[255'u8, 255, 255])
   new result
   result.fileDescriptor = fileDescriptor
   result.col = col
   result.row = row
-  result.max = data.max
+  result.max = max
   result.data = data
 
 proc newPPM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PPM =
-  ## Return new PPM.
+  ## Return a new PPM with the maximum brightness of the data as the maximum brightness of the image.
   runnableExamples:
     let p3 = newPPM(ppmFileDescriptorP3, 1, 1, @[255'u8, 255, 255])
     let p6 = newPPM(ppmFileDescriptorP6, 1, 1, @[255'u8, 255, 255])
-  new result
-  result.fileDescriptor = fileDescriptor
-  result.col = col
-  result.row = row
-  result.max = data.max
-  result.data = data
+  result = newPPM(fileDescriptor, col, row, data.max, data)
 
 proc formatP1*(self: PBM): string =
   ## Return formatted string for PBM P1.
   runnableExamples:
-    let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8])
+    let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[0b1000_0000'u8])
     doAssert p1.formatP1 == "P1\n1 1\n1"
   let data = self.data.toBinString(self.col).toMatrixString(self.col)
   result = &"""{self.fileDescriptor}
@@ -335,7 +349,7 @@ proc formatP1*(self: PBM): string =
 proc formatP2*(self: PGM): string =
   ## Return formatted string for PGM P2.
   runnableExamples:
-    let p = newPGM(pgmFileDescriptorP2, 1, 1, @[2'u8])
+    let p = newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])
     doAssert p.formatP2 == "P2\n1 1\n2\n2"
   let data = self.data.toMatrixString(self.col)
   result = &"""{self.fileDescriptor}
@@ -346,7 +360,7 @@ proc formatP2*(self: PGM): string =
 proc formatP3*(self: PPM): string =
   ## Return formatted string for PPM P3.
   runnableExamples:
-    let p = newPPM(ppmFileDescriptorP3, 1, 1, @[255'u8, 255, 255])
+    let p = newPPM(ppmFileDescriptorP3, 1, 1, 255'u8, @[255'u8, 255, 255])
     doAssert p.formatP3 == "P3\n1 1\n255\n255 255 255"
   let data = self.data.toMatrixString 3
   result = &"""{self.fileDescriptor}
@@ -357,7 +371,7 @@ proc formatP3*(self: PPM): string =
 proc formatP4*(self: PBM): seq[uint8] =
   ## Return formatted byte data for PBM P4.
   runnableExamples:
-    let p4 = newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8])
+    let p4 = newPBM(pbmFileDescriptorP4, 1, 1, 255'u8, @[0b1000_0000'u8])
     doAssert p4.formatP4 == @[
       'P'.uint8, '4'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
@@ -380,7 +394,7 @@ proc formatP4*(self: PBM): seq[uint8] =
 proc formatP5*(self: PGM): seq[uint8] =
   ## Return formatted byte data for PGM P5.
   runnableExamples:
-    let p = newPGM(pgmFileDescriptorP5, 1, 1, @[2'u8])
+    let p = newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[2'u8])
     doAssert p.formatP5 == @[
       'P'.uint8, '5'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
@@ -406,7 +420,7 @@ proc formatP5*(self: PGM): seq[uint8] =
 proc formatP6*(self: PPM): seq[uint8] =
   ## Return formatted byte data for PPM P6.
   runnableExamples:
-    let p = newPPM(ppmFileDescriptorP6, 1, 1, @[255'u8, 255, 255])
+    let p = newPPM(ppmFileDescriptorP6, 1, 1, 255'u8, @[255'u8, 255, 255])
     doAssert p.formatP6 == @[
       'P'.uint8, '6'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
@@ -435,7 +449,7 @@ proc parsePBM*(s: string): PBM =
   ## You should validate string to use this proc with `validatePBM proc
   ## <#validatePBM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8])[]
+    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[0b1000_0000'u8])[]
   ## P1用
   new(result)
   var lines: seq[string]
@@ -465,7 +479,7 @@ proc parsePBM*(s: openArray[uint8]): PBM =
       'P'.uint8, '4'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
       0b1000_0000'u8,
-    ].parsePBM[] == newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8])[]
+    ].parsePBM[] == newPBM(pbmFileDescriptorP4, 1, 1, 255'u8, @[0b1000_0000'u8])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -486,8 +500,8 @@ proc parsePGM*(s: string): PGM =
   ## You should validate string to use this proc with `validatePGM proc
   ## <#validatePGM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P2\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, @[2'u8])[]
-    doAssert "P5\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, @[2'u8])[]
+    doAssert "P2\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
+    doAssert "P5\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[2'u8])[]
   new(result)
   var lines: seq[string]
   for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
@@ -517,7 +531,7 @@ proc parsePGM*(s: openArray[uint8]): PGM =
                '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
                '2'.uint8, '\n'.uint8,
                2'u8,
-    ].parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, @[2'u8])[]
+    ].parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -545,7 +559,7 @@ proc parsePPM*(s: string): PPM =
   ## You should validate string to use this proc with `validatePPM proc
   ## <#validatePPM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P3\n1 1\n255\n255 255 255".parsePPM[] == newPPM(ppmFileDescriptorP3, 1, 1, @[255'u8, 255, 255])[]
+    doAssert "P3\n1 1\n255\n255 255 255".parsePPM[] == newPPM(ppmFileDescriptorP3, 1, 1, 255'u8, @[255'u8, 255, 255])[]
   new(result)
   var lines: seq[string]
   for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
@@ -575,7 +589,7 @@ proc parsePPM*(s: openArray[uint8]): PPM =
                '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
                '2'.uint8, '5'.uint8, '5'.uint8, '\n'.uint8,
                255'u8, 255, 255
-    ].parsePPM[] == newPPM(ppmFileDescriptorP6, 1, 1, @[255'u8, 255, 255])[]
+    ].parsePPM[] == newPPM(ppmFileDescriptorP6, 1, 1, 255'u8, @[255'u8, 255, 255])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -845,7 +859,7 @@ proc writePBM*(f: File, data: PBM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
+      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[1'u8])
       var f = open("p1.pbm", fmWrite)
       f.writePBM p1
       f.close
@@ -869,7 +883,7 @@ proc writePGM*(f: File, data: PGM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPGM(pgmFileDescriptorP2, 1, 1, @[1'u8])
+      let p1 = newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[1'u8])
       var f = open("p2.pgm", fmWrite)
       f.writePGM p1
       f.close
@@ -893,7 +907,7 @@ proc writePPM*(f: File, data: PPM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPPM(ppmFileDescriptorP3, 1, 1, @[1'u8])
+      let p1 = newPPM(ppmFileDescriptorP3, 1, 1, 255'u8, @[1'u8])
       var f = open("p3.ppm", fmWrite)
       f.writePPM p1
       f.close
@@ -917,7 +931,7 @@ proc writePBMFile*(fn: string, data: PBM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
+      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[1'u8])
       writePBMFile "p1.pbm", p1
       removeFile "p1.pbm"
     except:
@@ -933,7 +947,7 @@ proc writePGMFile*(fn: string, data: PGM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPGM(pgmFileDescriptorP2, 1, 1, @[1'u8])
+      let p1 = newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[1'u8])
       writePGMFile "p2.pgm", p1
       removeFile "p2.pgm"
     except:
@@ -949,7 +963,7 @@ proc writePPMFile*(fn: string, data: PPM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPPM(ppmFileDescriptorP3, 1, 1, @[1'u8])
+      let p1 = newPPM(ppmFileDescriptorP3, 1, 1, 255'u8, @[1'u8])
       writePPMFile "p3.ppm", p1
       removeFile "p3.ppm"
     except:
