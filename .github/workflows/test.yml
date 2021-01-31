@@ -34,3 +34,15 @@ jobs:
               ./main
             )
           done
+
+  docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        nim-version: ['stable']
+    steps:
+      - uses: actions/checkout@v1
+      - uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: ${{ matrix.nim-version }}
+      - run: nimble doc --index:on --project --out:${{ env.deploy-dir }} ${{ env.nim-src }}
