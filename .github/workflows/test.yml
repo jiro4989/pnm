@@ -45,4 +45,4 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ matrix.nim-version }}
-      - run: nimble doc --index:on --project --out:${{ env.deploy-dir }} ${{ env.nim-src }}
+      - run: nimble doc --index:on --project --out:.out src/pnm.nim
