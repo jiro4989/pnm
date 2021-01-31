@@ -339,7 +339,7 @@ proc newPPM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PPM =
 proc formatP1*(self: PBM): string =
   ## Return formatted string for PBM P1.
   runnableExamples:
-    let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[0b1000_0000'u8])
+    let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8])
     doAssert p1.formatP1 == "P1\n1 1\n1"
   let data = self.data.toBinString(self.col).toMatrixString(self.col)
   result = &"""{self.fileDescriptor}
@@ -371,7 +371,7 @@ proc formatP3*(self: PPM): string =
 proc formatP4*(self: PBM): seq[uint8] =
   ## Return formatted byte data for PBM P4.
   runnableExamples:
-    let p4 = newPBM(pbmFileDescriptorP4, 1, 1, 255'u8, @[0b1000_0000'u8])
+    let p4 = newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8])
     doAssert p4.formatP4 == @[
       'P'.uint8, '4'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
