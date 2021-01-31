@@ -29,7 +29,9 @@ pbmFileDescriptorP4	pnm.html#pbmFileDescriptorP4	pnm: pbmFileDescriptorP4
 pgmFileDescriptorP5	pnm.html#pgmFileDescriptorP5	pnm: pgmFileDescriptorP5	
 ppmFileDescriptorP6	pnm.html#ppmFileDescriptorP6	pnm: ppmFileDescriptorP6	
 newPBM	pnm.html#newPBM,string,int,int,seq[uint8]	pnm: newPBM(fileDescriptor: string; col, row: int; data: seq[uint8]): PBM	
+newPGM	pnm.html#newPGM,string,int,int,uint8,seq[uint8]	pnm: newPGM(fileDescriptor: string; col, row: int; max: uint8; data: seq[uint8]): PGM	
 newPGM	pnm.html#newPGM,string,int,int,seq[uint8]	pnm: newPGM(fileDescriptor: string; col, row: int; data: seq[uint8]): PGM	
+newPPM	pnm.html#newPPM,string,int,int,uint8,seq[uint8]	pnm: newPPM(fileDescriptor: string; col, row: int; max: uint8; data: seq[uint8]): PPM	
 newPPM	pnm.html#newPPM,string,int,int,seq[uint8]	pnm: newPPM(fileDescriptor: string; col, row: int; data: seq[uint8]): PPM	
 formatP1	pnm.html#formatP1,PBM	pnm: formatP1(self: PBM): string	
 formatP2	pnm.html#formatP2,PGM	pnm: formatP2(self: PGM): string	
