@@ -350,7 +350,7 @@ proc formatP2*(self: PGM): string =
   ## Return formatted string for PGM P2.
   runnableExamples:
     let p = newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])
-    doAssert p.formatP2 == "P2\n1 1\n2\n255"
+    doAssert p.formatP2 == "P2\n1 1\n255\n2"
   let data = self.data.toMatrixString(self.col)
   result = &"""{self.fileDescriptor}
 {self.col} {self.row}
