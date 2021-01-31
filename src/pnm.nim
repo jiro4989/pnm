@@ -449,7 +449,7 @@ proc parsePBM*(s: string): PBM =
   ## You should validate string to use this proc with `validatePBM proc
   ## <#validatePBM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[0b1000_0000'u8])[]
+    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8])[]
   ## P1用
   new(result)
   var lines: seq[string]
@@ -479,7 +479,7 @@ proc parsePBM*(s: openArray[uint8]): PBM =
       'P'.uint8, '4'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
       0b1000_0000'u8,
-    ].parsePBM[] == newPBM(pbmFileDescriptorP4, 1, 1, 255'u8, @[0b1000_0000'u8])[]
+    ].parsePBM[] == newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -859,7 +859,7 @@ proc writePBM*(f: File, data: PBM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[1'u8])
+      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
       var f = open("p1.pbm", fmWrite)
       f.writePBM p1
       f.close
@@ -931,7 +931,7 @@ proc writePBMFile*(fn: string, data: PBM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[1'u8])
+      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
       writePBMFile "p1.pbm", p1
       removeFile "p1.pbm"
     except:
