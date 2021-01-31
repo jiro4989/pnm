@@ -339,7 +339,7 @@ proc newPPM*(fileDescriptor: string, col, row: int, data: seq[uint8]): PPM =
 proc formatP1*(self: PBM): string =
   ## Return formatted string for PBM P1.
   runnableExamples:
-    let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[0b1000_0000'u8])
+    let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8])
     doAssert p1.formatP1 == "P1\n1 1\n1"
   let data = self.data.toBinString(self.col).toMatrixString(self.col)
   result = &"""{self.fileDescriptor}
@@ -350,7 +350,7 @@ proc formatP2*(self: PGM): string =
   ## Return formatted string for PGM P2.
   runnableExamples:
     let p = newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])
-    doAssert p.formatP2 == "P2\n1 1\n2\n2"
+    doAssert p.formatP2 == "P2\n1 1\n255\n2"
   let data = self.data.toMatrixString(self.col)
   result = &"""{self.fileDescriptor}
 {self.col} {self.row}
@@ -371,7 +371,7 @@ proc formatP3*(self: PPM): string =
 proc formatP4*(self: PBM): seq[uint8] =
   ## Return formatted byte data for PBM P4.
   runnableExamples:
-    let p4 = newPBM(pbmFileDescriptorP4, 1, 1, 255'u8, @[0b1000_0000'u8])
+    let p4 = newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8])
     doAssert p4.formatP4 == @[
       'P'.uint8, '4'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
@@ -398,7 +398,7 @@ proc formatP5*(self: PGM): seq[uint8] =
     doAssert p.formatP5 == @[
       'P'.uint8, '5'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
-      '2'.uint8, '\n'.uint8,
+      '2'.uint8, '5'.uint8, '5'.uint8, '\n'.uint8,
       2'u8,
     ]
   # header part
@@ -449,7 +449,7 @@ proc parsePBM*(s: string): PBM =
   ## You should validate string to use this proc with `validatePBM proc
   ## <#validatePBM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[0b1000_0000'u8])[]
+    doAssert "P1\n1 1\n1".parsePBM[] == newPBM(pbmFileDescriptorP1, 1, 1, @[0b1000_0000'u8])[]
   ## P1用
   new(result)
   var lines: seq[string]
@@ -479,7 +479,7 @@ proc parsePBM*(s: openArray[uint8]): PBM =
       'P'.uint8, '4'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
       0b1000_0000'u8,
-    ].parsePBM[] == newPBM(pbmFileDescriptorP4, 1, 1, 255'u8, @[0b1000_0000'u8])[]
+    ].parsePBM[] == newPBM(pbmFileDescriptorP4, 1, 1, @[0b1000_0000'u8])[]
   new(result)
   var dataPos = 3
   var colRowLine: string
@@ -500,8 +500,8 @@ proc parsePGM*(s: string): PGM =
   ## You should validate string to use this proc with `validatePGM proc
   ## <#validatePGM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P2\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
-    doAssert "P5\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[2'u8])[]
+    doAssert "P2\n1 1\n255\n2".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
+    doAssert "P5\n1 1\n255\n2".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[2'u8])[]
   new(result)
   var lines: seq[string]
   for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
@@ -529,7 +529,7 @@ proc parsePGM*(s: openArray[uint8]): PGM =
   runnableExamples:
     doAssert @['P'.uint8, '2'.uint8, '\n'.uint8,
                '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
-               '2'.uint8, '\n'.uint8,
+               '2'.uint8, '5'.uint8, '5'.uint8, '\n'.uint8,
                2'u8,
     ].parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
   new(result)
@@ -859,7 +859,7 @@ proc writePBM*(f: File, data: PBM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[1'u8])
+      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
       var f = open("p1.pbm", fmWrite)
       f.writePBM p1
       f.close
@@ -931,7 +931,7 @@ proc writePBMFile*(fn: string, data: PBM) =
   runnableExamples:
     from os import removeFile
     try:
-      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, 255'u8, @[1'u8])
+      let p1 = newPBM(pbmFileDescriptorP1, 1, 1, @[1'u8])
       writePBMFile "p1.pbm", p1
       removeFile "p1.pbm"
     except:
