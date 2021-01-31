@@ -350,7 +350,7 @@ proc formatP2*(self: PGM): string =
   ## Return formatted string for PGM P2.
   runnableExamples:
     let p = newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])
-    doAssert p.formatP2 == "P2\n1 1\n2\n2"
+    doAssert p.formatP2 == "P2\n1 1\n2\n255"
   let data = self.data.toMatrixString(self.col)
   result = &"""{self.fileDescriptor}
 {self.col} {self.row}
@@ -398,7 +398,7 @@ proc formatP5*(self: PGM): seq[uint8] =
     doAssert p.formatP5 == @[
       'P'.uint8, '5'.uint8, '\n'.uint8,
       '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
-      '2'.uint8, '\n'.uint8,
+      '2'.uint8, '5'.uint8, '5'.uint8, '\n'.uint8,
       2'u8,
     ]
   # header part
@@ -500,8 +500,8 @@ proc parsePGM*(s: string): PGM =
   ## You should validate string to use this proc with `validatePGM proc
   ## <#validatePGM,openArray[uint8]>`_ .
   runnableExamples:
-    doAssert "P2\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
-    doAssert "P5\n1 1\n2\n2".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[2'u8])[]
+    doAssert "P2\n1 1\n2\n255".parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
+    doAssert "P5\n1 1\n2\n255".parsePGM[] == newPGM(pgmFileDescriptorP5, 1, 1, 255'u8, @[2'u8])[]
   new(result)
   var lines: seq[string]
   for line in s.replaceWhiteSpace.splitLines.mapIt(it.strip):
@@ -529,7 +529,7 @@ proc parsePGM*(s: openArray[uint8]): PGM =
   runnableExamples:
     doAssert @['P'.uint8, '2'.uint8, '\n'.uint8,
                '1'.uint8, ' '.uint8, '1'.uint8, '\n'.uint8,
-               '2'.uint8, '\n'.uint8,
+               '2'.uint8, '5'.uint8, '5'.uint8, '\n'.uint8,
                2'u8,
     ].parsePGM[] == newPGM(pgmFileDescriptorP2, 1, 1, 255'u8, @[2'u8])[]
   new(result)
