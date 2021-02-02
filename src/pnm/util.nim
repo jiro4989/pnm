@@ -168,12 +168,12 @@ proc writeTextDataPartOfPGMOrPPM*(strm: Stream, data: seq[uint8], rowCount: int)
 
 proc writeDataPart*(strm: Stream, header: Header, data: seq[uint8]) =
   case header.descriptor
-  of P1:
-    discard
-  of P2:
+  of P1, P2:
     strm.writeTextDataPartOfPGMOrPPM(data, header.row)
   of P3:
     strm.writeTextDataPartOfPGMOrPPM(data, header.row * 3)
-  of P4, P5, P6:
+  of P4:
+    discard
+  of P5, P6:
     for b in data:
       strm.write(b)
