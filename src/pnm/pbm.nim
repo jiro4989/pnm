@@ -4,7 +4,7 @@ export types
 
 proc readPBM*(strm: Stream): PBM =
   result.header = strm.readHeader()
-  result.data = strm.readPGMPPMData(result.header.descriptor)
+  result.data = strm.readBinaryDataPart(result.header.descriptor)
 
 proc readPBMFile*(file: string): PBM =
   var strm = newFileStream(file)
