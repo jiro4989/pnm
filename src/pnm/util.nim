@@ -162,7 +162,9 @@ proc readDataPart*(strm: Stream, descr: Descriptor): seq[uint8] =
     result = strm.readTextDataPartOfP1()
   of P2, P3:
     result = strm.readTextDataPart()
-  of P4, P5, P6:
+  of P4:
+    discard # TODO
+  of P5, P6:
     result = strm.readAll().mapIt(it.uint8)
 
 proc writeHeaderPart*(strm: Stream, header: Header) =
