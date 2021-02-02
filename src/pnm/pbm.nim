@@ -3,7 +3,7 @@ import types, util
 export types
 
 proc readPBM*(strm: Stream): PBM =
-  result.header = strm.readHeader()
+  result.header = strm.readHeaderPart()
   result.data = strm.readDataPart(result.header.descriptor)
 
 proc readPBMFile*(file: string): PBM =

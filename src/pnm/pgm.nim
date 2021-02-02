@@ -3,7 +3,7 @@ import types, util
 export types
 
 proc readPGM*(strm: Stream): PGM =
-  result.header = strm.readHeader()
+  result.header = strm.readHeaderPart()
   result.data = strm.readDataPart(result.header.descriptor)
 
 proc readPGMFile*(file: string): PGM =

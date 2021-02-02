@@ -3,7 +3,7 @@ import types, util
 export types
 
 proc readPPM*(strm: Stream): PPM =
-  result.header = strm.readHeader()
+  result.header = strm.readHeaderPart()
   result.data = strm.readDataPart(result.header.descriptor)
 
 proc readPPMFile*(file: string): PPM =

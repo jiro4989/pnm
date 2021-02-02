@@ -122,7 +122,7 @@ proc replaceWhiteSpace*(s: string): string =
     ignoreWhiteSpace = false
     result.add c
 
-proc readHeader*(strm: Stream): Header =
+proc readHeaderPart*(strm: Stream): Header =
   # read descriptor
   result.descriptor = strm.readLine().toDescriptor()
 
