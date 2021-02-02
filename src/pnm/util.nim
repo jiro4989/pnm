@@ -3,7 +3,10 @@
 ## **You don't need to use directly this module for pnm module.**
 
 from sequtils import mapIt
-from strutils import join
+from strutils import join, split, parseInt, parseUint
+import streams
+
+import types
 
 proc toBinSeq*(b: uint8): seq[uint8] =
   ## Return binary sequence from each bits of uint8.
@@ -118,3 +121,27 @@ proc replaceWhiteSpace*(s: string): string =
         continue
     ignoreWhiteSpace = false
     result.add c
+
+
+proc readHeader*(strm: Stream): Header =
+  # read descriptor
+  result.descriptor = strm.readLine()
+  doAssert result.descriptor[0] == 'P'
+  doAssert result.descriptor[1] in '1'..'6'
+  doAssert result.descriptor.len == 2
+
+  # read comment line
+  let b = strm.peekChar()
+  if b == '#':
+    # コメント行を読み取って破棄
+    discard strm.readLine()
+
+  # read column size and row size
+  let sizeLine = strm.readLine()
+  let colRow = sizeLine.split(" ")
+  result.col = colRow[0].parseInt()
+  result.row = colRow[1].parseInt()
+
+  # read max data
+  if result.descriptor in ["P2", "P3", "P5", "P6"]:
+    result.max = strm.readLine().parseUint.uint8
