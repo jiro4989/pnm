@@ -89,6 +89,12 @@ proc toBin*(arr: openArray[uint8], col: int =  8): seq[uint8] =
   if data != 0:
     result.add data shl (8 - (i mod 8))
 
+proc toBitSeq*(data: openArray[uint8], col: int): seq[uint8] =
+  ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
+  runnableExamples:
+    doAssert @[255'u8, 127].toBitSeq(9) == @[1'u8, 1, 1, 1, 1, 1, 1, 1, 1]
+  discard
+
 proc removeCommentLine*(s: openArray[uint8]): seq[uint8] =
   ## Return sequence that removed comment line.
   ## Range of comment is from '#' to first '\n'.
