@@ -10,3 +10,8 @@ proc readPPMFile*(file: string): PPM =
   var strm = newFileStream(file)
   defer: strm.close()
   result = strm.readPPM()
+
+proc writePPMFile*(fn: string, data: PPM) =
+  var strm = newFileStream(fn, fmWrite)
+  defer: strm.close()
+  strm.writeHeader(data.header)

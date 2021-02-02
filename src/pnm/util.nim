@@ -2,7 +2,7 @@
 ##
 ## **You don't need to use directly this module for pnm module.**
 
-from sequtils import mapIt
+from sequtils import mapIt, distribute
 from strutils import join, split, parseInt, parseUint
 import streams
 
@@ -139,7 +139,7 @@ proc readHeader*(strm: Stream): Header =
   result.row = colRow[1].parseInt()
 
   # read max data
-  if result.descriptor.isPgmPnmDescriptors:
+  if result.descriptor.isPgmPnmDescriptor:
     result.max = strm.readLine().parseUint.uint8
 
 proc readTextDataPart(strm: Stream): seq[uint8] =
@@ -155,3 +155,25 @@ proc readBinaryDataPart*(strm: Stream, descr: Descriptor): seq[uint8] =
     result = strm.readTextDataPart()
   of P4, P5, P6:
     result = strm.readAll().mapIt(it.uint8)
+
+proc writeHeader*(strm: Stream, header: Header) =
+  strm.writeLine(header.descriptor)
+  strm.writeLine($header.col & " " & $header.row)
+  if header.descriptor.isPgmPnmDescriptor:
+    strm.writeLine(header.max)
+
+proc writeTextDataPartOfPGMOrPPM*(strm: Stream, data: seq[uint8], rowCount: int) =
+  for row in data.distribute(rowCount):
+    strm.writeLine(row.mapIt($it).join(" "))
+
+proc writeDataPart*(strm: Stream, header: Header, data: seq[uint8]) =
+  case header.descriptor
+  of P1:
+    discard
+  of P2:
+    strm.writeTextDataPartOfPGMOrPPM(data, header.row)
+  of P3:
+    strm.writeTextDataPartOfPGMOrPPM(data, header.row * 3)
+  of P4, P5, P6:
+    for b in data:
+      strm.write(b)

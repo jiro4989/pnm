@@ -18,7 +18,7 @@ type
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
 
-func isPgmPnmDescriptors*(d: Descriptor): bool =
+func isPgmPnmDescriptor*(d: Descriptor): bool =
   return d in @[P2, P3, P5, P6]
 
 func toDescriptor*(str: string): Descriptor =
