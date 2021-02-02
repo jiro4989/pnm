@@ -1,10 +1,11 @@
-from strformat import `&`
-
 type
   Header* = object
     descriptor*: Descriptor
     col*, row*: int
     max*: uint8
+  PGM* = object
+    header*: Header
+    data*: seq[uint8]
   PPM* = object
     header*: Header
     data*: seq[uint8]
@@ -26,4 +27,4 @@ func toDescriptor*(str: string): Descriptor =
   of "P5": P5
   of "P6": P6
   else:
-    raise newException(IllegalFileDescriptorError, &"IllegalFileDescriptor: file descriptor is {fd}")
+    raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & str)

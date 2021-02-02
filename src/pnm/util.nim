@@ -141,3 +141,19 @@ proc readHeader*(strm: Stream): Header =
   # read max data
   if result.descriptor.isPgmPnmDescriptors:
     result.max = strm.readLine().parseUint.uint8
+
+proc readP2P3Data*(strm: Stream): seq[uint8] =
+  ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
+  var line: string
+  while strm.readLine(line):
+    result.add(line.split(" ").mapIt(it.parseUInt.uint8))
+
+proc readPGMPPMData*(strm: Stream, descr: Descriptor): seq[uint8] =
+  ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
+  case descr
+  of P2, P3:
+    result = strm.readP2P3Data()
+  of P5, P6:
+    result = strm.readAll().mapIt(it.uint8)
+  else:
+    raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & $descr)

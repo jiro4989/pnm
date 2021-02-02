@@ -2,11 +2,11 @@ import streams
 import types, util
 export types
 
-proc readPPM*(strm: Stream): PPM =
+proc readPGM*(strm: Stream): PGM =
   result.header = strm.readHeader()
   result.data = strm.readPGMPPMData(result.header.descriptor)
 
-proc readPPMFile*(file: string): PPM =
+proc readPGMFile*(file: string): PGM =
   var strm = newFileStream(file)
   defer: strm.close()
-  result = strm.readPPM()
+  result = strm.readPGM()
