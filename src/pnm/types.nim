@@ -3,6 +3,9 @@ type
     descriptor*: Descriptor
     col*, row*: int
     max*: uint8
+  PBM* = object
+    header*: Header
+    data*: seq[uint8]
   PGM* = object
     header*: Header
     data*: seq[uint8]
