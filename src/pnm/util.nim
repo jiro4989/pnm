@@ -164,8 +164,8 @@ proc writeHeaderPart*(strm: Stream, header: Header) =
 
 proc writeBinaryDataPartOfPBM*(strm: Stream, data: seq[uint8], rowCount: int) =
   for row in data.distribute(rowCount):
-    # strm.writeLine(row.mapIt($it).join(" "))
-    discard
+    for b in row.toBin:
+      strm.write(b)
 
 proc writeTextDataPartOfPGMOrPPM*(strm: Stream, data: seq[uint8], rowCount: int, delim: string) =
   for row in data.distribute(rowCount):
