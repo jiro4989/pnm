@@ -156,7 +156,7 @@ proc readBinaryDataPart*(strm: Stream, descr: Descriptor): seq[uint8] =
   of P4, P5, P6:
     result = strm.readAll().mapIt(it.uint8)
 
-proc writeHeader*(strm: Stream, header: Header) =
+proc writeHeaderPart*(strm: Stream, header: Header) =
   strm.writeLine(header.descriptor)
   strm.writeLine($header.col & " " & $header.row)
   if header.descriptor.isPgmPnmDescriptor:

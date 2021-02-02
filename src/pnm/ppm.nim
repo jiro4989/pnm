@@ -14,4 +14,5 @@ proc readPPMFile*(file: string): PPM =
 proc writePPMFile*(fn: string, data: PPM) =
   var strm = newFileStream(fn, fmWrite)
   defer: strm.close()
-  strm.writeHeader(data.header)
+  strm.writeHeaderPart(data.header)
+  strm.writeDataPart(data.header, data.data)
