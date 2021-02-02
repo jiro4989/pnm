@@ -148,7 +148,7 @@ proc readTextDataPart(strm: Stream): seq[uint8] =
   while strm.readLine(line):
     result.add(line.split(" ").mapIt(it.parseUInt.uint8))
 
-proc readBinaryDataPart*(strm: Stream, descr: Descriptor): seq[uint8] =
+proc readDataPart*(strm: Stream, descr: Descriptor): seq[uint8] =
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
   case descr
   of P1, P2, P3:
