@@ -2,8 +2,8 @@
 ##
 ## **You don't need to use directly this module for pnm module.**
 
-from sequtils import mapIt, distribute
-from strutils import join, split, parseInt, parseUint
+from sequtils import mapIt, distribute, toSeq
+from strutils import join, split, parseInt, parseUint, replace
 import streams
 
 import types
@@ -142,6 +142,13 @@ proc readHeaderPart*(strm: Stream): Header =
   if result.descriptor.isPgmPnmDescriptor:
     result.max = strm.readLine().parseUint.uint8
 
+proc readTextDataPartOfP1(strm: Stream): seq[uint8] =
+  ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
+  # P1は空白文字があってもなくても良い
+  var line: string
+  while strm.readLine(line):
+    result.add(toSeq(line.replace(" ", "").items).mapIt(it.uint8))
+
 proc readTextDataPart(strm: Stream): seq[uint8] =
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
   var line: string
@@ -151,7 +158,9 @@ proc readTextDataPart(strm: Stream): seq[uint8] =
 proc readDataPart*(strm: Stream, descr: Descriptor): seq[uint8] =
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
   case descr
-  of P1, P2, P3:
+  of P1:
+    result = strm.readTextDataPartOfP1()
+  of P2, P3:
     result = strm.readTextDataPart()
   of P4, P5, P6:
     result = strm.readAll().mapIt(it.uint8)
