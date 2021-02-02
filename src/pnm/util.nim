@@ -122,13 +122,9 @@ proc replaceWhiteSpace*(s: string): string =
     ignoreWhiteSpace = false
     result.add c
 
-
 proc readHeader*(strm: Stream): Header =
   # read descriptor
-  result.descriptor = strm.readLine()
-  doAssert result.descriptor[0] == 'P'
-  doAssert result.descriptor[1] in '1'..'6'
-  doAssert result.descriptor.len == 2
+  result.descriptor = strm.readLine().toDescriptor()
 
   # read comment line
   let b = strm.peekChar()
@@ -143,5 +139,5 @@ proc readHeader*(strm: Stream): Header =
   result.row = colRow[1].parseInt()
 
   # read max data
-  if result.descriptor in ["P2", "P3", "P5", "P6"]:
+  if result.descriptor.isPgmPnmDescriptors:
     result.max = strm.readLine().parseUint.uint8
