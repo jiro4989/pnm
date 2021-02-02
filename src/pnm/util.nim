@@ -155,5 +155,3 @@ proc readBinaryDataPart*(strm: Stream, descr: Descriptor): seq[uint8] =
     result = strm.readTextDataPart()
   of P4, P5, P6:
     result = strm.readAll().mapIt(it.uint8)
-  else:
-    raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & $descr)
