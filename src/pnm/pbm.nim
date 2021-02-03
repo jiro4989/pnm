@@ -47,7 +47,7 @@ proc readPBMFile*(file: string): PBM =
   defer: strm.close()
   result = strm.readPBM()
 
-func bitSeqToByteSeq(arr: openArray[uint8], col: int =  8): seq[uint8] =
+func bitSeqToByteSeq(arr: openArray[uint8], col: int): seq[uint8] =
   ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
   var data: uint8
   var i = 0
@@ -97,8 +97,8 @@ when isMainModule:
   doAssert 0'u8.toBitSeq == 0'u8.repeat(8)
   doAssert 0b1010_1010.toBitSeq == @[1'u8, 0, 1, 0, 1, 0, 1, 0]
 
-  doAssert @[1'u8, 1, 1, 1, 0, 0, 0, 0].bitSeqToByteSeq == @[0b1111_0000'u8]
-  doAssert @[1'u8, 1, 1, 1, 1, 1].bitSeqToByteSeq == @[0b1111_1100'u8]
+  doAssert @[1'u8, 1, 1, 1, 0, 0, 0, 0].bitSeqToByteSeq(8) == @[0b1111_0000'u8]
+  doAssert @[1'u8, 1, 1, 1, 1, 1].bitSeqToByteSeq(8) == @[0b1111_1100'u8]
 
   doAssert @[1, 2, 3, 4].headTail(2) == (@[1, 2], @[3, 4])
   doAssert @[1, 2, 3, 4].headTail(4) == (@[1, 2, 3, 4], @[])
