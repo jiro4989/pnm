@@ -48,3 +48,24 @@ suite "proc readTextDataPart":
                 6, 7, 8, 9, 10]
     check want == got
 
+  test "P3: single spaces":
+    var strm = newStringStream("""0 0 255
+0 255 0
+255 0 0
+""")
+    let want = strm.readTextDataPart
+    let got = @[0'u8, 0, 255,
+                0, 255, 0,
+                255, 0, 0]
+    check want == got
+
+  test "P3: multi spaces":
+    var strm = newStringStream("""0   0   255
+                                  0   255 0  
+                                  255 0   0  
+""")
+    let want = strm.readTextDataPart
+    let got = @[0'u8, 0, 255,
+                0, 255, 0,
+                255, 0, 0]
+    check want == got

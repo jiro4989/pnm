@@ -3,7 +3,7 @@
 ## **You don't need to use directly this module for pnm module.**
 
 from sequtils import mapIt, distribute, toSeq
-from strutils import join, split, parseInt, parseUint, replace
+import strutils
 import streams
 
 import types
@@ -33,7 +33,7 @@ proc readTextDataPart*(strm: Stream): seq[uint8] =
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
   var line: string
   while strm.readLine(line):
-    result.add(line.split(" ").mapIt(it.parseUInt.uint8))
+    result.add(line.splitWhitespace().mapIt(it.parseUInt.uint8))
 
 proc readBinaryDataPart*(strm: Stream): seq[uint8] =
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
