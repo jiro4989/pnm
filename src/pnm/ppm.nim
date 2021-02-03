@@ -4,7 +4,12 @@ export types
 
 proc readPPM*(strm: Stream): PPM =
   result.header = strm.readHeaderPart()
-  result.data = strm.readDataPart(result.header.descriptor)
+  result.data =
+    case result.header.descriptor
+    of P3: strm.readTextDataPart()
+    of P6: strm.readBinaryDataPart()
+    else:
+      raise newException(IllegalFileDescriptorError, "TODO")
 
 proc readPPMFile*(file: string): PPM =
   var strm = newFileStream(file)

@@ -4,7 +4,12 @@ export types
 
 proc readPGM*(strm: Stream): PGM =
   result.header = strm.readHeaderPart()
-  result.data = strm.readDataPart(result.header.descriptor)
+  result.data =
+    case result.header.descriptor
+    of P2: strm.readTextDataPart()
+    of P5: strm.readBinaryDataPart()
+    else:
+      raise newException(IllegalFileDescriptorError, "TODO")
 
 proc readPGMFile*(file: string): PGM =
   var strm = newFileStream(file)
