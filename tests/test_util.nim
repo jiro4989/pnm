@@ -137,3 +137,12 @@ suite "proc writeTextDataPart":
       let got = strm.readAll()
       check v.want == got
 
+suite "proc writeBinaryDataPart":
+  test "normal":
+    var strm = newStringStream("")
+    strm.writeBinaryDataPart(@['f'.uint8, 'o'.uint8])
+    strm.setPosition(0)
+    let want = "fo"
+    let got = strm.readAll()
+    check want == got
+
