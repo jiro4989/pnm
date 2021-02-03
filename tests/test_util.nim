@@ -85,27 +85,25 @@ suite "proc readBinaryDataPart":
     check want == got
 
 suite "proc writeHeaderPart":
-  test "P1":
-    var strm = newStringStream("")
-    let header = Header(descriptor: P1, col: 5, row: 3)
-    strm.writeHeaderPart(header)
-    strm.setPosition(0)
-    let want = """P1
-5 3
-"""
-    let got = strm.readAll()
-    check want == got
+  test "P1, P4":
+    for descr in [P1, P4]:
+      var strm = newStringStream("")
+      let header = Header(descriptor: descr, col: 5, row: 3)
+      strm.writeHeaderPart(header)
+      strm.setPosition(0)
+      let want = $descr & "\n5 3\n"
+      let got = strm.readAll()
+      check want == got
 
-  test "P1: but max is not 0":
-    var strm = newStringStream("")
-    let header = Header(descriptor: P1, col: 5, row: 3, max: 255'u8)
-    strm.writeHeaderPart(header)
-    strm.setPosition(0)
-    let want = """P1
-5 3
-"""
-    let got = strm.readAll()
-    check want == got
+  test "P1, P4: but max is not zero (illegal case)":
+    for descr in [P1, P4]:
+      var strm = newStringStream("")
+      let header = Header(descriptor: descr, col: 5, row: 3, max: 99'u8)
+      strm.writeHeaderPart(header)
+      strm.setPosition(0)
+      let want = $descr & "\n5 3\n"
+      let got = strm.readAll()
+      check want == got
 
   test "P2, P3, P5, P6":
     for descr in [P2, P3, P5, P6]:
