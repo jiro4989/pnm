@@ -29,6 +29,7 @@ proc readHeaderPart*(strm: Stream): Header =
     result.max = strm.readLine().parseUint.uint8
 
 proc readTextDataPart*(strm: Stream): seq[uint8] =
+  ## P2, P3用のデータ部を取得する。
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
   var line: string
   while strm.readLine(line):

@@ -28,3 +28,23 @@ suite "proc readHeaderPart":
     let want = strm.readHeaderPart
     let got = Header(descriptor: P3, col: 5, row: 3, max: 255'u8)
     check want == got
+
+suite "proc readTextDataPart":
+  test "P2: single spaces":
+    var strm = newStringStream("""1 2 3 4 5
+6 7 8 9 10
+""")
+    let want = strm.readTextDataPart
+    let got = @[1'u8, 2, 3, 4, 5,
+                6, 7, 8, 9, 10]
+    check want == got
+
+  test "P2: multi spaces":
+    var strm = newStringStream("""1 2 3 4 5
+6    7     8 9  10
+""")
+    let want = strm.readTextDataPart
+    let got = @[1'u8, 2, 3, 4, 5,
+                6, 7, 8, 9, 10]
+    check want == got
+
