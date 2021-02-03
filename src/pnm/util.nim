@@ -8,17 +8,6 @@ import streams
 
 import types
 
-proc toBinSeq*(b: uint8): seq[uint8] =
-  ## Return binary sequence from each bits of uint8.
-  runnableExamples:
-    from sequtils import repeat
-    doAssert 0'u8.toBinSeq == 0'u8.repeat(8)
-    doAssert 0b1010_1010.toBinSeq == @[1'u8, 0, 1, 0, 1, 0, 1, 0]
-  var c = b
-  for i in 1..8:
-    result.add (uint8(c and 0b1000_0000) shr 7)
-    c = c shl 1
-
 proc toBinString*(data: openArray[uint8], col: int): string =
   ## Return binary string from each bits of uint8.
   runnableExamples:
@@ -88,12 +77,6 @@ proc toBin*(arr: openArray[uint8], col: int =  8): seq[uint8] =
       i = 0
   if data != 0:
     result.add data shl (8 - (i mod 8))
-
-proc toBitSeq*(data: openArray[uint8], col: int): seq[uint8] =
-  ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
-  runnableExamples:
-    doAssert @[255'u8, 127].toBitSeq(9) == @[1'u8, 1, 1, 1, 1, 1, 1, 1, 1]
-  discard
 
 proc removeCommentLine*(s: openArray[uint8]): seq[uint8] =
   ## Return sequence that removed comment line.
@@ -172,6 +155,10 @@ proc writeBinaryDataPartOfPBM*(strm: Stream, data: seq[uint8], rowCount: int) =
 proc writeTextDataPartOfPGMOrPPM*(strm: Stream, data: seq[uint8], rowCount: int, delim: string) =
   for row in data.distribute(rowCount):
     strm.writeLine(row.mapIt($it).join(delim))
+
+proc writeBinaryDataPart*(strm: Stream, data: seq[uint8]) =
+  for b in data:
+    strm.write(b)
 
 proc writeDataPart*(strm: Stream, header: Header, data: seq[uint8]) =
   case header.descriptor
