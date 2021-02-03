@@ -25,15 +25,15 @@ jobs:
         run: nimble install -Y
       - name: Unit test
         run: nimble test -Y
-      - name: Examples test
-        run: |
-          find examples/ -mindepth 1 -type d | while read -r dir; do
-            (
-              cd "$dir"
-              nim c -d:release main.nim
-              ./main
-            )
-          done
+      # - name: Examples test
+      #   run: |
+      #     find examples/ -mindepth 1 -type d | while read -r dir; do
+      #       (
+      #         cd "$dir"
+      #         nim c -d:release main.nim
+      #         ./main
+      #       )
+      #     done
 
   docs:
     runs-on: ubuntu-latest
