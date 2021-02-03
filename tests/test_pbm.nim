@@ -25,8 +25,9 @@ suite "proc readPBMFile":
     discard
 
 suite "proc bitSeqToByteSeq":
-  test "P1":
-    discard
+  test "1, 1, 1, 1, 1, 1": check @[1'u8, 1, 1, 1, 1, 1].bitSeqToByteSeq(8) == @[0b1111_1100'u8]
+  test "1, 1, 1, 1, 0, 0, 0, 0": check @[1'u8, 1, 1, 1, 0, 0, 0, 0].bitSeqToByteSeq(8) == @[0b1111_0000'u8]
+  test "1, 1, 1, 1, 0, 0, 0, 0, 1, 1": check @[1'u8, 1, 1, 1, 0, 0, 0, 0, 1, 1].bitSeqToByteSeq(8) == @[0b1111_0000'u8, 0b1100_0000]
 
 suite "proc headTail":
   test "P1":
