@@ -3,7 +3,7 @@ import unittest
 include pnm/util
 
 suite "proc readHeaderPart":
-  test "0b0000_0000":
+  test "P1":
     var strm = newStringStream("""P1
 5 3
 """)
