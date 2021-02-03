@@ -152,24 +152,10 @@ proc writeBinaryDataPartOfPBM*(strm: Stream, data: seq[uint8], rowCount: int) =
     for b in row.toBin:
       strm.write(b)
 
-proc writeTextDataPartOfPGMOrPPM*(strm: Stream, data: seq[uint8], rowCount: int, delim: string) =
+proc writeTextDataPart*(strm: Stream, data: seq[uint8], rowCount: int, delim: string) =
   for row in data.distribute(rowCount):
     strm.writeLine(row.mapIt($it).join(delim))
 
 proc writeBinaryDataPart*(strm: Stream, data: seq[uint8]) =
   for b in data:
     strm.write(b)
-
-proc writeDataPart*(strm: Stream, header: Header, data: seq[uint8]) =
-  case header.descriptor
-  of P1:
-    strm.writeTextDataPartOfPGMOrPPM(data, header.row, "")
-  of P2:
-    strm.writeTextDataPartOfPGMOrPPM(data, header.row, " ")
-  of P3:
-    strm.writeTextDataPartOfPGMOrPPM(data, header.row * 3, " ")
-  of P4:
-    strm.writeBinaryDataPartOfPBM(data, header.row)
-  of P5, P6:
-    for b in data:
-      strm.write(b)

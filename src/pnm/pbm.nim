@@ -52,7 +52,7 @@ proc writePBMFile*(fn: string, data: PBM) =
   defer: strm.close()
   strm.writeHeaderPart(data.header)
   case data.header.descriptor
-  of P1: strm.writeTextDataPartOfPGMOrPPM(data.data, data.header.row, "")
+  of P1: strm.writeTextDataPart(data.data, data.header.row, "")
   of P4: strm.writeBinaryDataPart(data.data)
   else:
     raise newException(IllegalFileDescriptorError, "TODO")
