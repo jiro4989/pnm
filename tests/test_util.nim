@@ -114,3 +114,26 @@ suite "proc writeHeaderPart":
       let want = $descr & "\n5 3\n255\n"
       let got = strm.readAll()
       check want == got
+
+suite "proc writeTextDataPart":
+  setup:
+    type TestData = object
+      data: seq[uint8]
+      row: int
+      delim: string
+      want: string
+
+  test "normal case":
+    let inData = [
+      TestData(data: @[1'u8, 2, 3, 4, 5, 6], row: 1, delim: " ", want: "1 2 3 4 5 6\n"),
+      TestData(data: @[1'u8, 2, 3, 4, 5, 6], row: 2, delim: " ", want: "1 2 3\n4 5 6\n"),
+      TestData(data: @[1'u8, 2, 3, 4, 5, 6], row: 3, delim: " ", want: "1 2\n3 4\n5 6\n"),
+      TestData(data: @[1'u8, 1, 0, 0, 1, 1], row: 3, delim: "", want: "11\n00\n11\n"),
+    ]
+    for v in inData:
+      var strm = newStringStream("")
+      strm.writeTextDataPart(v.data, v.row, v.delim)
+      strm.setPosition(0)
+      let got = strm.readAll()
+      check v.want == got
+
