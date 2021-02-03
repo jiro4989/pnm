@@ -51,4 +51,8 @@ proc writePBMFile*(fn: string, data: PBM) =
   var strm = newFileStream(fn, fmWrite)
   defer: strm.close()
   strm.writeHeaderPart(data.header)
-  strm.writeDataPart(data.header, data.data)
+  case data.header.descriptor
+  of P1: strm.writeTextDataPartOfPGMOrPPM(data.data, data.header.row, "")
+  of P4: strm.writeBinaryDataPart(data.data)
+  else:
+    raise newException(IllegalFileDescriptorError, "TODO")
