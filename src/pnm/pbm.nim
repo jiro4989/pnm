@@ -47,12 +47,15 @@ proc readPBMFile*(file: string): PBM =
   defer: strm.close()
   result = strm.readPBM()
 
+proc writeBinaryDataPartOfPBM(strm: Stream, data: seq[uint8], columnSize: int) =
+  discard
+
 proc writePBMFile*(fn: string, data: PBM) =
   var strm = newFileStream(fn, fmWrite)
   defer: strm.close()
   strm.writeHeaderPart(data.header)
   case data.header.descriptor
   of P1: strm.writeTextDataPart(data.data, data.header.row, "")
-  of P4: strm.writeBinaryDataPart(data.data)
+  of P4: strm.writeBinaryDataPartOfPBM(data.data, data.header.col)
   else:
     raise newException(IllegalFileDescriptorError, "TODO")
