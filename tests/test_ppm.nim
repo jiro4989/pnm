@@ -40,4 +40,6 @@ suite "proc readPPMFile":
 
 suite "proc writePPMFile":
   test "0b1111_1111":
-    discard
+    var data = newPPM(P3, 2, 2, 4'u8)
+    data.data = @[1'u8, 2, 3, 4]
+    writePPMFile(outputDataDir/"p3.ppm", data)
