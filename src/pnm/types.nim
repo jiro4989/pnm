@@ -18,6 +18,18 @@ type
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
 
+func newPBM*(descriptor: Descriptor, col, row: int): PBM =
+  let h = Header(descriptor: descriptor, col: col, row: row)
+  return PBM(header: h)
+
+func newPGM*(descriptor: Descriptor, col, row: int, max: uint8): PGM =
+  let h = Header(descriptor: descriptor, col: col, row: row, max: max)
+  return PGM(header: h)
+
+func newPPM*(descriptor: Descriptor, col, row: int, max: uint8): PPM =
+  let h = Header(descriptor: descriptor, col: col, row: row, max: max)
+  return PPM(header: h)
+
 func isPgmPnmDescriptor*(d: Descriptor): bool =
   return d in @[P2, P3, P5, P6]
 
