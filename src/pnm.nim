@@ -236,7 +236,7 @@
 ## * `(JA) PNM(画像フォーマット) - Wikipedia <https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88)>`_
 
 import streams, strformat
-from sequtils import mapIt, repeat
+from sequtils import mapIt, repeat, distribute
 from strutils import join
 
 type
@@ -364,8 +364,19 @@ proc writeFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
       let lineStr = line.mapIt(it.str).join(" ")
       strm.writeLine(lineStr)
   of P4:
-    for b in data.data.mapIt(it.bit).bitSeqToByteSeq(8):
-      strm.write(b)
+    let bits = data.data.mapIt(it.bit)
+    var rows: seq[seq[uint8]]
+    var row: seq[uint8]
+    for bit in bits:
+      row.add(bit)
+      if data.w <= row.len:
+        rows.add(row)
+        row = @[]
+    if 0 < row.len:
+      rows.add(row)
+    for row in rows:
+      for b in row.bitSeqToByteSeq(8):
+        strm.write(b)
   of P5, P6:
     for c in data.data:
       c.write(strm)
