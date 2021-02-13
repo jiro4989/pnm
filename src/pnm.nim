@@ -237,11 +237,12 @@
 
 import streams, strformat
 from sequtils import mapIt, repeat
+from strutils import join
 
 type
-  Image[T: Color] = object
+  Image = object
     width*, height*: int
-    data*: seq[T]
+    data*: seq[Color]
   Descriptor* {.pure.} = enum
     P1, P2, P3, P4, P5, P6
 
@@ -261,9 +262,10 @@ type
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
 
-proc newImage*[T](width, height: int): Image[T] =
-  result = Image[T](width: width, height: height)
-  result.data = repeat(T(), width * height)
+proc newImage*(t: typedesc, width, height: int): Image =
+  result = Image(width: width, height: height)
+  let c: Color = t()
+  result.data = repeat(c, width * height)
 
 template w*(img: Image): int =
   img.width
@@ -276,7 +278,7 @@ template g*(c: ColorGray): ColorComponent = c.gray
 template r*(c: ColorRGB): ColorComponent = c.red
 template g*(c: ColorRGB): ColorComponent = c.green
 template b*(c: ColorRGB): ColorComponent = c.blue
-template line*[T: Color](img: Image[T], y: int): seq[T] =
+template line*(img: Image, y: int): seq[Color] =
   let startPos = y * img.w
   img.data[startPos ..< startPos+img.w]
 
@@ -293,8 +295,8 @@ template `[]=`*(img: var Image, p: Point, c: Color) =
   img[p.x, p.y] = c
 
 method str(c: Color): string {.base.} = discard
-method str(c: ColorBit): string = $c[]
-method str(c: ColorGray): string = $c[]
+method str(c: ColorBit): string = $c.b
+method str(c: ColorGray): string = $c.g
 method str(c: ColorRGB): string = &"{c.r} {c.g} {c.b}"
 
 method write(c: Color, strm: Stream) {.base.} =
@@ -310,6 +312,11 @@ method write(c: ColorRGB, strm: Stream) =
   strm.write(c.r)
   strm.write(c.g)
   strm.write(c.b)
+
+method high(c: Color): int {.base.} = int.high
+method high(c: ColorBit): int = 1
+method high(c: ColorGray): int = ColorComponent.high.int
+method high(c: ColorRGB): int = ColorComponent.high.int
 
 proc writeFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
   var strm = newFileStream(fn, fmWrite)
@@ -329,8 +336,8 @@ proc writeFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
   # body
   case descr
   of P1, P2, P3:
-    for y in 0..<data.y:
-      let line = data.line[y]
+    for y in 0..<data.h:
+      let line = data.line(y)
       let lineStr = line.mapIt(it.str).join(" ")
       strm.writeLine(lineStr)
   of P4:
