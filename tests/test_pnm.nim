@@ -8,15 +8,17 @@ const
 
 suite "usecase":
   test "create PBM image and save file":
-    var img = newImage(ColorBit, 64, 255)
-    for y in 0..<img.h:
-      for x in 0..<img.w:
-        let b =
-          if y div 10 mod 2 == 0: 0'u8
-          else: 1'u8
-        img[x, y] = ColorBit(bit: b)
-    writeFile(outputDataDir/"p1.pbm", img, P1)
-    writeFile(outputDataDir/"p4.pbm", img, P4)
+    let width = [63, 64]
+    for w in width:
+      var img = newImage(ColorBit, w, 255)
+      for y in 0..<img.h:
+        for x in 0..<img.w:
+          let b =
+            if y div 10 mod 2 == 0: 0'u8
+            else: 1'u8
+          img[x, y] = ColorBit(bit: b)
+      writeFile(outputDataDir/"p1_" & $w & ".pbm", img, P1)
+      writeFile(outputDataDir/"p4_" & $w & ".pbm", img, P4)
 
   test "create PGM image and save file":
     var img = newImage(ColorGray, 50, 255)
