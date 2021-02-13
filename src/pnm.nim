@@ -267,6 +267,26 @@ proc newImage*(t: typedesc, width, height: int): Image =
   let c: Color = t()
   result.data = repeat(c, width * height)
 
+func bitSeqToByteSeq(arr: openArray[uint8], col: int): seq[uint8] =
+  ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
+  var data: uint8
+  var i = 0
+  for u in arr:
+    data = data shl 1
+    data += u
+    i.inc
+    if i mod 8 == 0:
+      result.add data
+      data = 0'u8
+      continue
+    if i mod col == 0:
+      data = data shl (8 - (i mod 8))
+      result.add data
+      data = 0'u8
+      i = 0
+  if data != 0:
+    result.add data shl (8 - (i mod 8))
+
 template w*(img: Image): int =
   img.width
 
@@ -298,6 +318,9 @@ method str(c: Color): string {.base.} = discard
 method str(c: ColorBit): string = $c.b
 method str(c: ColorGray): string = $c.g
 method str(c: ColorRGB): string = &"{c.r} {c.g} {c.b}"
+
+method bit(c: Color): uint8 {.base.} = discard
+method bit(c: ColorBit): uint8 = c.b
 
 method write(c: Color, strm: Stream) {.base.} =
   discard
@@ -341,7 +364,8 @@ proc writeFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
       let lineStr = line.mapIt(it.str).join(" ")
       strm.writeLine(lineStr)
   of P4:
-    discard
+    for b in data.data.mapIt(it.bit).bitSeqToByteSeq(8):
+      strm.write(b)
   of P5, P6:
     for c in data.data:
       c.write(strm)
