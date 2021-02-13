@@ -17,24 +17,24 @@ suite "usecase":
             if y div 10 mod 2 == 0: 0'u8
             else: 1'u8
           img[x, y] = ColorBit(bit: b)
-      writeFile(outputDataDir/"p1_" & $w & ".pbm", img, P1)
-      writeFile(outputDataDir/"p4_" & $w & ".pbm", img, P4)
+      writePNMFile(outputDataDir/"p1_" & $w & ".pbm", img, P1)
+      writePNMFile(outputDataDir/"p4_" & $w & ".pbm", img, P4)
 
   test "create PGM image and save file":
     var img = newImage(ColorGray, 50, 255)
     for y in 0..<img.h:
       for x in 0..<img.w:
         img[x, y] = ColorGray(gray: y.uint8)
-    writeFile(outputDataDir/"p2.pgm", img, P2)
-    writeFile(outputDataDir/"p5.pgm", img, P5)
+    writePNMFile(outputDataDir/"p2.pgm", img, P2)
+    writePNMFile(outputDataDir/"p5.pgm", img, P5)
 
   test "create PPM image and save file":
     var img = newImage(ColorRGB, 50, 255)
     for y in 0..<img.h:
       for x in 0..<img.w:
         img[x, y] = ColorRGB(red: y.uint8, green: 25'u8, blue: 0'u8)
-    writeFile(outputDataDir/"p3.ppm", img, P3)
-    writeFile(outputDataDir/"p6.ppm", img, P6)
+    writePNMFile(outputDataDir/"p3.ppm", img, P3)
+    writePNMFile(outputDataDir/"p6.ppm", img, P6)
 
 suite "bitSeqToByteSeq":
   test "0 * 8":

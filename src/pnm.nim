@@ -341,7 +341,7 @@ method high(c: ColorBit): int = 1
 method high(c: ColorGray): int = ColorComponent.high.int
 method high(c: ColorRGB): int = ColorComponent.high.int
 
-proc writeFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
+proc writePNMFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
   var strm = newFileStream(fn, fmWrite)
   defer: strm.close()
 
