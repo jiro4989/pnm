@@ -235,12 +235,15 @@
 ## * `(EN) Portable Anymap - Wikipedia <https://en.wikipedia.org/wiki/Netpbm_format>`_
 ## * `(JA) PNM(画像フォーマット) - Wikipedia <https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88)>`_
 
-import streams, strformat
+import streams, strformat, strutils
 from sequtils import mapIt, repeat, distribute
-from strutils import join
 
 type
-  Image = object
+  PNM* = object
+    descriptor*: Descriptor
+    max: int
+    image: Image
+  Image* = object
     width*, height*: int
     data*: seq[Color]
   Descriptor* {.pure.} = enum
@@ -266,6 +269,17 @@ proc newImage*(t: typedesc, width, height: int): Image =
   result = Image(width: width, height: height)
   let c: Color = t()
   result.data = repeat(c, width * height)
+
+func toDescriptor*(str: string): Descriptor =
+  case str
+  of "P1": P1
+  of "P2": P2
+  of "P3": P3
+  of "P4": P4
+  of "P5": P5
+  of "P6": P6
+  else:
+    raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & str)
 
 func bitSeqToByteSeq(arr: openArray[uint8], col: int): seq[uint8] =
   ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
@@ -340,6 +354,33 @@ method high(c: Color): int {.base.} = int.high
 method high(c: ColorBit): int = 1
 method high(c: ColorGray): int = ColorComponent.high.int
 method high(c: ColorRGB): int = ColorComponent.high.int
+
+proc readPNM*(strm: Stream): PNM =
+  # read descriptor
+  result.descriptor = strm.readLine().toDescriptor()
+
+  # read comment line
+  let b = strm.peekChar()
+  if b == '#':
+    # コメント行を読み取って破棄
+    discard strm.readLine()
+
+  # read column size and row size
+  let sizeLine = strm.readLine()
+  let wh = sizeLine.split(" ")
+  let width = wh[0].parseInt()
+  let height = wh[1].parseInt()
+  result.image =
+    case result.descriptor
+    of P1, P4: newImage(ColorBit, width, height)
+    of P2, P5: newImage(ColorGray, width, height)
+    of P3, P6: newImage(ColorRGB, width, height)
+
+  # read max data
+  case result.descriptor
+  of P2, P3, P5, P6:
+    result.max = strm.readLine().parseInt
+  else: discard
 
 proc writePNMFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
   var strm = newFileStream(fn, fmWrite)
