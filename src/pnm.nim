@@ -236,7 +236,7 @@
 ## * `(JA) PNM(画像フォーマット) - Wikipedia <https://ja.wikipedia.org/wiki/PNM_(%E7%94%BB%E5%83%8F%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88)>`_
 
 import streams, strformat, strutils
-from sequtils import mapIt, repeat, distribute
+from sequtils import map, mapIt, repeat, distribute
 
 type
   PNM* = object
@@ -356,6 +356,8 @@ method high(c: ColorGray): int = ColorComponent.high.int
 method high(c: ColorRGB): int = ColorComponent.high.int
 
 proc readPNM*(strm: Stream): PNM =
+  # TODO: refactoring
+
   # read descriptor
   result.descriptor = strm.readLine().toDescriptor()
 
@@ -380,6 +382,41 @@ proc readPNM*(strm: Stream): PNM =
   case result.descriptor
   of P2, P3, P5, P6:
     result.max = strm.readLine().parseInt
+  else: discard
+
+  # body
+  case result.descriptor
+  of P2, P3:
+    var line: string
+    var bytes: seq[uint8]
+    while strm.readLine(line):
+      for b in line.splitWhitespace().mapIt(it.parseUInt.uint8):
+        # TODO: varidate data size
+        bytes.add(b)
+    case result.descriptor
+    of P2:
+      # TODO: move to procedure
+      var img = newImage(ColorGray, width, height)
+      img.data = bytes.map(proc(n: uint8): Color =
+        var c: Color = ColorGray(gray: n)
+        return c)
+      result.image = img
+    of P3:
+      # TODO: move to procedure
+      var img = newImage(ColorRGB, width, height)
+      var data: seq[array[3, uint8]]
+      var arr: array[3, uint8]
+      for i, b in bytes:
+        let m = i mod 3
+        arr[m] = b
+        if (i+1) mod 3 == 0:
+          data.add(arr)
+          arr = [0'u8, 0, 0]
+      img.data = data.map(proc(n: array[3, uint8]): Color =
+        var c: Color = ColorRGB(red: n[0], green: n[1], blue: n[2])
+        return c)
+      result.image = img
+    else: discard
   else: discard
 
 proc writePNMFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
