@@ -407,15 +407,11 @@ proc readPNM*(strm: Stream): PNM =
     discard strm.readLine()
 
   # read column size and row size
-  let sizeLine = strm.readLine()
-  let wh = sizeLine.split(" ")
-  let width = wh[0].parseInt()
-  let height = wh[1].parseInt()
-  result.image =
-    case result.descriptor
-    of P1, P4: newImage(ColorBit, width, height)
-    of P2, P5: newImage(ColorGray, width, height)
-    of P3, P6: newImage(ColorRGB, width, height)
+  let
+    sizeLine = strm.readLine()
+    wh = sizeLine.split(" ")
+    width = wh[0].parseInt()
+    height = wh[1].parseInt()
 
   # read max data
   case result.descriptor
