@@ -355,7 +355,7 @@ method high(c: ColorBit): int = 1
 method high(c: ColorGray): int = ColorComponent.high.int
 method high(c: ColorRGB): int = ColorComponent.high.int
 
-proc readDataPart(strm: Stream): seq[uint8] =
+proc readDataPartOfTextData(strm: Stream): seq[uint8] =
   ## for P2 or P3.
   var line: string
   while strm.readLine(line):
@@ -414,14 +414,12 @@ proc readPNM*(strm: Stream): PNM =
 
   # body
   case result.descriptor
-  of P2, P3:
-    let bytes = strm.readDataPart()
-    case result.descriptor
-    of P2:
-      result.image = bytes.toColorGrayImage(width, height)
-    of P3:
-      result.image = bytes.toColorRGBImage(width, height)
-    else: discard
+  of P2:
+    let bytes = strm.readDataPartOfTextData()
+    result.image = bytes.toColorGrayImage(width, height)
+  of P3:
+    let bytes = strm.readDataPartOfTextData()
+    result.image = bytes.toColorRGBImage(width, height)
   else: discard
 
 proc writePNMFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
