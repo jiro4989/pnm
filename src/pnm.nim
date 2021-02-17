@@ -367,11 +367,16 @@ proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = fa
       if maxDataCount <= dataCounter:
         return
 
-proc readDataPartOfBinaryData(strm: Stream): seq[uint8] =
+proc readDataPartOfBinaryData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
   ## for P5 or P6.
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
-  # TODO: varidate data size
-  result = strm.readAll().mapIt(it.uint8)
+  let maxDataCount = width * height * byteSize
+  var dataCounter: int
+  while not strm.atEnd():
+    result.add(strm.readUint8())
+    inc(dataCounter)
+    if maxDataCount <= dataCounter:
+      return
 
 proc toColorBitImage(bytes: seq[uint8], width, height: int): Image =
   result = newImage(ColorBit, width, height)
@@ -442,10 +447,10 @@ proc readPNM*(strm: Stream): PNM =
     # result.image = bytes.toColorBitImage(width, height)
     discard
   of P5:
-    let bytes = strm.readDataPartOfBinaryData()
+    let bytes = strm.readDataPartOfBinaryData(width, height, byteSize)
     result.image = bytes.toColorGrayImage(width, height)
   of P6:
-    let bytes = strm.readDataPartOfBinaryData()
+    let bytes = strm.readDataPartOfBinaryData(width, height, byteSize, true)
     result.image = bytes.toColorRGBImage(width, height)
 
 proc writePNMFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
