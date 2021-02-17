@@ -366,6 +366,7 @@ proc readDataPartOfTextData(strm: Stream): seq[uint8] =
 proc readDataPartOfBinaryData(strm: Stream): seq[uint8] =
   ## for P5 or P6.
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
+  # TODO: varidate data size
   result = strm.readAll().mapIt(it.uint8)
 
 proc toColorBitImage(bytes: seq[uint8], width, height: int): Image =
