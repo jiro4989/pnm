@@ -357,7 +357,10 @@ method high(c: ColorRGB): int = ColorComponent.high.int
 
 proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
   ## for P2 or P3.
-  let maxDataCount = width * height * byteSize
+  let singleDataSize = width * height * byteSize
+  let maxDataCount =
+    if rgb: singleDataSize * 3
+    else: singleDataSize
   var line: string
   var dataCounter: int
   while strm.readLine(line):
@@ -370,7 +373,10 @@ proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = fa
 proc readDataPartOfBinaryData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
   ## for P5 or P6.
   ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
-  let maxDataCount = width * height * byteSize
+  let singleDataSize = width * height * byteSize
+  let maxDataCount =
+    if rgb: singleDataSize * 3
+    else: singleDataSize
   var dataCounter: int
   while not strm.atEnd():
     result.add(strm.readUint8())
