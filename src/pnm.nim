@@ -363,6 +363,11 @@ proc readDataPartOfTextData(strm: Stream): seq[uint8] =
       # TODO: varidate data size
       result.add(b)
 
+proc readDataPartOfBinaryData(strm: Stream): seq[uint8] =
+  ## for P5 or P6.
+  ## **Note**: 事前にstrmからヘッダ部分の読み込みが完了していないといけない。
+  result = strm.readAll().mapIt(it.uint8)
+
 proc toColorBitImage(bytes: seq[uint8], width, height: int): Image =
   result = newImage(ColorBit, width, height)
   result.data = bytes.map(proc(n: uint8): Color =
@@ -429,7 +434,17 @@ proc readPNM*(strm: Stream): PNM =
   of P3:
     let bytes = strm.readDataPartOfTextData()
     result.image = bytes.toColorRGBImage(width, height)
-  else: discard
+  of P4:
+    # TODO
+    # let bytes = strm.readDataPartOfTextData()
+    # result.image = bytes.toColorBitImage(width, height)
+    discard
+  of P5:
+    let bytes = strm.readDataPartOfBinaryData()
+    result.image = bytes.toColorGrayImage(width, height)
+  of P6:
+    let bytes = strm.readDataPartOfBinaryData()
+    result.image = bytes.toColorRGBImage(width, height)
 
 proc writePNMFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
   var strm = newFileStream(fn, fmWrite)
