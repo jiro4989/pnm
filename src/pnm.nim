@@ -241,6 +241,7 @@ from sequtils import map, mapIt, repeat, distribute
 type
   PNM* = object
     descriptor*: Descriptor
+    comment: string
     max: int
     image: Image
   Image* = object
@@ -417,8 +418,8 @@ proc readPNM*(strm: Stream): PNM =
   # read comment line
   let b = strm.peekChar()
   if b == '#':
-    # コメント行を読み取って破棄
-    discard strm.readLine()
+    discard strm.readChar() # remove comment prefix
+    result.comment = strm.readLine()
 
   # read column size and row size
   let
