@@ -270,7 +270,7 @@ proc newImage*(t: typedesc, width, height: int): Image =
   let c: Color = t()
   result.data = repeat(c, width * height)
 
-func toDescriptor*(str: string): Descriptor =
+func toDescriptor(str: string): Descriptor =
   case str
   of "P1": P1
   of "P2": P2
