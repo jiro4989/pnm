@@ -411,8 +411,6 @@ proc toColorRGBImage(bytes: seq[uint8], width, height: int): Image =
     return c)
 
 proc readPNM*(strm: Stream): PNM =
-  # TODO: refactoring
-
   # read descriptor
   result.descriptor = strm.readLine().toDescriptor()
 
