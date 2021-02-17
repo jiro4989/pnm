@@ -458,35 +458,33 @@ proc readPNM*(strm: Stream): PNM =
     let bytes = strm.readDataPartOfBinaryData(width, height, byteSize, true)
     result.image = bytes.toColorRGBImage(width, height)
 
-proc writePNMFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
-  var strm = newFileStream(fn, fmWrite)
-  defer: strm.close()
-
+proc writePNM*(strm: Stream, data: PNM) =
+  let image = data.image
   # header
-  strm.writeLine(descr)
-  if comment != "":
-    strm.writeLine("#" & comment)
-  strm.writeLine($data.w & " " & $data.h)
-  case descr
+  strm.writeLine(data.descriptor)
+  if data.comment != "":
+    strm.writeLine("#" & data.comment)
+  strm.writeLine($image.w & " " & $image.h)
+  case data.descriptor
   of P2, P3, P5, P6:
-    strm.writeLine($data[0, 0].high)
+    strm.writeLine($image[0, 0].high)
   else:
     discard
 
   # body
-  case descr
+  case data.descriptor
   of P1, P2, P3:
-    for y in 0..<data.h:
-      let line = data.line(y)
+    for y in 0..<image.h:
+      let line = image.line(y)
       let lineStr = line.mapIt(it.str).join(" ")
       strm.writeLine(lineStr)
   of P4:
-    let bits = data.data.mapIt(it.bit)
+    let bits = image.data.mapIt(it.bit)
     var rows: seq[seq[uint8]]
     var row: seq[uint8]
     for bit in bits:
       row.add(bit)
-      if data.w <= row.len:
+      if image.w <= row.len:
         rows.add(row)
         row = @[]
     if 0 < row.len:
@@ -495,6 +493,6 @@ proc writePNMFile*(fn: string, data: Image, descr: Descriptor, comment = "") =
       for b in row.bitSeqToByteSeq(8):
         strm.write(b)
   of P5, P6:
-    for c in data.data:
+    for c in image.data:
       c.write(strm)
 
