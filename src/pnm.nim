@@ -369,6 +369,20 @@ proc toColorGrayImage(bytes: seq[uint8], width, height: int): Image =
     var c: Color = ColorGray(gray: n)
     return c)
 
+proc toColorRGBImage(bytes: seq[uint8], width, height: int): Image =
+  result = newImage(ColorRGB, width, height)
+  var data: seq[array[3, uint8]]
+  var arr: array[3, uint8]
+  for i, b in bytes:
+    let m = i mod 3
+    arr[m] = b
+    if (i+1) mod 3 == 0:
+      data.add(arr)
+      arr = [0'u8, 0, 0]
+  result.data = data.map(proc(n: array[3, uint8]): Color =
+    var c: Color = ColorRGB(red: n[0], green: n[1], blue: n[2])
+    return c)
+
 proc readPNM*(strm: Stream): PNM =
   # TODO: refactoring
 
@@ -406,20 +420,7 @@ proc readPNM*(strm: Stream): PNM =
     of P2:
       result.image = bytes.toColorGrayImage(width, height)
     of P3:
-      # TODO: move to procedure
-      var img = newImage(ColorRGB, width, height)
-      var data: seq[array[3, uint8]]
-      var arr: array[3, uint8]
-      for i, b in bytes:
-        let m = i mod 3
-        arr[m] = b
-        if (i+1) mod 3 == 0:
-          data.add(arr)
-          arr = [0'u8, 0, 0]
-      img.data = data.map(proc(n: array[3, uint8]): Color =
-        var c: Color = ColorRGB(red: n[0], green: n[1], blue: n[2])
-        return c)
-      result.image = img
+      result.image = bytes.toColorRGBImage(width, height)
     else: discard
   else: discard
 
