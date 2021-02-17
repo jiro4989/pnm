@@ -355,13 +355,17 @@ method high(c: ColorBit): int = 1
 method high(c: ColorGray): int = ColorComponent.high.int
 method high(c: ColorRGB): int = ColorComponent.high.int
 
-proc readDataPartOfTextData(strm: Stream): seq[uint8] =
+proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
   ## for P2 or P3.
+  let maxDataCount = width * height * byteSize
   var line: string
+  var dataCounter: int
   while strm.readLine(line):
     for b in line.splitWhitespace().mapIt(it.parseUInt.uint8):
-      # TODO: varidate data size
       result.add(b)
+      inc(dataCounter)
+      if maxDataCount <= dataCounter:
+        return
 
 proc readDataPartOfBinaryData(strm: Stream): seq[uint8] =
   ## for P5 or P6.
@@ -421,15 +425,16 @@ proc readPNM*(strm: Stream): PNM =
   else: discard
 
   # body
+  const byteSize = 1
   case result.descriptor
   of P1:
-    let bytes = strm.readDataPartOfTextData()
+    let bytes = strm.readDataPartOfTextData(width, height, byteSize)
     result.image = bytes.toColorBitImage(width, height)
   of P2:
-    let bytes = strm.readDataPartOfTextData()
+    let bytes = strm.readDataPartOfTextData(width, height, byteSize)
     result.image = bytes.toColorGrayImage(width, height)
   of P3:
-    let bytes = strm.readDataPartOfTextData()
+    let bytes = strm.readDataPartOfTextData(width, height, byteSize, true)
     result.image = bytes.toColorRGBImage(width, height)
   of P4:
     # TODO
