@@ -363,6 +363,12 @@ proc readDataPartOfTextData(strm: Stream): seq[uint8] =
       # TODO: varidate data size
       result.add(b)
 
+proc toColorBitImage(bytes: seq[uint8], width, height: int): Image =
+  result = newImage(ColorBit, width, height)
+  result.data = bytes.map(proc(n: uint8): Color =
+    var c: Color = ColorBit(bit: n)
+    return c)
+
 proc toColorGrayImage(bytes: seq[uint8], width, height: int): Image =
   result = newImage(ColorGray, width, height)
   result.data = bytes.map(proc(n: uint8): Color =
@@ -414,6 +420,9 @@ proc readPNM*(strm: Stream): PNM =
 
   # body
   case result.descriptor
+  of P1:
+    let bytes = strm.readDataPartOfTextData()
+    result.image = bytes.toColorBitImage(width, height)
   of P2:
     let bytes = strm.readDataPartOfTextData()
     result.image = bytes.toColorGrayImage(width, height)
