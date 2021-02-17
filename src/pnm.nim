@@ -259,9 +259,6 @@ type
   ColorRGB* = ref object of Color
     red*, green*, blue*: ColorComponent
 
-  Point* = object
-    x*, y*: int
-
   IllegalFileDescriptorError* = object of Defect
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
@@ -320,14 +317,8 @@ template line*(img: Image, y: int): seq[Color] =
 template `[]`*(img: Image, x, y: int): Color =
   img.data[x + y * img.w]
 
-template `[]`*(img: Image, p: Point): Color =
-  img[p.x, p.y]
-
 template `[]=`*(img: var Image, x, y: int, c: Color) =
   img.data[x + y * img.w] = c
-
-template `[]=`*(img: var Image, p: Point, c: Color) =
-  img[p.x, p.y] = c
 
 method str(c: Color): string {.base.} = discard
 method str(c: ColorBit): string = $c.b
