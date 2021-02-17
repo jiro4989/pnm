@@ -496,3 +496,13 @@ proc writePNM*(strm: Stream, data: PNM) =
     for c in image.data:
       c.write(strm)
 
+when not defined js:
+  proc readPNMFile*(fn: string): PNM =
+    var strm = newFileStream(fn, fmRead)
+    defer: strm.close()
+    result = strm.readPNM()
+
+  proc writePNMFile*(fn: string, data: PNM) =
+    var strm = newFileStream(fn, fmWrite)
+    defer: strm.close()
+    strm.writePNM(data)
