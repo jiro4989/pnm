@@ -355,6 +355,14 @@ method high(c: ColorBit): int = 1
 method high(c: ColorGray): int = ColorComponent.high.int
 method high(c: ColorRGB): int = ColorComponent.high.int
 
+proc readDataPart(strm: Stream): seq[uint8] =
+  ## for P2 or P3.
+  var line: string
+  while strm.readLine(line):
+    for b in line.splitWhitespace().mapIt(it.parseUInt.uint8):
+      # TODO: varidate data size
+      result.add(b)
+
 proc readPNM*(strm: Stream): PNM =
   # TODO: refactoring
 
@@ -387,12 +395,7 @@ proc readPNM*(strm: Stream): PNM =
   # body
   case result.descriptor
   of P2, P3:
-    var line: string
-    var bytes: seq[uint8]
-    while strm.readLine(line):
-      for b in line.splitWhitespace().mapIt(it.parseUInt.uint8):
-        # TODO: varidate data size
-        bytes.add(b)
+    let bytes = strm.readDataPart()
     case result.descriptor
     of P2:
       # TODO: move to procedure
