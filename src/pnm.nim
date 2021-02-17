@@ -363,6 +363,12 @@ proc readDataPart(strm: Stream): seq[uint8] =
       # TODO: varidate data size
       result.add(b)
 
+proc toColorGrayImage(bytes: seq[uint8], width, height: int): Image =
+  result = newImage(ColorGray, width, height)
+  result.data = bytes.map(proc(n: uint8): Color =
+    var c: Color = ColorGray(gray: n)
+    return c)
+
 proc readPNM*(strm: Stream): PNM =
   # TODO: refactoring
 
@@ -398,12 +404,7 @@ proc readPNM*(strm: Stream): PNM =
     let bytes = strm.readDataPart()
     case result.descriptor
     of P2:
-      # TODO: move to procedure
-      var img = newImage(ColorGray, width, height)
-      img.data = bytes.map(proc(n: uint8): Color =
-        var c: Color = ColorGray(gray: n)
-        return c)
-      result.image = img
+      result.image = bytes.toColorGrayImage(width, height)
     of P3:
       # TODO: move to procedure
       var img = newImage(ColorRGB, width, height)
