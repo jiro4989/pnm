@@ -239,113 +239,34 @@ import streams, strformat, strutils
 from sequtils import map, mapIt, repeat, distribute
 
 type
-  PNM* = object
-    descriptor*: Descriptor
+  Pnm* = ref PnmObj
+  PnmObj* = object of RootObj
+    descriptor: Descriptor
     comment: string
-    max: int
-    image: Image
-  Image* = object
-    width*, height*: int
-    data*: seq[Color]
+    width, height, max: int
+
+  Pbm* = ref PbmObj
+  PbmObj* = object of PnmObj
+    data: seq[ColorBit]
+
+  Pgm* = ref PgmObj
+  PgmObj* = object of PnmObj
+    data: seq[ColorGray]
+
+  Ppm* = ref PpmObj
+  PpmObj* = object of PnmObj
+    data: seq[ColorRgb]
+
   Descriptor* {.pure.} = enum
     P1, P2, P3, P4, P5, P6
 
-  Color* = ref object of RootObj # base class
-  ColorComponent* = uint8
-  ColorBit* = ref object of Color
-    bit: uint8 # 0 or 1
-  ColorGray* = ref object of Color
-    gray: ColorComponent
-  ColorRGB* = ref object of Color
-    red*, green*, blue*: ColorComponent
+  ColorBit* = byte
+  ColorGray* = byte
+  ColorRgb* = array[3, byte]
 
   IllegalFileDescriptorError* = object of Defect
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
-
-proc newImage*(t: typedesc, width, height: int): Image =
-  result = Image(width: width, height: height)
-  let c: Color = t()
-  result.data = repeat(c, width * height)
-
-func toDescriptor(str: string): Descriptor =
-  case str
-  of "P1": P1
-  of "P2": P2
-  of "P3": P3
-  of "P4": P4
-  of "P5": P5
-  of "P6": P6
-  else:
-    raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & str)
-
-func bitSeqToByteSeq(arr: openArray[uint8], col: int): seq[uint8] =
-  ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
-  var data: uint8
-  var i = 0
-  for u in arr:
-    data = data shl 1
-    data += u
-    i.inc
-    if i mod 8 == 0:
-      result.add data
-      data = 0'u8
-      continue
-    if i mod col == 0:
-      data = data shl (8 - (i mod 8))
-      result.add data
-      data = 0'u8
-      i = 0
-  if data != 0:
-    result.add data shl (8 - (i mod 8))
-
-template w*(img: Image): int =
-  img.width
-
-template h*(img: Image): int =
-  img.height
-
-template b*(c: ColorBit): uint8 = c.bit
-template g*(c: ColorGray): ColorComponent = c.gray
-template r*(c: ColorRGB): ColorComponent = c.red
-template g*(c: ColorRGB): ColorComponent = c.green
-template b*(c: ColorRGB): ColorComponent = c.blue
-template line*(img: Image, y: int): seq[Color] =
-  let startPos = y * img.w
-  img.data[startPos ..< startPos+img.w]
-
-template `[]`*(img: Image, x, y: int): Color =
-  img.data[x + y * img.w]
-
-template `[]=`*(img: var Image, x, y: int, c: Color) =
-  img.data[x + y * img.w] = c
-
-method str(c: Color): string {.base.} = discard
-method str(c: ColorBit): string = $c.b
-method str(c: ColorGray): string = $c.g
-method str(c: ColorRGB): string = &"{c.r} {c.g} {c.b}"
-
-method bit(c: Color): uint8 {.base.} = discard
-method bit(c: ColorBit): uint8 = c.b
-
-method write(c: Color, strm: Stream) {.base.} =
-  discard
-
-method write(c: ColorBit, strm: Stream) =
-  discard
-
-method write(c: ColorGray, strm: Stream) =
-  strm.write(c.g)
-
-method write(c: ColorRGB, strm: Stream) =
-  strm.write(c.r)
-  strm.write(c.g)
-  strm.write(c.b)
-
-method high(c: Color): int {.base.} = int.high
-method high(c: ColorBit): int = 1
-method high(c: ColorGray): int = ColorComponent.high.int
-method high(c: ColorRGB): int = ColorComponent.high.int
 
 proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
   ## for P2 or P3.
@@ -376,34 +297,35 @@ proc readDataPartOfBinaryData(strm: Stream, width, height, byteSize: int, rgb = 
     if maxDataCount <= dataCounter:
       return
 
-proc toColorBitImage(bytes: seq[uint8], width, height: int): Image =
-  result = newImage(ColorBit, width, height)
-  result.data = bytes.map(proc(n: uint8): Color =
-    var c: Color = ColorBit(bit: n)
-    return c)
+func toDescriptor(str: string): Descriptor =
+  case str
+  of "P1": P1
+  of "P2": P2
+  of "P3": P3
+  of "P4": P4
+  of "P5": P5
+  of "P6": P6
+  else:
+    raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & str)
 
-proc toColorGrayImage(bytes: seq[uint8], width, height: int): Image =
-  result = newImage(ColorGray, width, height)
-  result.data = bytes.map(proc(n: uint8): Color =
-    var c: Color = ColorGray(gray: n)
-    return c)
+#[
+================================================================================
+                                      PGM
+================================================================================
+]#
 
-proc toColorRGBImage(bytes: seq[uint8], width, height: int): Image =
-  result = newImage(ColorRGB, width, height)
-  var data: seq[array[3, uint8]]
-  var arr: array[3, uint8]
-  for i, b in bytes:
-    let m = i mod 3
-    arr[m] = b
-    if (i+1) mod 3 == 0:
-      data.add(arr)
-      arr = [0'u8, 0, 0]
-  result.data = data.map(proc(n: array[3, uint8]): Color =
-    var c: Color = ColorRGB(red: n[0], green: n[1], blue: n[2])
-    return c)
+template line(p: Pgm, y: int): seq[ColorGray] =
+  let startPos = y * p.width
+  p.data[startPos ..< startPos+p.width]
 
-proc readPNM*(strm: Stream): PNM =
-  # read descriptor
+proc `[]`*(p: Pgm, x, y: int): ColorGray =
+  p.data[x + y * p.width]
+
+proc `[]=`*(p: Pgm, x, y: int, c: ColorGray) =
+  p.data[x + y * p.width] = c
+
+proc readPgm*(strm: Stream): Pgm =
+  new result
   result.descriptor = strm.readLine().toDescriptor()
 
   # read comment line
@@ -419,81 +341,337 @@ proc readPNM*(strm: Stream): PNM =
     width = wh[0].parseInt()
     height = wh[1].parseInt()
 
+  result.width = width
+  result.height = height
+
   # read max data
   case result.descriptor
-  of P2, P3, P5, P6:
+  of P2, P5:
     result.max = strm.readLine().parseInt
   else: discard
 
   # body
   const byteSize = 1
   case result.descriptor
-  of P1:
-    let bytes = strm.readDataPartOfTextData(width, height, byteSize)
-    result.image = bytes.toColorBitImage(width, height)
-  of P2:
-    let bytes = strm.readDataPartOfTextData(width, height, byteSize)
-    result.image = bytes.toColorGrayImage(width, height)
-  of P3:
-    let bytes = strm.readDataPartOfTextData(width, height, byteSize, true)
-    result.image = bytes.toColorRGBImage(width, height)
-  of P4:
-    # TODO
-    # let bytes = strm.readDataPartOfTextData()
-    # result.image = bytes.toColorBitImage(width, height)
-    discard
-  of P5:
-    let bytes = strm.readDataPartOfBinaryData(width, height, byteSize)
-    result.image = bytes.toColorGrayImage(width, height)
-  of P6:
-    let bytes = strm.readDataPartOfBinaryData(width, height, byteSize, true)
-    result.image = bytes.toColorRGBImage(width, height)
+  of P2: result.data = strm.readDataPartOfTextData(width, height, byteSize)
+  of P5: result.data = strm.readDataPartOfBinaryData(width, height, byteSize)
+  else: discard
 
-proc writePNM*(strm: Stream, data: PNM) =
-  let image = data.image
+proc writePgm*(strm: Stream, data: Pgm) =
   # header
   strm.writeLine(data.descriptor)
   if data.comment != "":
     strm.writeLine("#" & data.comment)
-  strm.writeLine($image.w & " " & $image.h)
-  case data.descriptor
-  of P2, P3, P5, P6:
-    strm.writeLine($image[0, 0].high)
-  else:
-    discard
+  strm.writeLine($data.width & " " & $data.height)
+  strm.writeLine($high(ColorGray))
 
   # body
   case data.descriptor
-  of P1, P2, P3:
-    for y in 0..<image.h:
-      let line = image.line(y)
-      let lineStr = line.mapIt(it.str).join(" ")
+  of P2:
+    for y in 0..<data.height:
+      let line = data.line(y)
+      let lineStr = line.mapIt($it).join(" ")
       strm.writeLine(lineStr)
-  of P4:
-    let bits = image.data.mapIt(it.bit)
-    var rows: seq[seq[uint8]]
-    var row: seq[uint8]
-    for bit in bits:
-      row.add(bit)
-      if image.w <= row.len:
+  of P5:
+    for c in data.data:
+      strm.write(c)
+  else: discard
+
+#[
+================================================================================
+                                      PPM
+================================================================================
+]#
+
+template line(p: Ppm, y: int): seq[ColorRgb] =
+  let startPos = y * p.width
+  p.data[startPos ..< startPos+p.width]
+
+template r*(c: ColorRGB): byte = c[0]
+template g*(c: ColorRGB): byte = c[1]
+template b*(c: ColorRGB): byte = c[2]
+
+template `r=`*(c: ColorRGB, b: byte) = c[0] = b
+template `g=`*(c: ColorRGB, b: byte) = c[1] = b
+template `b=`*(c: ColorRGB, b: byte) = c[2] = b
+
+proc `[]`*(p: Ppm, x, y: int): ColorRgb =
+  p.data[x + y * p.width]
+
+proc `[]=`*(p: Ppm, x, y: int, c: ColorRgb) =
+  p.data[x + y * p.width] = c
+
+proc toColorRgb(bytes: seq[uint8]): seq[ColorRgb] =
+  var data: seq[ColorRgb]
+  var arr: ColorRgb
+  for i, b in bytes:
+    let m = i mod 3
+    arr[m] = b
+    if (i+1) mod 3 == 0:
+      data.add(arr)
+      arr = [0'u8, 0, 0]
+  return data
+
+proc readPpm*(strm: Stream): Ppm =
+  new result
+  result.descriptor = strm.readLine().toDescriptor()
+
+  # read comment line
+  let b = strm.peekChar()
+  if b == '#':
+    discard strm.readChar() # remove comment prefix
+    result.comment = strm.readLine()
+
+  # read column size and row size
+  let
+    sizeLine = strm.readLine()
+    wh = sizeLine.split(" ")
+    width = wh[0].parseInt()
+    height = wh[1].parseInt()
+
+  result.width = width
+  result.height = height
+
+  # read max data
+  case result.descriptor
+  of P3, P6:
+    result.max = strm.readLine().parseInt
+  else: discard
+
+  # body
+  const byteSize = 3
+  case result.descriptor
+  of P3: result.data = strm.readDataPartOfTextData(width, height, byteSize).toColorRgb
+  of P6: result.data = strm.readDataPartOfBinaryData(width, height, byteSize).toColorRgb
+  else: discard
+
+proc writePpm*(strm: Stream, data: Ppm) =
+  # header
+  strm.writeLine(data.descriptor)
+  if data.comment != "":
+    strm.writeLine("#" & data.comment)
+  strm.writeLine($data.width & " " & $data.height)
+  strm.writeLine($high(byte))
+
+  # body
+  case data.descriptor
+  of P3:
+    for y in 0..<data.height:
+      let line = data.line(y)
+      let lineStr = line.mapIt(&"{it.r} {it.g} {it.b}").join(" ")
+      strm.writeLine(lineStr)
+  of P6:
+    for c in data.data:
+      strm.write(c.r)
+      strm.write(c.g)
+      strm.write(c.b)
+  else: discard
+
+
+when false:
+  proc newImage*(t: typedesc, width, height: int): Image =
+    result = Image(width: width, height: height)
+    let c: Color = t()
+    result.data = repeat(c, width * height)
+
+  func toDescriptor(str: string): Descriptor =
+    case str
+    of "P1": P1
+    of "P2": P2
+    of "P3": P3
+    of "P4": P4
+    of "P5": P5
+    of "P6": P6
+    else:
+      raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & str)
+
+  func bitSeqToByteSeq(arr: openArray[uint8], col: int): seq[uint8] =
+    ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
+    var data: uint8
+    var i = 0
+    for u in arr:
+      data = data shl 1
+      data += u
+      i.inc
+      if i mod 8 == 0:
+        result.add data
+        data = 0'u8
+        continue
+      if i mod col == 0:
+        data = data shl (8 - (i mod 8))
+        result.add data
+        data = 0'u8
+        i = 0
+    if data != 0:
+      result.add data shl (8 - (i mod 8))
+
+  template w*(img: Image): int =
+    img.width
+
+  template h*(img: Image): int =
+    img.height
+
+  template b*(c: ColorBit): uint8 = c.bit
+  template g*(c: ColorGray): ColorComponent = c.gray
+  template r*(c: ColorRGB): ColorComponent = c.red
+  template g*(c: ColorRGB): ColorComponent = c.green
+  template b*(c: ColorRGB): ColorComponent = c.blue
+  template line*(img: Image, y: int): seq[Color] =
+    let startPos = y * img.w
+    img.data[startPos ..< startPos+img.w]
+
+  template `[]`*(img: Image, x, y: int): Color =
+    img.data[x + y * img.w]
+
+  template `[]=`*(img: var Image, x, y: int, c: Color) =
+    img.data[x + y * img.w] = c
+
+  method str(c: Color): string {.base.} = discard
+  method str(c: ColorBit): string = $c.b
+  method str(c: ColorGray): string = $c.g
+  method str(c: ColorRGB): string = &"{c.r} {c.g} {c.b}"
+
+  method bit(c: Color): uint8 {.base.} = discard
+  method bit(c: ColorBit): uint8 = c.b
+
+  method write(c: Color, strm: Stream) {.base.} =
+    discard
+
+  method write(c: ColorBit, strm: Stream) =
+    discard
+
+  method write(c: ColorGray, strm: Stream) =
+    strm.write(c.g)
+
+  method write(c: ColorRGB, strm: Stream) =
+    strm.write(c.r)
+    strm.write(c.g)
+    strm.write(c.b)
+
+  method high(c: Color): int {.base.} = int.high
+  method high(c: ColorBit): int = 1
+  method high(c: ColorGray): int = ColorComponent.high.int
+  method high(c: ColorRGB): int = ColorComponent.high.int
+
+
+  proc toColorBitImage(bytes: seq[uint8], width, height: int): Image =
+    result = newImage(ColorBit, width, height)
+    result.data = bytes.map(proc(n: uint8): Color =
+      var c: Color = ColorBit(bit: n)
+      return c)
+
+  proc toColorGrayImage(bytes: seq[uint8], width, height: int): Image =
+    result = newImage(ColorGray, width, height)
+    result.data = bytes.map(proc(n: uint8): Color =
+      var c: Color = ColorGray(gray: n)
+      return c)
+
+  proc toColorRGBImage(bytes: seq[uint8], width, height: int): Image =
+    result = newImage(ColorRGB, width, height)
+    var data: seq[array[3, uint8]]
+    var arr: array[3, uint8]
+    for i, b in bytes:
+      let m = i mod 3
+      arr[m] = b
+      if (i+1) mod 3 == 0:
+        data.add(arr)
+        arr = [0'u8, 0, 0]
+    result.data = data.map(proc(n: array[3, uint8]): Color =
+      var c: Color = ColorRGB(red: n[0], green: n[1], blue: n[2])
+      return c)
+
+  proc readPNM*(strm: Stream): PNM =
+    # read descriptor
+    result.descriptor = strm.readLine().toDescriptor()
+
+    # read comment line
+    let b = strm.peekChar()
+    if b == '#':
+      discard strm.readChar() # remove comment prefix
+      result.comment = strm.readLine()
+
+    # read column size and row size
+    let
+      sizeLine = strm.readLine()
+      wh = sizeLine.split(" ")
+      width = wh[0].parseInt()
+      height = wh[1].parseInt()
+
+    # read max data
+    case result.descriptor
+    of P2, P3, P5, P6:
+      result.max = strm.readLine().parseInt
+    else: discard
+
+    # body
+    const byteSize = 1
+    case result.descriptor
+    of P1:
+      let bytes = strm.readDataPartOfTextData(width, height, byteSize)
+      result.image = bytes.toColorBitImage(width, height)
+    of P2:
+      let bytes = strm.readDataPartOfTextData(width, height, byteSize)
+      result.image = bytes.toColorGrayImage(width, height)
+    of P3:
+      let bytes = strm.readDataPartOfTextData(width, height, byteSize, true)
+      result.image = bytes.toColorRGBImage(width, height)
+    of P4:
+      # TODO
+      # let bytes = strm.readDataPartOfTextData()
+      # result.image = bytes.toColorBitImage(width, height)
+      discard
+    of P5:
+      let bytes = strm.readDataPartOfBinaryData(width, height, byteSize)
+      result.image = bytes.toColorGrayImage(width, height)
+    of P6:
+      let bytes = strm.readDataPartOfBinaryData(width, height, byteSize, true)
+      result.image = bytes.toColorRGBImage(width, height)
+
+  proc writePNM*(strm: Stream, data: PNM) =
+    let image = data.image
+    # header
+    strm.writeLine(data.descriptor)
+    if data.comment != "":
+      strm.writeLine("#" & data.comment)
+    strm.writeLine($image.w & " " & $image.h)
+    case data.descriptor
+    of P2, P3, P5, P6:
+      strm.writeLine($image[0, 0].high)
+    else:
+      discard
+
+    # body
+    case data.descriptor
+    of P1, P2, P3:
+      for y in 0..<image.h:
+        let line = image.line(y)
+        let lineStr = line.mapIt(it.str).join(" ")
+        strm.writeLine(lineStr)
+    of P4:
+      let bits = image.data.mapIt(it.bit)
+      var rows: seq[seq[uint8]]
+      var row: seq[uint8]
+      for bit in bits:
+        row.add(bit)
+        if image.w <= row.len:
+          rows.add(row)
+          row = @[]
+      if 0 < row.len:
         rows.add(row)
-        row = @[]
-    if 0 < row.len:
-      rows.add(row)
-    for row in rows:
-      for b in row.bitSeqToByteSeq(8):
-        strm.write(b)
-  of P5, P6:
-    for c in image.data:
-      c.write(strm)
+      for row in rows:
+        for b in row.bitSeqToByteSeq(8):
+          strm.write(b)
+    of P5, P6:
+      for c in image.data:
+        c.write(strm)
 
-when not defined js:
-  proc readPNMFile*(fn: string): PNM =
-    var strm = newFileStream(fn, fmRead)
-    defer: strm.close()
-    result = strm.readPNM()
+  when not defined js:
+    proc readPNMFile*(fn: string): PNM =
+      var strm = newFileStream(fn, fmRead)
+      defer: strm.close()
+      result = strm.readPNM()
 
-  proc writePNMFile*(fn: string, data: PNM) =
-    var strm = newFileStream(fn, fmWrite)
-    defer: strm.close()
-    strm.writePNM(data)
+    proc writePNMFile*(fn: string, data: PNM) =
+      var strm = newFileStream(fn, fmWrite)
+      defer: strm.close()
+      strm.writePNM(data)
