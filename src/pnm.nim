@@ -241,7 +241,7 @@ from sequtils import map, mapIt, repeat, distribute
 type
   Pnm* = ref PnmObj
   PnmObj* = object of RootObj
-    descriptor: Descriptor
+    descriptor: PnmDescriptor
     comment: string
     width, height, max: int
 
@@ -257,7 +257,7 @@ type
   PpmObj* = object of PnmObj
     data: seq[ColorRgb]
 
-  Descriptor* {.pure.} = enum
+  PnmDescriptor* {.pure.} = enum
     P1, P2, P3, P4, P5, P6
 
   ColorBit* = byte
@@ -267,6 +267,17 @@ type
   IllegalFileDescriptorError* = object of Defect
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
+
+proc width*(p: Pnm): int = p.width
+proc height*(p: Pnm): int = p.height
+
+template validateDescriptorPgm(d: PnmDescriptor) =
+  if d notin [P2, P5]:
+    raise newException(IllegalFileDescriptorError, "the descriptor of PGM must be P2 or P5")
+
+template validateDescriptorPpm(d: PnmDescriptor) =
+  if d notin [P3, P6]:
+    raise newException(IllegalFileDescriptorError, "the descriptor of PPM must be P3 or P6")
 
 proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
   ## for P2 or P3.
@@ -297,7 +308,7 @@ proc readDataPartOfBinaryData(strm: Stream, width, height, byteSize: int, rgb = 
     if maxDataCount <= dataCounter:
       return
 
-func toDescriptor(str: string): Descriptor =
+func toDescriptor(str: string): PnmDescriptor =
   case str
   of "P1": P1
   of "P2": P2
@@ -314,6 +325,17 @@ func toDescriptor(str: string): Descriptor =
 ================================================================================
 ]#
 
+proc newPgm*(descriptor: PnmDescriptor, width, height, max: int, comment = ""): Pgm =
+  validateDescriptorPgm(descriptor)
+
+  new result
+  result.descriptor = descriptor
+  result.width = width
+  result.height = height
+  result.max = max
+  result.comment = comment
+  result.data = repeat(ColorGray(0'u8), width*height)
+
 template line(p: Pgm, y: int): seq[ColorGray] =
   let startPos = y * p.width
   p.data[startPos ..< startPos+p.width]
@@ -321,8 +343,12 @@ template line(p: Pgm, y: int): seq[ColorGray] =
 proc `[]`*(p: Pgm, x, y: int): ColorGray =
   p.data[x + y * p.width]
 
-proc `[]=`*(p: Pgm, x, y: int, c: ColorGray) =
-  p.data[x + y * p.width] = c
+proc `[]=`*(p: Pgm, x, y: int, color: ColorGray) =
+  p.data[x + y * p.width] = color
+
+proc `descriptor=`*(p: Pgm, descriptor: PnmDescriptor) =
+  validateDescriptorPgm(descriptor)
+  p.descriptor = descriptor
 
 proc readPgm*(strm: Stream): Pgm =
   new result
@@ -383,6 +409,17 @@ proc writePgm*(strm: Stream, data: Pgm) =
 ================================================================================
 ]#
 
+proc newPpm*(descriptor: PnmDescriptor, width, height, max: int, comment = ""): Ppm =
+  validateDescriptorPpm(descriptor)
+
+  new result
+  result.descriptor = descriptor
+  result.width = width
+  result.height = height
+  result.max = max
+  result.comment = comment
+  result.data = repeat(ColorRgb([0'u8, 0, 0]), width*height)
+
 template line(p: Ppm, y: int): seq[ColorRgb] =
   let startPos = y * p.width
   p.data[startPos ..< startPos+p.width]
@@ -398,8 +435,12 @@ template `b=`*(c: ColorRGB, b: byte) = c[2] = b
 proc `[]`*(p: Ppm, x, y: int): ColorRgb =
   p.data[x + y * p.width]
 
-proc `[]=`*(p: Ppm, x, y: int, c: ColorRgb) =
-  p.data[x + y * p.width] = c
+proc `[]=`*(p: Ppm, x, y: int, color: ColorRgb) =
+  p.data[x + y * p.width] = color
+
+proc `descriptor=`*(p: Ppm, descriptor: PnmDescriptor) =
+  validateDescriptorPpm(descriptor)
+  p.descriptor = descriptor
 
 proc toColorRgb(bytes: seq[uint8]): seq[ColorRgb] =
   var data: seq[ColorRgb]
@@ -474,7 +515,7 @@ when false:
     let c: Color = t()
     result.data = repeat(c, width * height)
 
-  func toDescriptor(str: string): Descriptor =
+  func toDescriptor(str: string): PnmDescriptor =
     case str
     of "P1": P1
     of "P2": P2
