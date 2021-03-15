@@ -13,6 +13,9 @@ requires "nim >= 0.19.4"
 
 import strformat
 
+task tests, "Run tests":
+  exec "testament p 'tests/*/*.nim'"
+
 task examples, "Run example code":
   for d in ["write_pbm", "write_pgm", "write_ppm", "read_file"]:
     withDir &"examples/{d}":
