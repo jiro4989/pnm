@@ -24,7 +24,7 @@ jobs:
       - name: Install test
         run: nimble install -Y
       - name: Unit test
-        run: nimble test -Y
+        run: nimble tests
       # - name: Examples test
       #   run: |
       #     find examples/ -mindepth 1 -type d | while read -r dir; do
