@@ -268,6 +268,9 @@ type
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
 
+proc newColorRgb*(r, g, b: byte): ColorRgb =
+  ColorRgb([r, g, b])
+
 proc width*(p: Pnm): int = p.width
 proc height*(p: Pnm): int = p.height
 
