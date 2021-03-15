@@ -356,6 +356,7 @@ proc `descriptor=`*(p: Pgm, descriptor: PnmDescriptor) =
 proc readPgm*(strm: Stream): Pgm =
   new result
   result.descriptor = strm.readLine().toDescriptor()
+  validateDescriptorPgm result.descriptor
 
   # read comment line
   let b = strm.peekChar()
@@ -459,6 +460,7 @@ proc toColorRgb(bytes: seq[uint8]): seq[ColorRgb] =
 proc readPpm*(strm: Stream): Ppm =
   new result
   result.descriptor = strm.readLine().toDescriptor()
+  validateDescriptorPpm result.descriptor
 
   # read comment line
   let b = strm.peekChar()
