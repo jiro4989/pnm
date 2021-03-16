@@ -302,3 +302,33 @@ proc writePpm*(strm: Stream, data: Ppm) =
       strm.write(c.g)
       strm.write(c.b)
   else: discard
+
+when not defined js:
+  # ============================================================
+  # reader
+  # ============================================================
+
+  proc readPgmFile*(file: string): Pgm =
+    var strm = newFileStream(file, fmRead)
+    defer: strm.close
+    strm.readPgm
+
+  proc readPpmFile*(file: string): Ppm =
+    var strm = newFileStream(file, fmRead)
+    defer: strm.close
+    strm.readPpm
+
+  # ============================================================
+  # writer
+  # ============================================================
+
+  proc writePgmFile*(file: string, data: Pgm) =
+    var strm = newFileStream(file, fmWrite)
+    defer: strm.close
+    strm.writePgm(data)
+
+  proc writePpmFile*(file: string, data: Ppm) =
+    var strm = newFileStream(file, fmWrite)
+    defer: strm.close
+    strm.writePpm(data)
+
