@@ -278,8 +278,22 @@ template validateDescriptorPgm(d: PnmDescriptor) =
   if d notin [P2, P5]:
     raise newException(IllegalFileDescriptorError, "the descriptor of PGM must be P2 or P5")
 
+template validateRawStringDescriptorPgm(d: string) =
+  if not (d.len == 3 and
+     d[0] == 'P' and
+     d[1] in ['2', '5'] and
+     d[2] == '\n'):
+    raise newException(IllegalFileDescriptorError, "the descriptor of PGM must be P2 or P5")
+
 template validateDescriptorPpm(d: PnmDescriptor) =
   if d notin [P3, P6]:
+    raise newException(IllegalFileDescriptorError, "the descriptor of PPM must be P3 or P6")
+
+template validateRawStringDescriptorPpm(d: string) =
+  if not (d.len == 3 and
+     d[0] == 'P' and
+     d[1] in ['3', '6'] and
+     d[2] == '\n'):
     raise newException(IllegalFileDescriptorError, "the descriptor of PPM must be P3 or P6")
 
 proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
@@ -354,9 +368,13 @@ proc `descriptor=`*(p: Pgm, descriptor: PnmDescriptor) =
   p.descriptor = descriptor
 
 proc readPgm*(strm: Stream): Pgm =
+  # P1 ~ P6しか取り得ないので 3byte だけ読み取ってバリデーション
+  var d: string
+  strm.peekStr(3, d)
+  validateRawStringDescriptorPgm d
+
   new result
   result.descriptor = strm.readLine().toDescriptor()
-  validateDescriptorPgm result.descriptor
 
   # read comment line
   let b = strm.peekChar()
@@ -458,9 +476,13 @@ proc toColorRgb(bytes: seq[uint8]): seq[ColorRgb] =
   return data
 
 proc readPpm*(strm: Stream): Ppm =
+  # P1 ~ P6しか取り得ないので 3byte だけ読み取ってバリデーション
+  var d: string
+  strm.peekStr(3, d)
+  validateRawStringDescriptorPpm d
+
   new result
   result.descriptor = strm.readLine().toDescriptor()
-  validateDescriptorPpm result.descriptor
 
   # read comment line
   let b = strm.peekChar()
