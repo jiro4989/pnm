@@ -8,3 +8,6 @@ tests/test_util
 outputGotten.txt
 testresults/pattern.json
 tests/examples/write_pgm
+tests/examples/write_ppm
+tests/examples/read_pgm
+tests/examples/read_ppm
