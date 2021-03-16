@@ -532,22 +532,6 @@ proc writePpm*(strm: Stream, data: Ppm) =
 
 
 when false:
-  proc newImage*(t: typedesc, width, height: int): Image =
-    result = Image(width: width, height: height)
-    let c: Color = t()
-    result.data = repeat(c, width * height)
-
-  func toDescriptor(str: string): PnmDescriptor =
-    case str
-    of "P1": P1
-    of "P2": P2
-    of "P3": P3
-    of "P4": P4
-    of "P5": P5
-    of "P6": P6
-    else:
-      raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & str)
-
   func bitSeqToByteSeq(arr: openArray[uint8], col: int): seq[uint8] =
     ## Returns sequences that binary sequence is converted to uint8 every 8 bits.
     var data: uint8
@@ -567,55 +551,6 @@ when false:
         i = 0
     if data != 0:
       result.add data shl (8 - (i mod 8))
-
-  template w*(img: Image): int =
-    img.width
-
-  template h*(img: Image): int =
-    img.height
-
-  template b*(c: ColorBit): uint8 = c.bit
-  template g*(c: ColorGray): ColorComponent = c.gray
-  template r*(c: ColorRGB): ColorComponent = c.red
-  template g*(c: ColorRGB): ColorComponent = c.green
-  template b*(c: ColorRGB): ColorComponent = c.blue
-  template line*(img: Image, y: int): seq[Color] =
-    let startPos = y * img.w
-    img.data[startPos ..< startPos+img.w]
-
-  template `[]`*(img: Image, x, y: int): Color =
-    img.data[x + y * img.w]
-
-  template `[]=`*(img: var Image, x, y: int, c: Color) =
-    img.data[x + y * img.w] = c
-
-  method str(c: Color): string {.base.} = discard
-  method str(c: ColorBit): string = $c.b
-  method str(c: ColorGray): string = $c.g
-  method str(c: ColorRGB): string = &"{c.r} {c.g} {c.b}"
-
-  method bit(c: Color): uint8 {.base.} = discard
-  method bit(c: ColorBit): uint8 = c.b
-
-  method write(c: Color, strm: Stream) {.base.} =
-    discard
-
-  method write(c: ColorBit, strm: Stream) =
-    discard
-
-  method write(c: ColorGray, strm: Stream) =
-    strm.write(c.g)
-
-  method write(c: ColorRGB, strm: Stream) =
-    strm.write(c.r)
-    strm.write(c.g)
-    strm.write(c.b)
-
-  method high(c: Color): int {.base.} = int.high
-  method high(c: ColorBit): int = 1
-  method high(c: ColorGray): int = ColorComponent.high.int
-  method high(c: ColorRGB): int = ColorComponent.high.int
-
 
   proc toColorBitImage(bytes: seq[uint8], width, height: int): Image =
     result = newImage(ColorBit, width, height)
