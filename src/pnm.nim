@@ -339,6 +339,12 @@ func toDescriptor(str: string): PnmDescriptor =
 proc readDescriptor(strm: Stream): PnmDescriptor =
   strm.readLine().toDescriptor()
 
+proc readComment(strm: Stream): string =
+  let b = strm.peekChar
+  if b == '#':
+    discard strm.readChar # remove comment prefix
+    result.add strm.readLine
+
 #[
 ================================================================================
                                       PGM
@@ -372,18 +378,14 @@ proc `descriptor=`*(p: Pgm, descriptor: PnmDescriptor) =
 
 proc readPgm*(strm: Stream): Pgm =
   # P1 ~ P6しか取り得ないので 3byte だけ読み取ってバリデーション
-  var d: string
-  strm.peekStr(3, d)
-  validateRawStringDescriptorPgm d
+  block:
+    var d: string
+    strm.peekStr(3, d)
+    validateRawStringDescriptorPgm d
 
   new result
   result.descriptor = strm.readDescriptor
-
-  # read comment line
-  let b = strm.peekChar()
-  if b == '#':
-    discard strm.readChar() # remove comment prefix
-    result.comment = strm.readLine()
+  result.comment = strm.readComment
 
   # read column size and row size
   let
@@ -480,18 +482,14 @@ proc toColorRgb(bytes: seq[uint8]): seq[ColorRgb] =
 
 proc readPpm*(strm: Stream): Ppm =
   # P1 ~ P6しか取り得ないので 3byte だけ読み取ってバリデーション
-  var d: string
-  strm.peekStr(3, d)
-  validateRawStringDescriptorPpm d
+  block:
+    var d: string
+    strm.peekStr(3, d)
+    validateRawStringDescriptorPpm d
 
   new result
   result.descriptor = strm.readDescriptor
-
-  # read comment line
-  let b = strm.peekChar()
-  if b == '#':
-    discard strm.readChar() # remove comment prefix
-    result.comment = strm.readLine()
+  result.comment = strm.readComment
 
   # read column size and row size
   let
