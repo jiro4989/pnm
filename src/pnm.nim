@@ -39,9 +39,20 @@ proc newColorRgb*(r, g, b: byte): ColorRgb =
 proc width*(p: Pnm): int = p.width
 proc height*(p: Pnm): int = p.height
 
+template validateDescriptorPbm(d: PnmDescriptor) =
+  if d notin [P1, P4]:
+    raise newException(IllegalFileDescriptorError, "the descriptor of PBM must be P1 or P4")
+
 template validateDescriptorPgm(d: PnmDescriptor) =
   if d notin [P2, P5]:
     raise newException(IllegalFileDescriptorError, "the descriptor of PGM must be P2 or P5")
+
+template validateRawStringDescriptorPbm(d: string) =
+  if not (d.len == 3 and
+     d[0] == 'P' and
+     d[1] in ['1', '4'] and
+     d[2] == '\n'):
+    raise newException(IllegalFileDescriptorError, "the descriptor of PBM must be P1 or P4")
 
 template validateRawStringDescriptorPgm(d: string) =
   if not (d.len == 3 and
@@ -130,7 +141,69 @@ proc readMax(strm: Stream, d: PnmDescriptor): int =
 ================================================================================
 ]#
 
-# TODO
+proc newPbm*(descriptor: PnmDescriptor, width, height: int, comment = ""): Pbm =
+  validateDescriptorPbm(descriptor)
+
+  new result
+  result.descriptor = descriptor
+  result.width = width
+  result.height = height
+  result.comment = comment
+  result.data = repeat(ColorBit(0'u8), width*height)
+
+template line(p: Pbm, y: int): seq[ColorBit] =
+  let startPos = y * p.width
+  p.data[startPos ..< startPos+p.width]
+
+proc `[]`*(p: Pbm, x, y: int): ColorBit =
+  p.data[x + y * p.width]
+
+proc `[]=`*(p: Pbm, x, y: int, color: ColorBit) =
+  p.data[x + y * p.width] = color
+
+proc `descriptor=`*(p: Pbm, descriptor: PnmDescriptor) =
+  validateDescriptorPbm(descriptor)
+  p.descriptor = descriptor
+
+proc readPbm*(strm: Stream): Pbm =
+  # P1 ~ P6しか取り得ないので 3byte だけ読み取ってバリデーション
+  block:
+    var d: string
+    strm.peekStr(3, d)
+    validateRawStringDescriptorPbm d
+
+  new result
+
+  # header
+  result.descriptor = strm.readDescriptor
+  result.comment = strm.readComment
+  let (width, height) = strm.readWidthHeight
+  result.width = width
+  result.height = height
+
+  # body
+  const byteSize = 1
+  case result.descriptor
+  of P1: result.data = strm.readDataPartOfTextData(width, height, byteSize)
+  of P4: result.data = strm.readDataPartOfBinaryData(width, height, byteSize)
+  else: discard
+
+proc writePbm*(strm: Stream, data: Pbm) =
+  # header
+  strm.writeLine(data.descriptor)
+  if data.comment != "":
+    strm.writeLine("#" & data.comment)
+  strm.writeLine($data.width & " " & $data.height)
+
+  # body
+  case data.descriptor
+  of P1:
+    # TODO
+    discard
+  of P4:
+    for c in data.data:
+      strm.write(c)
+  else: discard
 
 #[
 ================================================================================
