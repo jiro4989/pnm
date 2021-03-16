@@ -345,6 +345,14 @@ proc readComment(strm: Stream): string =
     discard strm.readChar # remove comment prefix
     result.add strm.readLine
 
+proc readWidthHeight(strm: Stream): (int, int) =
+  let
+    sizeLine = strm.readLine
+    wh = sizeLine.split(" ")
+    width = wh[0].parseInt
+    height = wh[1].parseInt
+  return (width, height)
+
 #[
 ================================================================================
                                       PGM
@@ -388,12 +396,7 @@ proc readPgm*(strm: Stream): Pgm =
   result.comment = strm.readComment
 
   # read column size and row size
-  let
-    sizeLine = strm.readLine()
-    wh = sizeLine.split(" ")
-    width = wh[0].parseInt()
-    height = wh[1].parseInt()
-
+  let (width, height) = strm.readWidthHeight
   result.width = width
   result.height = height
 
@@ -492,12 +495,7 @@ proc readPpm*(strm: Stream): Ppm =
   result.comment = strm.readComment
 
   # read column size and row size
-  let
-    sizeLine = strm.readLine()
-    wh = sizeLine.split(" ")
-    width = wh[0].parseInt()
-    height = wh[1].parseInt()
-
+  let (width, height) = strm.readWidthHeight
   result.width = width
   result.height = height
 
