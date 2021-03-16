@@ -336,6 +336,9 @@ func toDescriptor(str: string): PnmDescriptor =
   else:
     raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & str)
 
+proc readDescriptor(strm: Stream): PnmDescriptor =
+  strm.readLine().toDescriptor()
+
 #[
 ================================================================================
                                       PGM
@@ -374,7 +377,7 @@ proc readPgm*(strm: Stream): Pgm =
   validateRawStringDescriptorPgm d
 
   new result
-  result.descriptor = strm.readLine().toDescriptor()
+  result.descriptor = strm.readDescriptor
 
   # read comment line
   let b = strm.peekChar()
@@ -482,7 +485,7 @@ proc readPpm*(strm: Stream): Ppm =
   validateRawStringDescriptorPpm d
 
   new result
-  result.descriptor = strm.readLine().toDescriptor()
+  result.descriptor = strm.readDescriptor
 
   # read comment line
   let b = strm.peekChar()
