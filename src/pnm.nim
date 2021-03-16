@@ -353,6 +353,12 @@ proc readWidthHeight(strm: Stream): (int, int) =
     height = wh[1].parseInt
   return (width, height)
 
+proc readMax(strm: Stream, d: PnmDescriptor): int =
+  case d
+  of P2, P3, P5, P6:
+    return strm.readLine().parseInt
+  else: discard
+
 #[
 ================================================================================
                                       PGM
@@ -399,12 +405,7 @@ proc readPgm*(strm: Stream): Pgm =
   let (width, height) = strm.readWidthHeight
   result.width = width
   result.height = height
-
-  # read max data
-  case result.descriptor
-  of P2, P5:
-    result.max = strm.readLine().parseInt
-  else: discard
+  result.max = strm.readMax(result.descriptor)
 
   # body
   const byteSize = 1
@@ -498,12 +499,7 @@ proc readPpm*(strm: Stream): Ppm =
   let (width, height) = strm.readWidthHeight
   result.width = width
   result.height = height
-
-  # read max data
-  case result.descriptor
-  of P3, P6:
-    result.max = strm.readLine().parseInt
-  else: discard
+  result.max = strm.readMax(result.descriptor)
 
   # body
   const byteSize = 3
