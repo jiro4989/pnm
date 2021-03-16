@@ -398,10 +398,10 @@ proc readPgm*(strm: Stream): Pgm =
     validateRawStringDescriptorPgm d
 
   new result
+
+  # header
   result.descriptor = strm.readDescriptor
   result.comment = strm.readComment
-
-  # read column size and row size
   let (width, height) = strm.readWidthHeight
   result.width = width
   result.height = height
@@ -492,10 +492,10 @@ proc readPpm*(strm: Stream): Ppm =
     validateRawStringDescriptorPpm d
 
   new result
+
+  # header
   result.descriptor = strm.readDescriptor
   result.comment = strm.readComment
-
-  # read column size and row size
   let (width, height) = strm.readWidthHeight
   result.width = width
   result.height = height
