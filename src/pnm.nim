@@ -73,7 +73,7 @@ template validateRawStringDescriptorPpm(d: string) =
     raise newException(IllegalFileDescriptorError, "the descriptor of PPM must be P3 or P6")
 
 proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
-  ## for P2 or P3.
+  ## for P1, P2, P3
   let singleDataSize = width * height * byteSize
   let maxDataCount =
     if rgb: singleDataSize * 3
@@ -84,6 +84,7 @@ proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = fa
     for b in line.splitWhitespace().mapIt(it.parseUInt.uint8):
       result.add(b)
       inc(dataCounter)
+      # 取得しうるデータ数以上取得する必要がないので早期リターン
       if maxDataCount <= dataCounter:
         return
 
@@ -98,6 +99,7 @@ proc readDataPartOfBinaryData(strm: Stream, width, height, byteSize: int, rgb = 
   while not strm.atEnd():
     result.add(strm.readUint8())
     inc(dataCounter)
+    # 取得しうるデータ数以上取得する必要がないので早期リターン
     if maxDataCount <= dataCounter:
       return
 
