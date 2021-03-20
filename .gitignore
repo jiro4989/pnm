@@ -1,5 +1,5 @@
 /nimcache/
 outputGotten.txt
 testresults/pattern.json
-tests/**/*
-!tests/**/*.*
+tests/*/*
+!tests/*/*.*
