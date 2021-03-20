@@ -62,3 +62,12 @@ P1
     check got[] == want[]
     strm.close
 
+  block:
+    const inIllegalData = """
+P1
+5 3
+0 1 0 1 0
+""" # too little data
+    var strm = newStringStream(inIllegalData)
+    expect IllegalDataSizeError:
+      discard strm.readPbm
