@@ -15,6 +15,14 @@ P1
 P1
 5 3
 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0"""
+  const inData3 = """
+P1
+# this is comment
+5 3
+0 1 0 1 0
+1 0 1 0 1
+0 1 0 1 0
+"""
   const inIllegalData = """
 P1
 5 3
@@ -50,6 +58,13 @@ P1
     var strm = newStringStream(inData2)
     var got = strm.readPbm
     check got[] == want[]
+    strm.close
+
+  block:
+    # has comment
+    var strm = newStringStream(inData3)
+    var got = strm.readPbm
+    check got.comment == " this is comment"
     strm.close
 
   # ==============
