@@ -392,6 +392,11 @@ when not defined js:
   # reader
   # ============================================================
 
+  proc readPbmFile*(file: string): Pbm =
+    var strm = newFileStream(file, fmRead)
+    defer: strm.close
+    strm.readPbm
+
   proc readPgmFile*(file: string): Pgm =
     var strm = newFileStream(file, fmRead)
     defer: strm.close
@@ -405,6 +410,11 @@ when not defined js:
   # ============================================================
   # writer
   # ============================================================
+
+  proc writePbmFile*(file: string, data: Pbm) =
+    var strm = newFileStream(file, fmWrite)
+    defer: strm.close
+    strm.writePbm(data)
 
   proc writePgmFile*(file: string, data: Pgm) =
     var strm = newFileStream(file, fmWrite)
