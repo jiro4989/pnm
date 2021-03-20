@@ -33,11 +33,13 @@ type
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
   IllegalDataWidthError* = object of CatchableError
-    ## Return this when data width less than 0.
+    ## Return this when data width is less than 0.
   IllegalDataHeightError* = object of CatchableError
-    ## Return this when data height less than 1.
+    ## Return this when data height is less than 1.
   IllegalDataSizeError* = object of CatchableError
     ## Return this when data size didn't match data size (width x height) of PNM.
+  IllegalDataMaxError* = object of CatchableError
+    ## Return this when data max is greater than 255.
   IllegalPbmDataError* = object of CatchableError
     ## Return this when PBM has byte data outside of 0 or 1.
 
@@ -58,6 +60,10 @@ template validateHeight(height: int) =
 template validateWidthHeight(width, height: int) =
   validateWidth(width)
   validateHeight(height)
+
+template validateMax(max: int) =
+  if not (0 <= max and max < 256):
+    raise newException(IllegalDataMaxError, "max must be between 0 and 255.")
 
 template validateDescriptorPbm(d: PnmFileDescriptor) =
   if d notin [P1, P4]:
@@ -242,6 +248,7 @@ proc writePbm*(strm: Stream, data: Pbm) =
 proc newPgm*(descriptor: PnmFileDescriptor, width, height, max: int, comment = ""): Pgm =
   validateDescriptorPgm(descriptor)
   validateWidthHeight(width, height)
+  validateMax(max)
 
   new result
   result.descriptor = descriptor
@@ -318,6 +325,7 @@ proc writePgm*(strm: Stream, data: Pgm) =
 proc newPpm*(descriptor: PnmFileDescriptor, width, height, max: int, comment = ""): Ppm =
   validateDescriptorPpm(descriptor)
   validateWidthHeight(width, height)
+  validateMax(max)
 
   new result
   result.descriptor = descriptor
