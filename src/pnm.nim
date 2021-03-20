@@ -6,7 +6,7 @@ from sequtils import map, mapIt, repeat, distribute
 type
   Pnm* = ref PnmObj
   PnmObj* = object of RootObj
-    descriptor: PnmDescriptor
+    descriptor: PnmFileDescriptor
     comment: string
     width, height, max: int
 
@@ -22,7 +22,7 @@ type
   PpmObj* = object of PnmObj
     data: seq[ColorRgb]
 
-  PnmDescriptor* {.pure.} = enum
+  PnmFileDescriptor* {.pure.} = enum
     P1, P2, P3, P4, P5, P6
 
   ColorBit* = byte
@@ -39,11 +39,11 @@ proc newColorRgb*(r, g, b: byte): ColorRgb =
 proc width*(p: Pnm): int = p.width
 proc height*(p: Pnm): int = p.height
 
-template validateDescriptorPbm(d: PnmDescriptor) =
+template validateDescriptorPbm(d: PnmFileDescriptor) =
   if d notin [P1, P4]:
     raise newException(IllegalFileDescriptorError, "the descriptor of PBM must be P1 or P4")
 
-template validateDescriptorPgm(d: PnmDescriptor) =
+template validateDescriptorPgm(d: PnmFileDescriptor) =
   if d notin [P2, P5]:
     raise newException(IllegalFileDescriptorError, "the descriptor of PGM must be P2 or P5")
 
@@ -61,7 +61,7 @@ template validateRawStringDescriptorPgm(d: string) =
      d[2] == '\n'):
     raise newException(IllegalFileDescriptorError, "the descriptor of PGM must be P2 or P5")
 
-template validateDescriptorPpm(d: PnmDescriptor) =
+template validateDescriptorPpm(d: PnmFileDescriptor) =
   if d notin [P3, P6]:
     raise newException(IllegalFileDescriptorError, "the descriptor of PPM must be P3 or P6")
 
@@ -103,7 +103,7 @@ proc readDataPartOfBinaryData(strm: Stream, width, height, byteSize: int, rgb = 
     if maxDataCount <= dataCounter:
       return
 
-func toDescriptor(str: string): PnmDescriptor =
+func toDescriptor(str: string): PnmFileDescriptor =
   case str
   of "P1": P1
   of "P2": P2
@@ -114,7 +114,7 @@ func toDescriptor(str: string): PnmDescriptor =
   else:
     raise newException(IllegalFileDescriptorError, "IllegalFileDescriptor: file descriptor is " & str)
 
-proc readDescriptor(strm: Stream): PnmDescriptor =
+proc readDescriptor(strm: Stream): PnmFileDescriptor =
   strm.readLine().toDescriptor()
 
 proc readComment(strm: Stream): string =
@@ -131,7 +131,7 @@ proc readWidthHeight(strm: Stream): (int, int) =
     height = wh[1].parseInt
   return (width, height)
 
-proc readMax(strm: Stream, d: PnmDescriptor): int =
+proc readMax(strm: Stream, d: PnmFileDescriptor): int =
   case d
   of P2, P3, P5, P6:
     return strm.readLine().parseInt
@@ -143,7 +143,7 @@ proc readMax(strm: Stream, d: PnmDescriptor): int =
 ================================================================================
 ]#
 
-proc newPbm*(descriptor: PnmDescriptor, width, height: int, comment = ""): Pbm =
+proc newPbm*(descriptor: PnmFileDescriptor, width, height: int, comment = ""): Pbm =
   validateDescriptorPbm(descriptor)
 
   new result
@@ -163,7 +163,7 @@ proc `[]`*(p: Pbm, x, y: int): ColorBit =
 proc `[]=`*(p: Pbm, x, y: int, color: ColorBit) =
   p.data[x + y * p.width] = color
 
-proc `descriptor=`*(p: Pbm, descriptor: PnmDescriptor) =
+proc `descriptor=`*(p: Pbm, descriptor: PnmFileDescriptor) =
   validateDescriptorPbm(descriptor)
   p.descriptor = descriptor
 
@@ -213,7 +213,7 @@ proc writePbm*(strm: Stream, data: Pbm) =
 ================================================================================
 ]#
 
-proc newPgm*(descriptor: PnmDescriptor, width, height, max: int, comment = ""): Pgm =
+proc newPgm*(descriptor: PnmFileDescriptor, width, height, max: int, comment = ""): Pgm =
   validateDescriptorPgm(descriptor)
 
   new result
@@ -234,7 +234,7 @@ proc `[]`*(p: Pgm, x, y: int): ColorGray =
 proc `[]=`*(p: Pgm, x, y: int, color: ColorGray) =
   p.data[x + y * p.width] = color
 
-proc `descriptor=`*(p: Pgm, descriptor: PnmDescriptor) =
+proc `descriptor=`*(p: Pgm, descriptor: PnmFileDescriptor) =
   validateDescriptorPgm(descriptor)
   p.descriptor = descriptor
 
@@ -288,7 +288,7 @@ proc writePgm*(strm: Stream, data: Pgm) =
 ================================================================================
 ]#
 
-proc newPpm*(descriptor: PnmDescriptor, width, height, max: int, comment = ""): Ppm =
+proc newPpm*(descriptor: PnmFileDescriptor, width, height, max: int, comment = ""): Ppm =
   validateDescriptorPpm(descriptor)
 
   new result
@@ -317,7 +317,7 @@ proc `[]`*(p: Ppm, x, y: int): ColorRgb =
 proc `[]=`*(p: Ppm, x, y: int, color: ColorRgb) =
   p.data[x + y * p.width] = color
 
-proc `descriptor=`*(p: Ppm, descriptor: PnmDescriptor) =
+proc `descriptor=`*(p: Ppm, descriptor: PnmFileDescriptor) =
   validateDescriptorPpm(descriptor)
   p.descriptor = descriptor
 

@@ -16,7 +16,7 @@ import pnm
 import streams
 
 var strm = newStringStream()
-var p = newPpm(PnmDescriptor.P3, 5, 5, 255)
+var p = newPpm(PnmFileDescriptor.P3, 5, 5, 255)
 
 for y in 0 ..< p.height:
   for x in 0 ..< p.width:
