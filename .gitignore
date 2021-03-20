@@ -1,10 +1,4 @@
-tests/tpnm
-tests/tutil
-main
-
-tests/test_util
 /nimcache/
-
 outputGotten.txt
 testresults/pattern.json
 tests/**/*
