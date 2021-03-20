@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        nim-version: ['1.0.x', '1.2.x', 'stable']
+        nim-version: ['1.4.4', '1.4.x', 'stable']
     steps:
       - uses: actions/checkout@v1
       - uses: jiro4989/setup-nim-action@v1
@@ -24,16 +24,16 @@ jobs:
       - name: Install test
         run: nimble install -Y
       - name: Unit test
-        run: nimble test -Y
-      - name: Examples test
-        run: |
-          find examples/ -mindepth 1 -type d | while read -r dir; do
-            (
-              cd "$dir"
-              nim c -d:release main.nim
-              ./main
-            )
-          done
+        run: nimble tests
+      # - name: Examples test
+      #   run: |
+      #     find examples/ -mindepth 1 -type d | while read -r dir; do
+      #       (
+      #         cd "$dir"
+      #         nim c -d:release main.nim
+      #         ./main
+      #       )
+      #     done
 
   docs:
     runs-on: ubuntu-latest

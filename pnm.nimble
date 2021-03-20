@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.1.1"
+version       = "3.0.0"
 author        = "jiro4989"
 description   = "pnm is library for PNM (Portable AnyMap)."
 license       = "MIT"
@@ -9,9 +9,12 @@ srcDir        = "src"
 
 # Dependencies
 
-requires "nim >= 0.19.4"
+requires "nim >= 1.4.4"
 
 import strformat
+
+task tests, "Run tests":
+  exec "testament p 'tests/*/*.nim'"
 
 task examples, "Run example code":
   for d in ["write_pbm", "write_pgm", "write_ppm", "read_file"]:
