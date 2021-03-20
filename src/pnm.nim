@@ -32,9 +32,10 @@ type
   IllegalFileDescriptorError* = object of CatchableError
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
-
   IllegalDataSizeError* = object of CatchableError
     ## Return this when data size didn't match data size (width x height) of PNM.
+  IllegalPbmDataError* = object of CatchableError
+    ## Return this when PBM has byte data outside of 0 or 1.
 
 proc newColorRgb*(r, g, b: byte): ColorRgb =
   ColorRgb([r, g, b])
@@ -75,7 +76,7 @@ template validateRawStringDescriptorPpm(d: string) =
      d[2] == '\n'):
     raise newException(IllegalFileDescriptorError, "the descriptor of PPM must be P3 or P6")
 
-proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
+proc readDataPartOfTextData(strm: Stream, descriptor: PnmFileDescriptor, width, height, byteSize: int, rgb = false): seq[uint8] =
   ## for P1, P2, P3
   let singleDataSize = width * height * byteSize
   let maxDataCount =
@@ -85,6 +86,9 @@ proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = fa
   var dataCounter: int
   while strm.readLine(line):
     for b in line.splitWhitespace().mapIt(it.parseUInt.uint8):
+      if descriptor == P1:
+        if b notin [0'u8, 1]:
+          raise newException(IllegalPbmDataError, "PBM data must be 0 or 1. this stream has illegal byte data.")
       result.add(b)
       inc(dataCounter)
       # 取得しうるデータ数以上取得する必要がないので早期リターン
@@ -191,7 +195,7 @@ proc readPbm*(strm: Stream): Pbm =
   # body
   const byteSize = 1
   case result.descriptor
-  of P1: result.data = strm.readDataPartOfTextData(width, height, byteSize)
+  of P1: result.data = strm.readDataPartOfTextData(result.descriptor, width, height, byteSize)
   of P4: result.data = strm.readDataPartOfBinaryData(width, height, byteSize)
   else: discard
 
@@ -263,7 +267,7 @@ proc readPgm*(strm: Stream): Pgm =
   # body
   const byteSize = 1
   case result.descriptor
-  of P2: result.data = strm.readDataPartOfTextData(width, height, byteSize)
+  of P2: result.data = strm.readDataPartOfTextData(result.descriptor, width, height, byteSize)
   of P5: result.data = strm.readDataPartOfBinaryData(width, height, byteSize)
   else: discard
 
@@ -357,7 +361,7 @@ proc readPpm*(strm: Stream): Ppm =
   # body
   const byteSize = 3
   case result.descriptor
-  of P3: result.data = strm.readDataPartOfTextData(width, height, byteSize).toColorRgb
+  of P3: result.data = strm.readDataPartOfTextData(result.descriptor, width, height, byteSize).toColorRgb
   of P6: result.data = strm.readDataPartOfBinaryData(width, height, byteSize).toColorRgb
   else: discard
 
