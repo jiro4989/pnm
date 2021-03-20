@@ -7,7 +7,7 @@ type
   Pnm* = ref PnmObj
   PnmObj* = object of RootObj
     descriptor: PnmFileDescriptor
-    comment: string
+    comment*: string
     width, height, max: int
 
   Pbm* = ref PbmObj
