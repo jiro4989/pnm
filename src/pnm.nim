@@ -29,11 +29,11 @@ type
   ColorGray* = byte
   ColorRgb* = array[3, byte]
 
-  IllegalFileDescriptorError* = object of Defect
+  IllegalFileDescriptorError* = object of CatchableError
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
 
-  IllegalDataSizeError* = object of Defect
+  IllegalDataSizeError* = object of CatchableError
     ## Return this when data size didn't match data size (width x height) of PNM.
 
 proc newColorRgb*(r, g, b: byte): ColorRgb =
