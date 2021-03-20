@@ -32,6 +32,10 @@ type
   IllegalFileDescriptorError* = object of CatchableError
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
+  IllegalDataWidthError* = object of CatchableError
+    ## Return this when data width less than 0.
+  IllegalDataHeightError* = object of CatchableError
+    ## Return this when data height less than 1.
   IllegalDataSizeError* = object of CatchableError
     ## Return this when data size didn't match data size (width x height) of PNM.
   IllegalPbmDataError* = object of CatchableError
@@ -42,6 +46,18 @@ proc newColorRgb*(r, g, b: byte): ColorRgb =
 
 proc width*(p: Pnm): int = p.width
 proc height*(p: Pnm): int = p.height
+
+template validateWidth(width: int) =
+  if width < 1:
+    raise newException(IllegalDataWidthError, "width must not be less than 1.")
+
+template validateHeight(height: int) =
+  if height < 1:
+    raise newException(IllegalDataHeightError, "height must not be less than 1.")
+
+template validateWidthHeight(width, height: int) =
+  validateWidth(width)
+  validateHeight(height)
 
 template validateDescriptorPbm(d: PnmFileDescriptor) =
   if d notin [P1, P4]:
@@ -154,6 +170,7 @@ proc readMax(strm: Stream, d: PnmFileDescriptor): int =
 
 proc newPbm*(descriptor: PnmFileDescriptor, width, height: int, comment = ""): Pbm =
   validateDescriptorPbm(descriptor)
+  validateWidthHeight(width, height)
 
   new result
   result.descriptor = descriptor
@@ -224,6 +241,7 @@ proc writePbm*(strm: Stream, data: Pbm) =
 
 proc newPgm*(descriptor: PnmFileDescriptor, width, height, max: int, comment = ""): Pgm =
   validateDescriptorPgm(descriptor)
+  validateWidthHeight(width, height)
 
   new result
   result.descriptor = descriptor
@@ -299,6 +317,7 @@ proc writePgm*(strm: Stream, data: Pgm) =
 
 proc newPpm*(descriptor: PnmFileDescriptor, width, height, max: int, comment = ""): Ppm =
   validateDescriptorPpm(descriptor)
+  validateWidthHeight(width, height)
 
   new result
   result.descriptor = descriptor
