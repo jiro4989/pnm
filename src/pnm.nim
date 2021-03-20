@@ -33,6 +33,9 @@ type
     ## Return this when file descriptor is wrong.
     ## filedescriptors are P1 or P2 or P3 or P4 or P5 or P6.
 
+  IllegalDataSizeError* = object of Defect
+    ## Return this when data size didn't match data size (width x height) of PNM.
+
 proc newColorRgb*(r, g, b: byte): ColorRgb =
   ColorRgb([r, g, b])
 
@@ -87,6 +90,7 @@ proc readDataPartOfTextData(strm: Stream, width, height, byteSize: int, rgb = fa
       # 取得しうるデータ数以上取得する必要がないので早期リターン
       if maxDataCount <= dataCounter:
         return
+  raise newException(IllegalDataSizeError, "data size too little. dataCounter must equal data size (width x height)")
 
 proc readDataPartOfBinaryData(strm: Stream, width, height, byteSize: int, rgb = false): seq[uint8] =
   ## for P5 or P6.
@@ -102,6 +106,7 @@ proc readDataPartOfBinaryData(strm: Stream, width, height, byteSize: int, rgb = 
     # 取得しうるデータ数以上取得する必要がないので早期リターン
     if maxDataCount <= dataCounter:
       return
+  raise newException(IllegalDataSizeError, "data size too little. dataCounter must equal data size (width x height)")
 
 func toDescriptor(str: string): PnmFileDescriptor =
   case str
