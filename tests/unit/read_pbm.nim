@@ -71,6 +71,7 @@ P1
     var strm = newStringStream(inIllegalData)
     expect IllegalDataSizeError:
       discard strm.readPbm
+    strm.close
 
   block:
     const inIllegalData = """
@@ -83,3 +84,30 @@ P1
     var strm = newStringStream(inIllegalData)
     expect IllegalPbmDataError:
       discard strm.readPbm
+    strm.close
+
+  block:
+    const inIllegalData = """
+P2
+5 3
+0 1 0 1 0
+0 1 0 1 0
+0 1 0 1 0
+""" # illegal file descriptor
+    var strm = newStringStream(inIllegalData)
+    expect IllegalFileDescriptorError:
+      discard strm.readPbm
+    strm.close
+
+  block:
+    const inIllegalData = """
+P1 
+5 3
+0 1 0 1 0
+0 1 0 1 0
+0 1 0 1 0
+""" # illegal file descriptor
+    var strm = newStringStream(inIllegalData)
+    expect IllegalFileDescriptorError:
+      discard strm.readPbm
+    strm.close
