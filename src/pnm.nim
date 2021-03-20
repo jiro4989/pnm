@@ -386,10 +386,10 @@ proc readPpm*(strm: Stream): Ppm =
   result.max = strm.readMax(result.descriptor)
 
   # body
-  const byteSize = 3
+  const byteSize = 1
   case result.descriptor
-  of P3: result.data = strm.readDataPartOfTextData(result.descriptor, width, height, byteSize).toColorRgb
-  of P6: result.data = strm.readDataPartOfBinaryData(width, height, byteSize).toColorRgb
+  of P3: result.data = strm.readDataPartOfTextData(result.descriptor, width, height, byteSize, rgb = true).toColorRgb
+  of P6: result.data = strm.readDataPartOfBinaryData(width, height, byteSize, rgb = true).toColorRgb
   else: discard
 
 proc writePpm*(strm: Stream, data: Ppm) =
